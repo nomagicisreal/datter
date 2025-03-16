@@ -1,6 +1,6 @@
 name: datter
 description: Extension for flutter usecase, including widgets or non-widgets.
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/nomagicisreal/datter
 
 environment:
