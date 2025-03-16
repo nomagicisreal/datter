@@ -1,0 +1,1 @@
+Extension for flutter usecase, including widgets or non-widgets.
