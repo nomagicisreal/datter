@@ -1,26 +1,16 @@
 ///
 ///
 /// this file contains:
-/// [KColor]
 ///
-/// [KSize]
-/// [KSize2Ratio3]
-/// [KSize3Ratio4]
-/// [KSize9Ratio16]
-///
-/// [KOffset],
 /// [KOffsetPermutation4], [KMapperCubicPointsPermutation]
 ///
-/// [KRadius], [KBorderRadius]
-/// [KEdgeInsets]
 /// [KInterval]
-///
 /// [KMaskFilter]
+/// [KFloatingActionButton]
 ///
 ///
 /// [VPaintFill], [VPaintStroke]
 /// [VThemeData]
-/// [VRandomMaterial]
 ///
 ///
 ///
@@ -43,164 +33,10 @@ part of '../../datter.dart';
 ///
 ///
 ///
-extension KColor on Color {
-  ///
-  ///
-  ///
-  /// 20 distinct colors, https://sashamaps.net/docs/resources/20-colors/
-  ///
-  ///
-  ///
-
-  //
-  static const Color black = Color(0xFF000000);
-  static const Color grey = Color(0xFFa9a9a9);
-  static const Color white = Color(0xFFffffff);
-
-  //
-  static const Color purple = Color(0xFF9111b4);
-  static const Color lavender = Color(0xFFdcbeff);
-  static const Color magenta = Color(0xFFf032e6);
-
-  //
-  static const Color navy = Color(0xFF000075);
-  static const Color blue = Color(0xFF4363d8);
-
-  //
-  static const Color teal = Color(0xFF469990);
-  static const Color cyan = Color(0xFF42d4f4);
-
-  //
-  static const Color lime = Color(0xFFbfef45);
-  static const Color green = Color(0xFF3cb44b);
-  static const Color mint = Color(0xFFaaffc3);
-
-  //
-  static const Color olive = Color(0xFF808000);
-  static const Color yellow = Color(0xFFffe119);
-  static const Color beige = Color(0xFFfffac8);
-
-  //
-  static const Color brown = Color(0xFF9a6324);
-  static const Color orange = Color(0xFFf58231);
-  static const Color apricot = Color(0xFFffd8b1);
-
-  //
-  static const Color maroon = Color(0xFF800000);
-  static const Color red = Color(0xFFe6194b);
-  static const Color pink = Color(0xFFfabed4);
-}
-
+/// offset
 ///
 ///
 ///
-///
-/// geometry
-///
-///
-///
-///
-///
-
-extension KSize on Size {
-  static const square_1 = Size.square(1);
-  static const square_10 = Size.square(10);
-  static const square_20 = Size.square(20);
-  static const square_30 = Size.square(30);
-  static const square_40 = Size.square(40);
-  static const square_50 = Size.square(50);
-  static const square_56 = Size.square(56);
-  static const square_60 = Size.square(60);
-  static const square_70 = Size.square(70);
-  static const square_80 = Size.square(80);
-  static const square_90 = Size.square(90);
-  static const square_100 = Size.square(100);
-  static const square_110 = Size.square(110);
-  static const square_120 = Size.square(120);
-  static const square_130 = Size.square(130);
-  static const square_140 = Size.square(140);
-  static const square_150 = Size.square(150);
-  static const square_160 = Size.square(160);
-  static const square_170 = Size.square(170);
-  static const square_180 = Size.square(180);
-  static const square_190 = Size.square(190);
-  static const square_200 = Size.square(200);
-  static const square_210 = Size.square(210);
-  static const square_220 = Size.square(220);
-  static const square_230 = Size.square(230);
-  static const square_240 = Size.square(240);
-  static const square_250 = Size.square(250);
-  static const square_260 = Size.square(260);
-  static const square_270 = Size.square(270);
-  static const square_280 = Size.square(280);
-  static const square_290 = Size.square(290);
-  static const square_300 = Size.square(300);
-
-  // in cm
-  static const a4 = Size(21.0, 29.7);
-  static const a3 = Size(29.7, 42.0);
-  static const a2 = Size(42.0, 59.4);
-  static const a1 = Size(59.4, 84.1);
-}
-
-extension KSize2Ratio3 on Size {
-  static const w360_h540 = Size(360, 540);
-  static const w420_h630 = Size(420, 630);
-  static const w480_h720 = Size(480, 720);
-}
-
-extension KSize3Ratio4 on Size {
-  static Size get w360_h480 => Size(360, 480);
-
-  static Size get w420_h560 => Size(420, 560);
-
-  static Size get w480_h640 => Size(480, 640);
-}
-
-extension KSize9Ratio16 on Size {
-  static Size get w270_h480 => Size(270, 480);
-
-  static Size get w405_h720 => Size(405, 720);
-
-  static Size get w450_h800 => Size(450, 800);
-}
-
-///
-///
-///
-/// offset, point3, vector
-///
-///
-///
-
-///
-/// [top], ..., [bottomRight]
-/// [square_1], [square_10], [square_100]
-/// [x_1], [x_10], [x_100]
-/// [y_1], [y_10], [y_100]
-///
-extension KOffset on Offset {
-  static const top = Offset(0, -1);
-  static const left = Offset(-1, 0);
-  static const right = Offset(1, 0);
-  static const bottom = Offset(0, 1);
-  static const center = Offset.zero;
-  static const topLeft = Offset(-math.sqrt1_2, -math.sqrt1_2);
-  static const topRight = Offset(math.sqrt1_2, -math.sqrt1_2);
-  static const bottomLeft = Offset(-math.sqrt1_2, math.sqrt1_2);
-  static const bottomRight = Offset(math.sqrt1_2, math.sqrt1_2);
-
-  static const square_1 = Offset(1, 1);
-  static const square_10 = Offset(10, 10);
-  static const square_100 = Offset(100, 100);
-  static const x_1 = Offset(1, 0);
-  static const x_10 = Offset(10, 0);
-  static const x_100 = Offset(100, 0);
-  static const y_1 = Offset(0, 1);
-  static const y_10 = Offset(0, 10);
-  static const y_100 = Offset(0, 100);
-}
-
 extension KOffsetPermutation4 on List<Offset> {
   // 0, 1, 2, 3
   // 1, 2, 3, a (add a, remove a)
@@ -324,39 +160,6 @@ extension KMapperCubicPointsPermutation on Applier<Map<Offset, List<Offset>>> {
 ///
 ///
 
-extension KRadius on Radius {
-  static const circular = Radius.circular(1);
-}
-
-extension KBorderRadius on BorderRadius {
-  static const zero = BorderRadius.all(Radius.zero);
-  static const circularAll = BorderRadius.all(KRadius.circular);
-  static const circularTopLeft = BorderRadius.only(topLeft: KRadius.circular);
-  static const circularTopRight = BorderRadius.only(topRight: KRadius.circular);
-  static const circularBottomLeft =
-      BorderRadius.only(bottomLeft: KRadius.circular);
-  static const circularBottomRight =
-      BorderRadius.only(bottomRight: KRadius.circular);
-  static const circularLeft = BorderRadius.horizontal(left: KRadius.circular);
-  static const circularTop = BorderRadius.vertical(top: KRadius.circular);
-  static const circularRight = BorderRadius.horizontal(right: KRadius.circular);
-  static const circularBottom = BorderRadius.vertical(bottom: KRadius.circular);
-}
-
-extension KEdgeInsets on EdgeInsets {
-  static const leftBottom = EdgeInsets.only(left: 1, bottom: 1);
-  static const left = EdgeInsets.only(left: 1);
-  static const leftTop = EdgeInsets.only(left: 1, top: 1);
-  static const top = EdgeInsets.only(top: 1);
-  static const rightTop = EdgeInsets.only(right: 1, top: 1);
-  static const right = EdgeInsets.only(right: 1);
-  static const rightBottom = EdgeInsets.only(right: 1, bottom: 1);
-  static const bottom = EdgeInsets.only(bottom: 1);
-  static const horizontal = EdgeInsets.symmetric(horizontal: 1);
-  static const vertical = EdgeInsets.symmetric(vertical: 1);
-  static const all = EdgeInsets.all(1);
-}
-
 ///
 ///
 ///
@@ -364,7 +167,6 @@ extension KEdgeInsets on EdgeInsets {
 ///
 ///
 ///
-
 extension KInterval on Interval {
   static const easeInOut_00_04 = Interval(0, 0.4, curve: Curves.easeInOut);
   static const easeInOut_00_05 = Interval(0, 0.5, curve: Curves.easeInOut);
@@ -399,6 +201,35 @@ extension KMaskFilter on Paint {
 
   /// solid
   static const MaskFilter solid_05 = MaskFilter.blur(BlurStyle.solid, 0.5);
+}
+
+///
+///
+/// floating action button
+///
+///
+extension KFloatingActionButton on FloatingActionButton {
+  static const List<FloatingActionButtonLocation> locations = [
+    FloatingActionButtonLocation.miniStartTop,
+    FloatingActionButtonLocation.miniStartDocked,
+    FloatingActionButtonLocation.miniStartFloat,
+    FloatingActionButtonLocation.miniCenterTop,
+    FloatingActionButtonLocation.miniCenterDocked,
+    FloatingActionButtonLocation.miniCenterFloat,
+    FloatingActionButtonLocation.miniEndTop,
+    FloatingActionButtonLocation.miniEndDocked,
+    FloatingActionButtonLocation.miniEndFloat,
+    FloatingActionButtonLocation.startTop,
+    FloatingActionButtonLocation.startDocked,
+    FloatingActionButtonLocation.startFloat,
+    FloatingActionButtonLocation.centerTop,
+    FloatingActionButtonLocation.centerDocked,
+    FloatingActionButtonLocation.centerFloat,
+    FloatingActionButtonLocation.endTop,
+    FloatingActionButtonLocation.endDocked,
+    FloatingActionButtonLocation.endFloat,
+    FloatingActionButtonLocation.endContained,
+  ];
 }
 
 ///
@@ -482,31 +313,4 @@ extension VThemeData on ThemeData {
           ),
     );
   }
-}
-
-///
-/// [colorPrimary], ...
-/// [fabLocation]
-///
-extension VRandomMaterial on Material {
-  ///
-  /// material
-  ///
-  static Color get colorPrimary => Colors.primaries[RandomExtension.intTo(18)];
-
-  static final List<FloatingActionButtonLocation> _fabLocations = [
-    FloatingActionButtonLocation.startTop,
-    FloatingActionButtonLocation.startDocked,
-    FloatingActionButtonLocation.startFloat,
-    FloatingActionButtonLocation.centerTop,
-    FloatingActionButtonLocation.centerDocked,
-    FloatingActionButtonLocation.centerFloat,
-    FloatingActionButtonLocation.endTop,
-    FloatingActionButtonLocation.endDocked,
-    FloatingActionButtonLocation.endFloat,
-    FloatingActionButtonLocation.endContained,
-  ];
-
-  static FloatingActionButtonLocation get fabLocation =>
-      _fabLocations[RandomExtension.intTo(10)];
 }

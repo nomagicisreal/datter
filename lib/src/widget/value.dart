@@ -18,13 +18,7 @@
 /// [WColoredBox]
 /// [WTransform]
 /// [WCustomPaint], [WClipPath]
-///
-///
-///
-///
-///
-///
-///
+/// [WRadioList]
 ///
 ///
 ///
@@ -106,13 +100,14 @@ extension WDrawer on Drawer {
 ///
 extension WListView on ListView {
   static ListView get fakeBigSmall_25 => ListView.builder(
-        padding: KEdgeInsets.vertical * 8,
+        padding: KGeometry.edgeInsets_vertical * 8,
         itemCount: 25,
         itemBuilder: (context, index) => Container(
-          margin: KEdgeInsets.horizontal * 24 + KEdgeInsets.vertical * 8,
+          margin: KGeometry.edgeInsets_horizontal * 24 +
+              KGeometry.edgeInsets_vertical * 8,
           height: index.isOdd ? 128 : 36,
           decoration: BoxDecoration(
-            borderRadius: KBorderRadius.circularAll * 8,
+            borderRadius: KGeometry.borderRadius_circularAll * 8,
             color: Colors.grey.shade600,
           ),
         ),
@@ -241,15 +236,12 @@ extension WSizedBox on SizedBox {
 
   static SizedBox squareColored({
     required double dimension,
-    Color? color,
+    required Color color,
     Widget? child,
   }) =>
       SizedBox.square(
         dimension: dimension,
-        child: ColoredBox(
-          color: color ?? VRandomMaterial.colorPrimary,
-          child: child,
-        ),
+        child: ColoredBox(color: color, child: child),
       );
 
   ///
@@ -285,51 +277,6 @@ extension WColoredBox on ColoredBox {
   static const ColoredBox blue = ColoredBox(color: Colors.blue);
   static const ColoredBox blueAccent = ColoredBox(color: Colors.blueAccent);
   static const ColoredBox purple = ColoredBox(color: Colors.purple);
-}
-
-extension WTransform on Transform {
-  static Transform transformFromDirection(
-    Direction3DIn6 direction, {
-    Point3 initialRadian = Point3.zero,
-    double zDeep = 100,
-    required Widget child,
-  }) {
-    Matrix4 instance() => Matrix4.identity();
-    return initialRadian == Point3.zero
-        ? switch (direction) {
-            Direction3DIn6.front => Transform(
-                transform: instance(),
-                alignment: Alignment.center,
-                child: child,
-              ),
-            Direction3DIn6.back => Transform(
-                alignment: Alignment.center,
-                transform: instance()..translateOf(Point3.ofZ(-zDeep)),
-                child: child,
-              ),
-            Direction3DIn6.left => Transform(
-                alignment: Alignment.centerLeft,
-                transform: instance()..rotateY(Radian.angle_90),
-                child: child,
-              ),
-            Direction3DIn6.right => Transform(
-                alignment: Alignment.centerRight,
-                transform: instance()..rotateY(-Radian.angle_90),
-                child: child,
-              ),
-            Direction3DIn6.top => Transform(
-                alignment: Alignment.topCenter,
-                transform: instance()..rotateX(-Radian.angle_90),
-                child: child,
-              ),
-            Direction3DIn6.bottom => Transform(
-                alignment: Alignment.bottomCenter,
-                transform: instance()..rotateX(Radian.angle_90),
-                child: child,
-              ),
-          }
-        : throw UnimplementedError();
-  }
 }
 
 ///
@@ -592,6 +539,26 @@ extension WClipPath on ClipPath {
           decoration: decoration,
           position: position,
           child: child,
+        ),
+      );
+}
+
+///
+///
+///
+///
+extension WRadioList on RadioListTile {
+  static List<RadioListTile<String?>> listString({
+    required String? optionsHost,
+    required List<String> options,
+    required ValueChanged<String?> onChanged,
+  }) =>
+      options.mapToList(
+        (option) => RadioListTile<String?>(
+          groupValue: optionsHost,
+          title: Text(option),
+          value: option,
+          onChanged: onChanged,
         ),
       );
 }

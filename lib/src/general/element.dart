@@ -10,56 +10,90 @@
 ///
 ///
 ///
-///
 part of '../../datter.dart';
 
 ///
 ///
-/// color
-///
-/// [plusARGB], [minusARGB], [multiplyARGB], [dividedARGB],
-/// [plusAllRGB], [minusAllRGB], [multiplyAllRGB], [dividedAllRGB],
+/// constants: [distinct20], ...
+/// instance methods: [plusARGB], ...
 ///
 extension ColorExtension on Color {
-  Color plusARGB(int alpha, int red, int green, int blue) => Color.fromARGB(
-        this.alpha + alpha,
-        this.red + red,
-        this.green + green,
-        this.blue + blue,
+  ///
+  ///
+  /// constants
+  ///
+  ///
+  // 20 distinct colors, https://sashamaps.net/docs/resources/20-colors/
+  static const Color _distinct20_pink = Color(0xFFfabed4);
+  static const Color _distinct20_red = Color(0xFFe6194b);
+  static const Color _distinct20_maroon = Color(0xFF800000);
+  static const Color _distinct20_orange = Color(0xFFf58231);
+  static const Color _distinct20_brown = Color(0xFF9a6324);
+  static const Color _distinct20_beige = Color(0xFFfffac8);
+  static const Color _distinct20_apricot = Color(0xFFffd8b1);
+  static const Color _distinct20_yellow = Color(0xFFffe119);
+  static const Color _distinct20_olive = Color(0xFF808000);
+  static const Color _distinct20_lime = Color(0xFFbfef45);
+  static const Color _distinct20_mint = Color(0xFFaaffc3);
+  static const Color _distinct20_green = Color(0xFF3cb44b);
+  static const Color _distinct20_cyan = Color(0xFF42d4f4);
+  static const Color _distinct20_teal = Color(0xFF469990);
+  static const Color _distinct20_blue = Color(0xFF4363d8);
+  static const Color _distinct20_navy = Color(0xFF000075);
+  static const Color _distinct20_lavender = Color(0xFFdcbeff);
+  static const Color _distinct20_magenta = Color(0xFFf032e6);
+  static const Color _distinct20_purple = Color(0xFF9111b4);
+  static const Color _distinct20_grey = Color(0xFFa9a9a9);
+  static const List<Color> distinct20 = [
+    _distinct20_pink,
+    _distinct20_red,
+    _distinct20_maroon,
+    _distinct20_orange,
+    _distinct20_brown,
+    _distinct20_beige,
+    _distinct20_apricot,
+    _distinct20_yellow,
+    _distinct20_olive,
+    _distinct20_lime,
+    _distinct20_mint,
+    _distinct20_green,
+    _distinct20_cyan,
+    _distinct20_teal,
+    _distinct20_blue,
+    _distinct20_navy,
+    _distinct20_lavender,
+    _distinct20_magenta,
+    _distinct20_purple,
+    _distinct20_grey,
+  ];
+
+  ///
+  ///
+  ///
+  /// instance methods
+  ///
+  ///
+  ///
+  Color plusARGB(double alpha, double red, double green, double blue) =>
+      Color.from(
+        alpha: a + alpha,
+        red: r + red,
+        green: g + green,
+        blue: b + blue,
       );
 
-  Color minusARGB(int alpha, int red, int green, int blue) => Color.fromARGB(
-        this.alpha - alpha,
-        this.red - red,
-        this.green - green,
-        this.blue - blue,
+  Color minusARGB(int alpha, int red, int green, int blue) => Color.from(
+        alpha: a - alpha,
+        red: r - red,
+        green: g - green,
+        blue: b - blue,
       );
 
-  Color multiplyARGB(int alpha, int red, int green, int blue) => Color.fromARGB(
-        this.alpha * alpha,
-        this.red * red,
-        this.green * green,
-        this.blue * blue,
-      );
+  Color plusAllRGB(double value) =>
+      Color.from(alpha: a, red: r + value, green: g + value, blue: b + value);
 
-  Color dividedARGB(int alpha, int red, int green, int blue) => Color.fromARGB(
-        this.alpha ~/ alpha,
-        this.red ~/ red,
-        this.green ~/ green,
-        this.blue ~/ blue,
-      );
-
-  Color plusAllRGB(int value) =>
-      Color.fromARGB(alpha, red + value, green + value, blue + value);
-
-  Color minusAllRGB(int value) =>
-      Color.fromARGB(alpha, red - value, green - value, blue - value);
-
-  Color multiplyAllRGB(int value) =>
-      Color.fromARGB(alpha, red * value, green * value, blue * value);
-
-  Color dividedAllRGB(int value) =>
-      Color.fromARGB(alpha, red ~/ value, green ~/ value, blue ~/ value);
+  Color minusAllRGB(double value) =>
+      Color.from(alpha: a, red: r - value, green: g - value, blue: b - value);
 }
 
 ///
@@ -251,7 +285,7 @@ extension FBorderInput on InputBorder {
 
   static UnderlineInputBorder underline({
     BorderSide borderSide = const BorderSide(),
-    BorderRadius borderRadius = KBorderRadius.circularTop,
+    BorderRadius borderRadius = KGeometry.borderRadius_circularTop,
   }) =>
       UnderlineInputBorder(
         borderSide: borderSide,
@@ -477,15 +511,15 @@ extension FDecorationInput on InputDecoration {
         enabledBorder: enabledBorder,
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.blueGrey, width: 1.5),
-          borderRadius: KBorderRadius.circularAll * 10,
+          borderRadius: KGeometry.borderRadius_circularAll * 10,
         ),
         errorBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.red, width: 1.5),
-          borderRadius: KBorderRadius.circularAll * 10,
+          borderRadius: KGeometry.borderRadius_circularAll * 10,
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.red, width: 1.5),
-          borderRadius: KBorderRadius.circularAll * 10,
+          borderRadius: KGeometry.borderRadius_circularAll * 10,
         ),
       );
 }

@@ -2,6 +2,8 @@
 ///
 /// this file contains:
 ///
+/// [PositionedExtension]
+///
 /// [GeneratorOffsetExtension]
 ///
 ///
@@ -12,7 +14,6 @@
 ///
 /// mix:
 /// [CenterSizedBox], [SizedBoxCenter]
-/// [RowPadding], [RowPaddingColumn]
 /// [ColumnPadding], [ColumnPaddingRow], [ColumnText]
 ///
 ///
@@ -38,6 +39,18 @@
 ///
 ///
 part of '../../datter.dart';
+
+///
+///
+///
+///
+extension PositionedExtension on Positioned {
+  Rect? get rect =>
+      (left == null || top == null || width == null || height == null)
+          ? null
+          : Rect.fromLTWH(left!, top!, width!, height!);
+}
+
 
 ///
 ///

@@ -11,17 +11,13 @@
 /// [PaintFrom], [PaintingPath], [Painter]
 /// [RectBuilder]
 ///
-/// [OnAnimate], [OnAnimatePath], [OnAnimateMatrix4]
-///
 ///
 /// [WidgetParentBuilder]
 /// [WidgetListBuilder]
 /// [WidgetGlobalKeysBuilder]
 ///
-///
 /// extensions:
-/// [WWidgetBuilder], [WWidgetParentBuilder]
-/// [WImageLoadingBuilder], [WImageErrorWidgetBuilder]
+/// [FWidgetBuilder], [FWidgetParentBuilder]
 ///
 ///
 ///
@@ -75,14 +71,6 @@ typedef Painter = Painting Function(SizingPath sizingPath);
 typedef RectBuilder = Rect Function(BuildContext context);
 
 ///
-/// on
-///
-typedef OnAnimate<T, S> = S Function(double t, T value);
-typedef OnAnimatePath<T> = SizingPath Function(double t, T value);
-typedef OnAnimateMatrix4 = Companion<Matrix4, Point3>;
-
-
-///
 ///
 /// widget
 ///
@@ -100,10 +88,6 @@ Function(
     Map<String, GlobalKey<S>> keys,
     );
 
-
-///
-///
-///
 ///
 ///
 /// extensions
@@ -112,13 +96,7 @@ Function(
 ///
 ///
 ///
-///
-///
-
-///
-///
-///
-extension WWidgetBuilder on WidgetBuilder {
+extension FWidgetBuilder on WidgetBuilder {
   static WidgetBuilder of(Widget child) => (_) => child;
 
   static List<WidgetBuilder> ofList(List<Widget> children) =>
@@ -195,101 +173,7 @@ extension WWidgetBuilder on WidgetBuilder {
   }
 }
 
-extension WWidgetParentBuilder on WidgetParentBuilder {
+extension FWidgetParentBuilder on WidgetParentBuilder {
   WidgetBuilder builderFrom(Iterable<WidgetBuilder> children) =>
           (context) => this(context, [...children.map((build) => build(context))]);
-}
-
-extension WImageLoadingBuilder on ImageLoadingBuilder {
-  static Widget style1(
-      BuildContext context,
-      Widget child,
-      ImageChunkEvent? loadingProgress,
-      ) =>
-      loadingProgress == null
-          ? child
-          : Center(
-        child: CircularProgressIndicator(
-          color: Colors.blueGrey,
-          value: loadingProgress.expectedTotalBytes != null &&
-              loadingProgress.expectedTotalBytes != null
-              ? loadingProgress.cumulativeBytesLoaded /
-              loadingProgress.expectedTotalBytes!
-              : null,
-        ),
-      );
-
-  static Widget style2(
-      BuildContext context,
-      Widget child,
-      ImageChunkEvent? loadingProgress,
-      ) =>
-      loadingProgress == null
-          ? child
-          : SizedBox(
-        width: 90,
-        height: 90,
-        child: Center(
-          child: CircularProgressIndicator(
-            color: Colors.grey,
-            value: loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded /
-                loadingProgress.expectedTotalBytes!
-                : null,
-          ),
-        ),
-      );
-
-  static Widget style3(
-      BuildContext ctx,
-      Widget child,
-      ImageChunkEvent? loadingProgress,
-      ) =>
-      loadingProgress == null
-          ? child
-          : Center(
-        child: CircularProgressIndicator(
-          color: Colors.blueGrey,
-          value: loadingProgress.expectedTotalBytes != null &&
-              loadingProgress.expectedTotalBytes != null
-              ? loadingProgress.cumulativeBytesLoaded /
-              loadingProgress.expectedTotalBytes!
-              : null,
-        ),
-      );
-
-  static Widget style4(
-      BuildContext context,
-      Widget child,
-      ImageChunkEvent? loadingProgress,
-      ) =>
-      loadingProgress == null
-          ? child
-          : SizedBox(
-        width: 200,
-        height: 200,
-        child: Center(
-          child: CircularProgressIndicator(
-            color: Colors.brown,
-            value: loadingProgress.expectedTotalBytes != null &&
-                loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded /
-                loadingProgress.expectedTotalBytes!
-                : null,
-          ),
-        ),
-      );
-}
-
-///
-///
-/// [WImageErrorWidgetBuilder]
-///
-///
-extension WImageErrorWidgetBuilder on ImageErrorWidgetBuilder {
-  static Widget accountStyle2(BuildContext c, Object o, StackTrace? s) =>
-      WIconMaterial.accountCircleStyle2;
-
-  static Widget errorStyle1(BuildContext c, Object o, StackTrace? s) =>
-      const SizedBox(height: 200, width: 200, child: Icon(Icons.error));
 }

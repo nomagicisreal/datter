@@ -2,11 +2,9 @@
 ///
 /// this file contains:
 ///
-///
-/// [FTextFormFieldValidator]
-///
-///
 /// extension:
+/// [TimeOfDayExtension]
+/// [ClipboardExtension]
 /// [FocusManagerExtension], [FocusNodeExtension]
 /// [GlobalKeyExtension]
 ///
@@ -14,6 +12,9 @@
 ///
 /// [BuildContextExtension]
 ///
+/// extension for functions:
+/// [FFormFieldValidator]
+/// [FImageLoadingBuilder], [FImageErrorWidgetBuilder]
 ///
 ///
 ///
@@ -25,18 +26,28 @@
 ///
 part of '../../datter.dart';
 
+///
+///
+///
+extension TimeOfDayExtension on TimeOfDay {
+  static TimeOfDay pm(int hour, int minute) {
+    assert(hour.isRangeClose(0, 11));
+    return TimeOfDay(hour: 12 + hour, minute: minute);
+  }
 
-///
-///
-///
-extension FTextFormFieldValidator on TextFormFieldValidator {
-  static FormFieldValidator<String> validateNullOrEmpty(
-      String validationFailedMessage,
-      ) =>
-          (value) =>
-      value == null || value.isEmpty ? validationFailedMessage : null;
+  static TimeOfDay am(int hour, int minute) {
+    assert(hour.isRangeClose(0, 11));
+    return TimeOfDay(hour: hour, minute: minute);
+  }
 }
 
+///
+///
+///
+extension ClipboardExtension on Clipboard {
+  static void copy(String text, {VoidCallback? then}) =>
+      Clipboard.setData(ClipboardData(text: text)).then((_) => then?.call());
+}
 
 
 ///
@@ -72,16 +83,6 @@ extension GlobalKeyExtension on GlobalKey {
   }
 }
 
-//
-extension AnimationControllerExtension on AnimationController {
-  void forwardReset({double? from}) => forward(from: from).then((_) => reset());
-
-  void resetForward({double? from}) => this
-    ..reset()
-    ..forward(from: from);
-}
-
-
 ///
 /// [theme], [themeText], .... , [colorScheme]
 /// [sizeMedia], [mediaViewInsets]
@@ -93,7 +94,7 @@ extension AnimationControllerExtension on AnimationController {
 ///
 /// [closeKeyboardIfShowing]
 /// [showSnackbar], [showSnackbarWithMessage]
-/// [showDialogGenericStyle1], [showDialogGenericStyle2], [showDialogListAndGetItem], [showDialogDecideTureOfFalse]
+/// [showDialogOptionsSupply], [showDialogOptionActions], [showDialogListAndGetItem], [showDialogDecideTureOfFalse]
 ///
 extension BuildContextExtension on BuildContext {
   // AppLocalizations get loc => AppLocalizations.of(this)!;
@@ -128,8 +129,6 @@ extension BuildContextExtension on BuildContext {
       theme.bottomNavigationBarTheme;
 
   BottomSheetThemeData get themeBottomSheet => theme.bottomSheetTheme;
-
-  ButtonBarThemeData get themeButtonBar => theme.buttonBarTheme;
 
   ButtonThemeData get themeButton => theme.buttonTheme;
 
@@ -331,16 +330,16 @@ extension BuildContextExtension on BuildContext {
 
   ///
   ///
-  /// [showDialogGenericStyle1], [showDialogGenericStyle2], [showDialogStyle3]
+  /// [showDialogOptionsSupply], [showDialogOptionActions], [showDialogEnsureCancel]
   /// [showDialogListAndGetItem], [showDialogDecideTureOfFalse]
   ///
   ///
-  Future<T?> showDialogGenericStyle1<T>({
+  Future<T?> showDialogOptionsSupply<T>({
     required String title,
     required String content,
-    required Supplier<Map<String, T>> optionsBuilder,
+    required Supplier<Map<String, T>> optionsSupply,
   }) {
-    final options = optionsBuilder();
+    final options = optionsSupply();
     return showDialog(
       context: this,
       builder: (context) => AlertDialog(
@@ -348,9 +347,7 @@ extension BuildContextExtension on BuildContext {
         content: Text(content),
         actions: options.keys
             .map((optionTitle) => TextButton(
-                  onPressed: () => context.navigator.pop(
-                    options[optionTitle],
-                  ),
+                  onPressed: () => context.navigator.pop(options[optionTitle]),
                   child: Text(optionTitle),
                 ))
             .toList(),
@@ -358,14 +355,14 @@ extension BuildContextExtension on BuildContext {
     );
   }
 
-  Future<T?> showDialogGenericStyle2<T>({
+  Future<T?> showDialogOptionActions<T>({
     required String title,
     required String? content,
-    required Map<String, T Function()> actionTitleAndActions,
+    required Map<String, Supplier<T>> optionActions,
   }) async {
     final actions = <Widget>[];
     T? returnValue;
-    actionTitleAndActions.forEach((label, action) {
+    optionActions.forEach((label, action) {
       actions.add(TextButton(
         onPressed: () {
           navigator.pop();
@@ -386,45 +383,41 @@ extension BuildContextExtension on BuildContext {
     return returnValue;
   }
 
-  void showDialogStyle3(
-    String text,
-    VoidCallback? onEnsure, {
-    Widget? content,
-    String messageEnsure = '確認',
-  }) {
-    showDialog<void>(
-      context: this,
-      builder: (context) {
-        return AlertDialog(
-          content: content ?? Text(text),
+  Future<void> showDialogEnsureCancel({
+    required String textEnsure,
+    required String textCancel,
+    WidgetBuilder? content,
+    VoidCallback? onEnsure,
+    VoidCallback? onCancel,
+  }) async =>
+      showDialog<void>(
+        context: this,
+        useRootNavigator: false,
+        builder: (context) => AlertDialog(
+          content: content?.call(context),
           actions: [
-            if (onEnsure != null)
-              TextButton(
-                onPressed: onEnsure,
-                child: Text(messageEnsure),
-              ),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('關閉'),
+              onPressed: onCancel ?? context.navigator.pop,
+              child: Text(textCancel),
             ),
+            if (onEnsure != null)
+              TextButton(onPressed: onEnsure, child: Text(textEnsure)),
           ],
-        );
-      },
-    );
-  }
+        ),
+      );
 
   Future<T?> showDialogListAndGetItem<T>({
     required String title,
     required List<T> itemList,
+    Size? size
   }) async {
     late final T? selectedItem;
     await showDialog(
       context: this,
       builder: (context) => AlertDialog(
         title: Text(title),
-        content: SizedBox(
-          height: 200,
-          width: 100,
+        content: SizedBox.fromSize(
+          size: KGeometry.size_w1_h2.flipped * 100,
           child: ListView.builder(
             itemCount: itemList.length,
             itemBuilder: (context, index) {
@@ -473,4 +466,148 @@ extension BuildContextExtension on BuildContext {
             ));
     return result;
   }
+}
+
+///
+///
+///
+///
+///
+///
+/// extension for functions
+///
+///
+///
+///
+///
+///
+///
+
+///
+/// [notEmpty]
+/// [intBetween], [lengthOf]
+///
+extension FFormFieldValidator on TextFormFieldValidator {
+  static FormFieldValidator<String> notEmpty([String messageEmpty = '請輸入']) =>
+      (value) => value == null || value.isEmpty ? messageEmpty : null;
+
+  static FormFieldValidator<String> intBetween({
+    required int min,
+    required int max,
+    String messageEmpty = '請輸入',
+    String messageNoInt = '請輸入數字',
+    String messageOutOfRange = '可接受範圍',
+  }) =>
+      (value) {
+        if (value == null || value.isEmpty) return messageEmpty;
+        final v = int.tryParse(value);
+        if (v == null) return messageNoInt;
+        if (v.isOutsideOpen(min, max)) return '$messageOutOfRange: $min~$max';
+        return null;
+      };
+
+  static FormFieldValidator<String> lengthOf({
+    required int count,
+    String messageEmpty = '請輸入',
+    String messageLengthWrong = '長度不符',
+  }) =>
+      (value) {
+        if (value == null || value.isEmpty) return messageEmpty;
+        if (value.length != count) return messageLengthWrong;
+        return null;
+      };
+}
+
+extension FImageLoadingBuilder on ImageLoadingBuilder {
+  static Widget style1(
+    BuildContext context,
+    Widget child,
+    ImageChunkEvent? loadingProgress,
+  ) =>
+      loadingProgress == null
+          ? child
+          : Center(
+              child: CircularProgressIndicator(
+                color: Colors.blueGrey,
+                value: loadingProgress.expectedTotalBytes != null &&
+                        loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            );
+
+  static Widget style2(
+    BuildContext context,
+    Widget child,
+    ImageChunkEvent? loadingProgress,
+  ) =>
+      loadingProgress == null
+          ? child
+          : SizedBox(
+              width: 90,
+              height: 90,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.grey,
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              ),
+            );
+
+  static Widget style3(
+    BuildContext ctx,
+    Widget child,
+    ImageChunkEvent? loadingProgress,
+  ) =>
+      loadingProgress == null
+          ? child
+          : Center(
+              child: CircularProgressIndicator(
+                color: Colors.blueGrey,
+                value: loadingProgress.expectedTotalBytes != null &&
+                        loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            );
+
+  static Widget style4(
+    BuildContext context,
+    Widget child,
+    ImageChunkEvent? loadingProgress,
+  ) =>
+      loadingProgress == null
+          ? child
+          : SizedBox(
+              width: 200,
+              height: 200,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.brown,
+                  value: loadingProgress.expectedTotalBytes != null &&
+                          loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              ),
+            );
+}
+
+///
+///
+/// [FImageErrorWidgetBuilder]
+///
+///
+extension FImageErrorWidgetBuilder on ImageErrorWidgetBuilder {
+  static Widget accountStyle2(BuildContext c, Object o, StackTrace? s) =>
+      WIconMaterial.accountCircleStyle2;
+
+  static Widget errorStyle1(BuildContext c, Object o, StackTrace? s) =>
+      const SizedBox(height: 200, width: 200, child: Icon(Icons.error));
 }

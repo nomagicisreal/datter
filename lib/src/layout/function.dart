@@ -7,10 +7,6 @@
 /// [FRectBuilder]
 /// [FExtruding2D]
 ///
-/// [FOnAnimateMatrix4]
-///
-///
-///
 ///
 ///
 part of '../../datter.dart';
@@ -628,98 +624,4 @@ extension FExtruding2D on Extruding2D {
     bool timesOrPlus = true,
   }) =>
       translateOnSize(dimension, dimension, timesOrPlus: timesOrPlus);
-}
-
-///
-/// instance methods for [Matrix4]
-/// [getPerspective]
-/// [setPerspective], [setDistance]
-/// [copyPerspective], [identityPerspective]
-///
-/// [translateOf], [rotateOf], [scaledOf]
-/// [rotateOn]
-///
-/// static methods:
-/// [translating], [rotating], [scaling]
-/// [mapTranslating], [mapRotating], [mapScaling]
-/// [fixedTranslating], [fixedRotating], [fixedScaling]
-///
-///
-extension FOnAnimateMatrix4 on Matrix4 {
-  double getPerspective() => entry(3, 2);
-
-  void setPerspective(double perspective) => setEntry(3, 2, perspective);
-
-  void setDistance(double? distance) =>
-      setPerspective(distance == null ? 0 : 1 / distance);
-
-  void copyPerspective(Matrix4 matrix4) =>
-      setPerspective(matrix4.getPerspective());
-
-  Matrix4 get identityPerspective => Matrix4.identity()..copyPerspective(this);
-
-  ///
-  /// [translateOf], [translateFor]
-  /// [rotateOf], [rotateOn]
-  /// [scaledOf], [scaledFor]
-  ///
-  void translateOf(Point3 point3) =>
-      translate(v64.Vector3(point3.x, point3.y, point3.z));
-
-  void translateFor(Offset offset) =>
-      translate(v64.Vector3(offset.dx, offset.dy, 0));
-
-  void rotateOf(Point3 point3) => this
-    ..rotateX(point3.x)
-    ..rotateY(point3.y)
-    ..rotateZ(point3.z);
-
-  void rotateOn(Point3 point3, double radian) =>
-      rotate(v64.Vector3(point3.x, point3.y, point3.z), radian);
-
-  Matrix4 scaledOf(Point3 point3) => scaled(point3.x, point3.y, point3.z);
-
-  Matrix4 scaledFor(Offset offset) => scaled(offset.dx, offset.dy, 1);
-
-  ///
-  ///
-  /// statics
-  ///
-  ///
-  static Matrix4 translating(Matrix4 matrix4, Point3 value) =>
-      matrix4.identityPerspective..translateOf(value);
-
-  static Matrix4 rotating(Matrix4 matrix4, Point3 value) =>
-      matrix4..setRotation((Matrix4.identity()..rotateOf(value)).getRotation());
-
-  static Matrix4 scaling(Matrix4 matrix4, Point3 value) =>
-      matrix4.scaledOf(value);
-
-// with mapping
-  static OnAnimateMatrix4 mapTranslating(Applier<Point3> mapping) =>
-      (matrix4, value) => matrix4
-        ..identityPerspective
-        ..translateOf(mapping(value));
-
-  static OnAnimateMatrix4 mapRotating(Applier<Point3> mapping) =>
-      (matrix4, value) => matrix4
-        ..setRotation(
-            (Matrix4.identity()..rotateOf(mapping(value))).getRotation());
-
-  static OnAnimateMatrix4 mapScaling(Applier<Point3> mapping) =>
-      (matrix4, value) => matrix4.scaledOf(mapping(value));
-
-  // with fixed value
-  static OnAnimateMatrix4 fixedTranslating(Point3 fixed) =>
-      (matrix4, value) => matrix4
-        ..identityPerspective
-        ..translateOf(value + fixed);
-
-  static OnAnimateMatrix4 fixedRotating(Point3 fixed) =>
-      (matrix4, value) => matrix4
-        ..setRotation(
-            (Matrix4.identity()..rotateOf(fixed + value)).getRotation());
-
-  static OnAnimateMatrix4 fixedScaling(Point3 fixed) =>
-      (matrix4, value) => matrix4.scaledOf(value + fixed);
 }
