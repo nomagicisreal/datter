@@ -12,7 +12,6 @@ part of '../../datter.dart';
 
 extension KGeometry on Size {
   ///
-  /// size
   ///
   static const Size size_square_1 = Size.square(1);
   static const Size size_w1_h2 = Size(1, 2);
@@ -25,7 +24,6 @@ extension KGeometry on Size {
   static const Size size_a1 = Size(59.4, 84.1);
 
   ///
-  /// offset
   ///
   static const Offset offset_square_1 = Offset(1, 1);
   static const Offset offset_x_1 = Offset(1, 0);
@@ -41,27 +39,6 @@ extension KGeometry on Size {
   static const Offset offset_bottomRight = Offset(math.sqrt1_2, math.sqrt1_2);
 
   ///
-  /// edge insets
-  ///
-  static const EdgeInsets edgeInsets_leftBottom =
-      EdgeInsets.only(left: 1, bottom: 1);
-  static const EdgeInsets edgeInsets_left = EdgeInsets.only(left: 1);
-  static const EdgeInsets edgeInsets_leftTop = EdgeInsets.only(left: 1, top: 1);
-  static const EdgeInsets edgeInsets_top = EdgeInsets.only(top: 1);
-  static const EdgeInsets edgeInsets_rightTop =
-      EdgeInsets.only(right: 1, top: 1);
-  static const EdgeInsets edgeInsets_right = EdgeInsets.only(right: 1);
-  static const EdgeInsets edgeInsets_rightBottom =
-      EdgeInsets.only(right: 1, bottom: 1);
-  static const EdgeInsets edgeInsets_bottom = EdgeInsets.only(bottom: 1);
-  static const EdgeInsets edgeInsets_horizontal =
-      EdgeInsets.symmetric(horizontal: 1);
-  static const EdgeInsets edgeInsets_vertical =
-      EdgeInsets.symmetric(vertical: 1);
-  static const EdgeInsets edgeInsets_all = EdgeInsets.all(1);
-
-  ///
-  /// radius
   ///
   static const Radius radius_circular_1 = Radius.circular(1);
   static const Radius radius_ellipse_x1_y2 = Radius.elliptical(1, 2);
@@ -71,27 +48,46 @@ extension KGeometry on Size {
   static const Radius radius_ellipse_x2_y3 = Radius.elliptical(2, 3);
 
   ///
+  ///
+  static const EdgeInsets edgeInsets_leftBottom_1 =
+      EdgeInsets.only(left: 1, bottom: 1);
+  static const EdgeInsets edgeInsets_left_1 = EdgeInsets.only(left: 1);
+  static const EdgeInsets edgeInsets_leftTop_1 = EdgeInsets.only(left: 1, top: 1);
+  static const EdgeInsets edgeInsets_top_1 = EdgeInsets.only(top: 1);
+  static const EdgeInsets edgeInsets_rightTop_1 =
+      EdgeInsets.only(right: 1, top: 1);
+  static const EdgeInsets edgeInsets_right_1 = EdgeInsets.only(right: 1);
+  static const EdgeInsets edgeInsets_rightBottom_1 =
+      EdgeInsets.only(right: 1, bottom: 1);
+  static const EdgeInsets edgeInsets_bottom_1 = EdgeInsets.only(bottom: 1);
+  static const EdgeInsets edgeInsets_horizontal_1 =
+      EdgeInsets.symmetric(horizontal: 1);
+  static const EdgeInsets edgeInsets_vertical_1 =
+      EdgeInsets.symmetric(vertical: 1);
+  static const EdgeInsets edgeInsets_all_1 = EdgeInsets.all(1);
+
+  ///
   /// border radius
   ///
-  static const BorderRadius borderRadius_zero = BorderRadius.all(Radius.zero);
-  static const BorderRadius borderRadius_circularAll =
-      BorderRadius.all(radius_circular_1);
-  static const BorderRadius borderRadius_circularTopLeft =
-      BorderRadius.only(topLeft: radius_circular_1);
-  static const BorderRadius borderRadius_circularTopRight =
-      BorderRadius.only(topRight: radius_circular_1);
-  static const BorderRadius borderRadius_circularBottomLeft =
-      BorderRadius.only(bottomLeft: radius_circular_1);
-  static const BorderRadius borderRadius_circularBottomRight =
-      BorderRadius.only(bottomRight: radius_circular_1);
-  static const BorderRadius borderRadius_circularLeft =
-      BorderRadius.horizontal(left: radius_circular_1);
-  static const BorderRadius borderRadius_circularTop =
-      BorderRadius.vertical(top: radius_circular_1);
-  static const BorderRadius borderRadius_circularRight =
-      BorderRadius.horizontal(right: radius_circular_1);
-  static const BorderRadius borderRadius_circularBottom =
-      BorderRadius.vertical(bottom: radius_circular_1);
+  static const BorderRadius borderRadius_0 = BorderRadius.all(Radius.zero);
+  static const BorderRadius borderRadius_circularAll_1 =
+      BorderRadius.all(KGeometry.radius_circular_1);
+  static const BorderRadius borderRadius_circularTopLeft_1 =
+      BorderRadius.only(topLeft: KGeometry.radius_circular_1);
+  static const BorderRadius borderRadius_circularTopRight_1 =
+      BorderRadius.only(topRight: KGeometry.radius_circular_1);
+  static const BorderRadius borderRadius_circularBottomLeft_1 =
+      BorderRadius.only(bottomLeft: KGeometry.radius_circular_1);
+  static const BorderRadius borderRadius_circularBottomRight_1 =
+      BorderRadius.only(bottomRight: KGeometry.radius_circular_1);
+  static const BorderRadius borderRadius_circularLeft_1 =
+      BorderRadius.horizontal(left: KGeometry.radius_circular_1);
+  static const BorderRadius borderRadius_circularTop_1 =
+      BorderRadius.vertical(top: KGeometry.radius_circular_1);
+  static const BorderRadius borderRadius_circularRight_1 =
+      BorderRadius.horizontal(right: KGeometry.radius_circular_1);
+  static const BorderRadius borderRadius_circularBottom_1 =
+      BorderRadius.vertical(bottom: KGeometry.radius_circular_1);
 }
 
 ///

@@ -49,7 +49,6 @@ extension ClipboardExtension on Clipboard {
       Clipboard.setData(ClipboardData(text: text)).then((_) => then?.call());
 }
 
-
 ///
 /// focus manager, focus general, global key
 ///
@@ -102,13 +101,65 @@ extension BuildContextExtension on BuildContext {
   ///
   ///
   ///
-  ///
-  /// theme
-  ///
-  ///
-  ///
-  ///
+  void closeKeyboardIfShowing() {
+    if (isKeyboardShowing) {
+      FocusScopeNode currentFocus = FocusScope.of(this);
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
+    }
+  }
 
+  ///
+  ///
+  ///
+  bool get isKeyboardShowing => mediaViewInsetsBottom > 0;
+
+  ///
+  ///
+  ///
+  double get mediaViewInsetsBottom => mediaViewInsets.bottom;
+
+  ///
+  ///
+  ///
+  Size get sizeMedia => MediaQuery.sizeOf(this);
+
+  Size get sizeRenderBox => renderBox.size;
+
+  ///
+  ///
+  ///
+  EdgeInsets get mediaViewInsets => MediaQuery.viewInsetsOf(this);
+
+  ///
+  ///
+  ///
+  DefaultTextStyle get defaultTextStyle => DefaultTextStyle.of(this);
+
+  TextDirection get textDirection => Directionality.of(this);
+
+  ///
+  /// state
+  ///
+  ScaffoldState get scaffold => Scaffold.of(this);
+
+  ScaffoldMessengerState get scaffoldMessenger => ScaffoldMessenger.of(this);
+
+  NavigatorState get navigator => Navigator.of(this);
+
+  OverlayState get overlay => Overlay.of(this);
+
+  ///
+  /// diagnosticable
+  ///
+  ColorScheme get colorScheme => theme.colorScheme;
+
+  RenderBox get renderBox => findRenderObject() as RenderBox;
+
+  ///
+  ///
+  ///
   ThemeData get theme => Theme.of(this);
 
   TargetPlatform get platform => theme.platform;
@@ -210,116 +261,12 @@ extension BuildContextExtension on BuildContext {
 
   TooltipThemeData get themeTooltip => theme.tooltipTheme;
 
-  ColorScheme get colorScheme => theme.colorScheme;
-
   ///
-  ///
-  /// [sizeMedia], [sizeRenderBox]
-  ///
-  ///
-  Size get sizeMedia => MediaQuery.sizeOf(this);
-
-  Size get sizeRenderBox => renderBox.size;
-
-  ///
-  ///
-  /// [mediaViewInsets], [mediaViewInsetsBottom]
-  /// [isKeyboardShowing], [closeKeyboardIfShowing]
-  ///
-  ///
-  EdgeInsets get mediaViewInsets => MediaQuery.viewInsetsOf(this);
-
-  double get mediaViewInsetsBottom => mediaViewInsets.bottom;
-
-  bool get isKeyboardShowing => mediaViewInsetsBottom > 0;
-
-  void closeKeyboardIfShowing() {
-    if (isKeyboardShowing) {
-      FocusScopeNode currentFocus = FocusScope.of(this);
-      if (!currentFocus.hasPrimaryFocus) {
-        currentFocus.unfocus();
-      }
-    }
-  }
-
-  ///
-  ///
-  /// [renderBox], [scaffold], [scaffoldMessenger]
-  ///
-  ///
-  RenderBox get renderBox => findRenderObject() as RenderBox;
-
-  ScaffoldState get scaffold => Scaffold.of(this);
-
-  ScaffoldMessengerState get scaffoldMessenger => ScaffoldMessenger.of(this);
-
-  ///
-  ///
-  /// [navigator], [pop]
-  ///
-  ///
-  NavigatorState get navigator => Navigator.of(this);
-
-  void pop() => Navigator.pop(this);
-
-  ///
-  ///
-  /// [defaultTextStyle], [defaultTextStyleMerge], [textDirection]
-  ///
-  ///
-  ///
-  DefaultTextStyle get defaultTextStyle => DefaultTextStyle.of(this);
-
-  TextStyle defaultTextStyleMerge(TextStyle? other) {
-    final style = defaultTextStyle.style;
-    return style.inherit ? style.merge(other) : style;
-  }
-
-  TextDirection get textDirection => Directionality.of(this);
-
-  ///
-  ///
-  ///
-  /// snackbar, material banner, dialog
-  ///
-  ///
-  ///
-
-  ///
-  ///
-  /// [showSnackbar], [showSnackbarWithMessage]
-  ///
+  /// snackbar, material banner
   ///
   void showSnackbar(SnackBar snackBar) =>
       scaffoldMessenger.showSnackBar(snackBar);
 
-  void showSnackbarWithMessage(
-    String? message, {
-    bool isCenter = true,
-    bool showWhetherMessageIsNull = false,
-    Duration duration = KCore.durationSecond1,
-    Color? backgroundColor,
-    SnackBarBehavior behavior = SnackBarBehavior.floating,
-  }) {
-    if (showWhetherMessageIsNull || message != null) {
-      scaffoldMessenger.showSnackBar(
-        SnackBar(
-          backgroundColor: backgroundColor ?? theme.cardColor,
-          behavior: behavior,
-          duration: duration,
-          content: isCenter
-              ? Center(child: Text(message ?? ''))
-              : Text(message ?? ''),
-        ),
-      );
-    }
-  }
-
-  ///
-  ///
-  /// [showMaterialBanner], [hideMaterialBanner]
-  ///
-  ///
   void showMaterialBanner(MaterialBanner banner) =>
       scaffoldMessenger.showMaterialBanner(banner);
 
@@ -329,10 +276,7 @@ extension BuildContextExtension on BuildContext {
       scaffoldMessenger.hideCurrentMaterialBanner(reason: reason);
 
   ///
-  ///
-  /// [showDialogOptionsSupply], [showDialogOptionActions], [showDialogEnsureCancel]
-  /// [showDialogListAndGetItem], [showDialogDecideTureOfFalse]
-  ///
+  /// dialog
   ///
   Future<T?> showDialogOptionsSupply<T>({
     required String title,
@@ -406,11 +350,8 @@ extension BuildContextExtension on BuildContext {
         ),
       );
 
-  Future<T?> showDialogListAndGetItem<T>({
-    required String title,
-    required List<T> itemList,
-    Size? size
-  }) async {
+  Future<T?> showDialogListAndGetItem<T>(
+      {required String title, required List<T> itemList, Size? size}) async {
     late final T? selectedItem;
     await showDialog(
       context: this,
@@ -471,18 +412,13 @@ extension BuildContextExtension on BuildContext {
 ///
 ///
 ///
-///
-///
-///
 /// extension for functions
 ///
 ///
 ///
 ///
-///
-///
-///
 
+///
 ///
 /// [notEmpty]
 /// [intBetween], [lengthOf]
