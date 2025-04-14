@@ -5,7 +5,6 @@ part of '../../datter.dart';
 /// [OverlayStreamWidget]
 ///   * [OverlayStreamUpdateExist]
 ///   * [OverlayStateMixin]
-///   * [OverlayInsertion]
 ///   |
 ///   --[LeaderWidget]
 ///     * [LeaderFollowerInitializer]
@@ -29,7 +28,7 @@ class OverlayStreamWidget extends StatefulWidget {
   });
 
   final Stream<String> streamUpdate;
-  final Mapper<String, OverlayInsertion> insert;
+  final Mapper<String, OverlayEntry> insert;
   final OverlayStreamUpdateExist updateIfExist;
   final Widget child;
 
@@ -37,30 +36,30 @@ class OverlayStreamWidget extends StatefulWidget {
   State<OverlayStreamWidget> createState() => _OverlayStreamWidgetState();
 
   static void updateExist(
-    List<OverlayInsertion> insertions,
-    Map<String, OverlayInsertion> exists,
+    List<OverlayEntry> insertions,
+    Map<String, OverlayEntry> exists,
     String key,
-    OverlayInsertion insertion,
+    OverlayEntry insertion,
   ) {
-    insertion.entry.markNeedsBuild();
+    insertion.markNeedsBuild();
   }
 
   static void updateExistThenRemove(
-    List<OverlayInsertion> insertions,
-    Map<String, OverlayInsertion> exists,
+    List<OverlayEntry> insertions,
+    Map<String, OverlayEntry> exists,
     String key,
-    OverlayInsertion insertion,
+    OverlayEntry insertion,
   ) {
-    insertion.entry.markNeedsBuild();
+    insertion.markNeedsBuild();
     exists.remove(key);
     insertions.remove(insertion);
   }
 }
 
 class _OverlayStreamWidgetState extends State<OverlayStreamWidget>
-    with OverlayStateMixin {
+    with OverlayStateMixin<OverlayStreamWidget> {
   late final StreamSubscription<String> subscription;
-  final Map<String, OverlayInsertion> exists = {};
+  final Map<String, OverlayEntry> exists = {};
 
   @override
   void initState() {
@@ -73,7 +72,7 @@ class _OverlayStreamWidgetState extends State<OverlayStreamWidget>
           exists.putIfAbsent(key, () => o);
           return;
         }
-        widget.updateIfExist(insertions, exists, key, insertion);
+        widget.updateIfExist(overlays, exists, key, insertion);
       },
     );
 
@@ -91,47 +90,74 @@ class _OverlayStreamWidgetState extends State<OverlayStreamWidget>
 }
 
 typedef OverlayStreamUpdateExist = void Function(
-  List<OverlayInsertion> insertions,
-  Map<String, OverlayInsertion> exists,
+  List<OverlayEntry> insertions,
+  Map<String, OverlayEntry> exists,
   String key,
-  OverlayInsertion insertion,
+  OverlayEntry insertion,
 );
 
-mixin OverlayStateMixin {
-  BuildContext get context;
+///
+/// 
+/// With [OverlayStateMixin] for stateful widget state, it's clear to insert an overlay.
+/// In tradition, when we want to insert an overlay in an stateful widget state, we have to use
+///   1. [OverlayState.insert] by [BuildContextExtension.overlay]
+///   2. [OverlayPortalController.toggle]
+/// both of them have to name an instance,
+///   for 1, naming an [OverlayEntry] to handle [OverlayEntry.markNeedsBuild] and [OverlayEntry.remove].
+///   for 2, naming and holding an [OverlayPortalController] for passing it to [OverlayPortal.controller]
+/// for now, without instance we can still update and remove overlay by [overlays]
+/// 
+/// 
+mixin OverlayStateMixin<T extends StatefulWidget> implements State<T> {
+  final List<OverlayEntry> overlays = [];
 
-  final List<OverlayInsertion> insertions = [];
-
-  void overlayInsert(OverlayInsertion o) {
-    context.overlay.insert(o.entry, below: o.below, above: o.above);
-    insertions.add(o);
+  ///
+  /// Excluding [overlayInsert], it's unnecessary to create function [overlayUpdate] and [overlayRemove].
+  /// for update, it's possible to include removing after updating finished, may be async or sync.
+  /// for remove, naming as a function is a bad practice for entry required updating before remove.
+  /// therefore, update and remove should be customized by [OverlayStateMixin] implementation.
+  ///
+  void overlayInsert(
+    OverlayEntry entry, {
+    OverlayEntry? below,
+    OverlayEntry? above,
+  }) {
+    context.overlay.insert(entry, below: below, above: above);
+    overlays.add(entry);
   }
-}
-
-class OverlayInsertion {
-  final WidgetBuilder builder;
-  final bool opaque;
-  final bool maintainState;
-  final OverlayEntry? below;
-  final OverlayEntry? above;
-
-  const OverlayInsertion({
-    required this.builder,
-    this.opaque = false,
-    this.maintainState = false,
-    this.below,
-    this.above,
-  });
-
-  OverlayEntry get entry => OverlayEntry(
-        builder: builder,
-        opaque: opaque,
-        maintainState: maintainState,
-      );
 
   static VoidCallback callbackEntryRemove(OverlayEntry entry) =>
-      () => entry.remove();
+          () => entry.remove();
 }
+
+// class OverlayInsertion {
+//   final WidgetBuilder builder;
+//   final bool opaque;
+//   final bool maintainState;
+//   final OverlayEntry? below;
+//   final OverlayEntry? above;
+//
+//   const OverlayInsertion({
+//     required this.builder,
+//     this.opaque = false,
+//     this.maintainState = false,
+//     this.below,
+//     this.above,
+//   });
+//
+//   ///
+//   /// no matter "build: build," or "builder: (context) => builder(context),"
+//   /// [OverlayEntry.markNeedsBuild] won't rebuild
+//   ///
+//   OverlayEntry get entry => OverlayEntry(
+//         // builder: builder,
+//         builder: (context) => builder(context),
+//         opaque: opaque,
+//         maintainState: maintainState,
+//       );
+//
+//
+// }
 
 ///
 ///
@@ -161,7 +187,7 @@ class LeaderWidget extends StatelessWidget {
   }
 }
 
-typedef LeaderFollowerInitializer = Mapper<String, OverlayInsertion> Function(
+typedef LeaderFollowerInitializer = Mapper<String, OverlayEntry> Function(
   LayerLink link,
 );
 

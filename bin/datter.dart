@@ -27,7 +27,13 @@ class MyHome extends StatefulWidget {
   State<MyHome> createState() => _MyHomeState();
 }
 
-class _MyHomeState extends State<MyHome> {
+class _MyHomeState extends State<MyHome> with OverlayStateMixin<MyHome> {
+  bool _toggle = false;
+
+  void _onPressed() {
+    setState(() => _toggle = !_toggle);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +45,7 @@ class _MyHomeState extends State<MyHome> {
         child: Text('hello'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: _onPressed,
       ),
     );
   }

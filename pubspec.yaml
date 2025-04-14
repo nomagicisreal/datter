@@ -1,6 +1,6 @@
 name: datter
 description: project for common flutter usecase.
-version: 0.0.5
+version: 0.0.6
 repository: https://github.com/nomagicisreal/datter
 
 environment:
@@ -8,7 +8,7 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
-  damath: ^0.0.30
+  damath: ^0.0.31
   flutter:
     sdk: flutter
 

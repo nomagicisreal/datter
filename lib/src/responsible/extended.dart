@@ -15,7 +15,6 @@ part of '../../datter.dart';
 ///
 ///
 
-
 ///
 ///
 ///
@@ -32,16 +31,15 @@ class IconAction {
       mixer(icon, action);
 
   static double maxSize(
-      Iterable<IconAction> icons,
-      BuildContext context,
-      double defaultSize,
-      ) =>
+    Iterable<IconAction> icons,
+    BuildContext context,
+    double defaultSize,
+  ) =>
       math.max(
         icons.iterator.induct((i) => i.icon.size ?? 0, math.max),
         context.themeIcon.size ?? defaultSize,
       );
 }
-
 
 ///
 ///
@@ -283,6 +281,14 @@ extension BuildContextExtension on BuildContext {
   ///
   void showSnackbar(SnackBar snackBar) =>
       scaffoldMessenger.showSnackBar(snackBar);
+
+  void showSnackBarMessage(
+    String message, [
+    Duration duration = KCore.durationMilli500,
+  ]) =>
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text(message), duration: duration),
+      );
 
   void showMaterialBanner(MaterialBanner banner) =>
       scaffoldMessenger.showMaterialBanner(banner);

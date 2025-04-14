@@ -186,15 +186,23 @@ extension WSizedBox on SizedBox {
   static SizedBox width(double dimension, {Widget? child}) =>
       SizedBox(width: dimension, child: child);
 
-  static SizedBox squareColored({
+  static Widget squareColored({
     required double dimension,
     required Color color,
+    bool center = false,
     Widget? child,
   }) =>
-      SizedBox.square(
-        dimension: dimension,
-        child: ColoredBox(color: color, child: child),
-      );
+      center
+          ? Center(
+              child: SizedBox.square(
+                dimension: dimension,
+                child: ColoredBox(color: color, child: child),
+              ),
+            )
+          : SizedBox.square(
+              dimension: dimension,
+              child: ColoredBox(color: color, child: child),
+            );
 
   ///
   /// expand
@@ -219,7 +227,6 @@ extension WSizedBox on SizedBox {
         child: Center(child: ColoredBox(color: color, child: child)),
       );
 }
-
 
 ///
 ///
