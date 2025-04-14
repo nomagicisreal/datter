@@ -1,108 +1,25 @@
+part of '../../datter.dart';
+
 ///
-/// this file contains:
 ///
-/// [ColorExtension]
-///
+/// [FBoxConstraints]
 /// [FBoxShadow]
 /// [FBorderSide], [FBorderBox], [FBorderInput], [FBorderOutlined]
 /// [FDecorationBox], [FDecorationShape], [FDecorationInput]
 ///
 ///
-///
-///
-part of '../../datter.dart';
 
 ///
 ///
-/// constants: [distinct20], ...
-/// instance methods: [plusARGB], ...
 ///
-extension ColorExtension on Color {
-  ///
-  ///
-  /// constants
-  ///
-  ///
-  // 20 distinct colors, https://sashamaps.net/docs/resources/20-colors/
-  static const Color _distinct20_pink = Color(0xFFfabed4);
-  static const Color _distinct20_red = Color(0xFFe6194b);
-  static const Color _distinct20_maroon = Color(0xFF800000);
-  static const Color _distinct20_orange = Color(0xFFf58231);
-  static const Color _distinct20_brown = Color(0xFF9a6324);
-  static const Color _distinct20_beige = Color(0xFFfffac8);
-  static const Color _distinct20_apricot = Color(0xFFffd8b1);
-  static const Color _distinct20_yellow = Color(0xFFffe119);
-  static const Color _distinct20_olive = Color(0xFF808000);
-  static const Color _distinct20_lime = Color(0xFFbfef45);
-  static const Color _distinct20_mint = Color(0xFFaaffc3);
-  static const Color _distinct20_green = Color(0xFF3cb44b);
-  static const Color _distinct20_cyan = Color(0xFF42d4f4);
-  static const Color _distinct20_teal = Color(0xFF469990);
-  static const Color _distinct20_blue = Color(0xFF4363d8);
-  static const Color _distinct20_navy = Color(0xFF000075);
-  static const Color _distinct20_lavender = Color(0xFFdcbeff);
-  static const Color _distinct20_magenta = Color(0xFFf032e6);
-  static const Color _distinct20_purple = Color(0xFF9111b4);
-  static const Color _distinct20_grey = Color(0xFFa9a9a9);
-  static const List<Color> distinct20 = [
-    _distinct20_pink,
-    _distinct20_red,
-    _distinct20_maroon,
-    _distinct20_orange,
-    _distinct20_brown,
-    _distinct20_beige,
-    _distinct20_apricot,
-    _distinct20_yellow,
-    _distinct20_olive,
-    _distinct20_lime,
-    _distinct20_mint,
-    _distinct20_green,
-    _distinct20_cyan,
-    _distinct20_teal,
-    _distinct20_blue,
-    _distinct20_navy,
-    _distinct20_lavender,
-    _distinct20_magenta,
-    _distinct20_purple,
-    _distinct20_grey,
-  ];
+extension FBoxConstraints on BoxConstraints {
+  static BoxConstraints keep(BoxConstraints v) => v;
 
-  ///
-  ///
-  ///
-  /// instance methods
-  ///
-  ///
-  ///
-  Color plusARGB(double alpha, double red, double green, double blue) =>
-      Color.from(
-        alpha: a + alpha,
-        red: r + red,
-        green: g + green,
-        blue: b + blue,
-      );
-
-  Color minusARGB(int alpha, int red, int green, int blue) => Color.from(
-        alpha: a - alpha,
-        red: r - red,
-        green: g - green,
-        blue: b - blue,
-      );
-
-  Color plusAllRGB(double value) =>
-      Color.from(alpha: a, red: r + value, green: g + value, blue: b + value);
-
-  Color minusAllRGB(double value) =>
-      Color.from(alpha: a, red: r - value, green: g - value, blue: b - value);
+  static BoxConstraints keepLoosen(BoxConstraints constraints) =>
+      constraints.loosen();
 }
 
 ///
-///
-/// [FBoxShadow]
-///   [FBoxShadow.blurNormal]
-///   [FBoxShadow.blurSolid]
-///   [FBoxShadow.blurOuter]
-///   [FBoxShadow.blurInner]
 ///
 ///
 extension FBoxShadow on BoxShadow {
@@ -165,9 +82,6 @@ extension FBoxShadow on BoxShadow {
 
 ///
 ///
-///
-///
-///
 /// [FBorderSide]
 ///   [FBorderSide.solidInside]
 ///   [FBorderSide.solidCenter]
@@ -199,8 +113,6 @@ extension FBoxShadow on BoxShadow {
 ///
 ///
 ///
-
-// border side
 extension FBorderSide on BorderSide {
   static BorderSide solidInside({
     Color color = Colors.blueGrey,
@@ -236,7 +148,6 @@ extension FBorderSide on BorderSide {
       );
 }
 
-// box border
 extension FBorderBox on BoxBorder {
   static Border sideSolidCenter({
     Color color = Colors.blueGrey,
@@ -293,7 +204,6 @@ extension FBorderInput on InputBorder {
       );
 }
 
-// outlined border
 extension FBorderOutlined on OutlinedBorder {
   static StarBorder star({
     BorderSide side = BorderSide.none,
@@ -372,12 +282,6 @@ extension FBorderOutlined on OutlinedBorder {
 ///
 ///
 ///
-///
-///
-///
-///
-///
-///
 /// [FDecorationBox]
 ///   [FDecorationBox.rectangle]
 ///   [FDecorationBox.circle]
@@ -390,12 +294,6 @@ extension FBorderOutlined on OutlinedBorder {
 /// [FDecorationInput]
 ///   [FDecorationInput.rowLabelIconText]
 ///   [FDecorationInput.style1]
-///
-///
-///
-///
-///
-///
 ///
 ///
 

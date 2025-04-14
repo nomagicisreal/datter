@@ -1,87 +1,170 @@
+part of '../../datter.dart';
+
 ///
 ///
-/// this file contains:
-///
-/// [PositionedExtension]
-///
-/// [GeneratorOffsetExtension]
-///
+/// [OverlayStreamWidget]
+///   * [OverlayStreamUpdateExist]
+///   * [OverlayStateMixin]
+///   * [OverlayInsertion]
+///   |
+///   --[LeaderWidget]
+///     * [LeaderFollowerInitializer]
 ///
 /// [GlobalKeysWidget]
 /// [StreamWidget]
 ///
 ///
 ///
-/// mix:
-/// [CenterSizedBox], [SizedBoxCenter]
-/// [ColumnPadding], [ColumnPaddingRow], [ColumnText]
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-part of '../../datter.dart';
 
 ///
 ///
 ///
-///
-extension PositionedExtension on Positioned {
-  Rect? get rect =>
-      (left == null || top == null || width == null || height == null)
-          ? null
-          : Rect.fromLTWH(left!, top!, width!, height!);
+class OverlayStreamWidget extends StatefulWidget {
+  const OverlayStreamWidget({
+    super.key,
+    required this.streamUpdate,
+    required this.insert,
+    required this.updateIfExist,
+    required this.child,
+  });
+
+  final Stream<String> streamUpdate;
+  final Mapper<String, OverlayInsertion> insert;
+  final OverlayStreamUpdateExist updateIfExist;
+  final Widget child;
+
+  @override
+  State<OverlayStreamWidget> createState() => _OverlayStreamWidgetState();
+
+  static void updateExist(
+    List<OverlayInsertion> insertions,
+    Map<String, OverlayInsertion> exists,
+    String key,
+    OverlayInsertion insertion,
+  ) {
+    insertion.entry.markNeedsBuild();
+  }
+
+  static void updateExistThenRemove(
+    List<OverlayInsertion> insertions,
+    Map<String, OverlayInsertion> exists,
+    String key,
+    OverlayInsertion insertion,
+  ) {
+    insertion.entry.markNeedsBuild();
+    exists.remove(key);
+    insertions.remove(insertion);
+  }
 }
 
+class _OverlayStreamWidgetState extends State<OverlayStreamWidget>
+    with OverlayStateMixin {
+  late final StreamSubscription<String> subscription;
+  final Map<String, OverlayInsertion> exists = {};
 
-///
-///
-///
-extension GeneratorOffsetExtension on Generator<Offset> {
-  List<Widget> yieldingPositionedTranslated(
-    int length, {
-    required Applier<Offset> translation,
-    required Widget child,
-    FilterQuality? filterQuality,
-    bool transformHitTests = true,
-  }) =>
-      yieldingToList(
-        length,
-        (position) => Positioned(
-          left: position.dx,
-          top: position.dy,
-          child: Transform.translate(
-            offset: translation(position),
-            transformHitTests: transformHitTests,
-            filterQuality: filterQuality,
-            child: child,
-          ),
-        ),
+  @override
+  void initState() {
+    subscription = widget.streamUpdate.listen(
+      (key) {
+        final insertion = exists[key];
+        if (insertion == null) {
+          final o = widget.insert(key);
+          overlayInsert(o);
+          exists.putIfAbsent(key, () => o);
+          return;
+        }
+        widget.updateIfExist(insertions, exists, key, insertion);
+      },
+    );
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
+typedef OverlayStreamUpdateExist = void Function(
+  List<OverlayInsertion> insertions,
+  Map<String, OverlayInsertion> exists,
+  String key,
+  OverlayInsertion insertion,
+);
+
+mixin OverlayStateMixin {
+  BuildContext get context;
+
+  final List<OverlayInsertion> insertions = [];
+
+  void overlayInsert(OverlayInsertion o) {
+    context.overlay.insert(o.entry, below: o.below, above: o.above);
+    insertions.add(o);
+  }
+}
+
+class OverlayInsertion {
+  final WidgetBuilder builder;
+  final bool opaque;
+  final bool maintainState;
+  final OverlayEntry? below;
+  final OverlayEntry? above;
+
+  const OverlayInsertion({
+    required this.builder,
+    this.opaque = false,
+    this.maintainState = false,
+    this.below,
+    this.above,
+  });
+
+  OverlayEntry get entry => OverlayEntry(
+        builder: builder,
+        opaque: opaque,
+        maintainState: maintainState,
       );
+
+  static VoidCallback callbackEntryRemove(OverlayEntry entry) =>
+      () => entry.remove();
 }
 
 ///
 ///
 ///
-/// [GlobalKeysWidget]
+class LeaderWidget extends StatelessWidget {
+  const LeaderWidget({
+    super.key,
+    required this.link,
+    required this.following,
+    required this.builder,
+    required this.child,
+  });
+
+  final LayerLink link;
+  final Stream<String> following;
+  final LeaderFollowerInitializer builder;
+  final Widget child; // child is leader
+
+  @override
+  Widget build(BuildContext context) {
+    return OverlayStreamWidget(
+      streamUpdate: following,
+      insert: builder(link),
+      updateIfExist: OverlayStreamWidget.updateExistThenRemove,
+      child: CompositedTransformTarget(link: link, child: child),
+    );
+  }
+}
+
+typedef LeaderFollowerInitializer = Mapper<String, OverlayInsertion> Function(
+  LayerLink link,
+);
+
 ///
 ///
 ///
@@ -130,8 +213,6 @@ class _GlobalKeysWidgetState<S extends State<StatefulWidget>>
 
 ///
 ///
-/// [StreamWidget]
-///
 ///
 class StreamWidget<T> extends StatelessWidget {
   const StreamWidget({
@@ -173,362 +254,6 @@ class StreamWidget<T> extends StatelessWidget {
             } ??
             this.builder)(context, snapshot.data, child);
       },
-    );
-  }
-}
-
-
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-/// mix
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-
-
-///
-///
-///
-class CenterSizedBox extends StatelessWidget {
-  const CenterSizedBox({
-    super.key,
-    this.width,
-    this.height,
-    this.widthFactor,
-    this.heightFactor,
-    this.child,
-  });
-
-  const CenterSizedBox.expand({
-    super.key,
-    this.widthFactor,
-    this.heightFactor,
-    this.child,
-  })  : width = double.infinity,
-        height = double.infinity;
-
-  CenterSizedBox.fromSize({
-    super.key,
-    this.widthFactor,
-    this.heightFactor,
-    required Size size,
-    this.child,
-  })  : width = size.width,
-        height = size.height;
-
-  final double? width;
-  final double? height;
-  final double? widthFactor;
-  final double? heightFactor;
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      widthFactor: widthFactor,
-      heightFactor: heightFactor,
-      child: SizedBox(width: width, height: height, child: child),
-    );
-  }
-}
-
-class SizedBoxCenter extends StatelessWidget {
-  const SizedBoxCenter({
-    super.key,
-    this.width,
-    this.height,
-    this.widthFactor,
-    this.heightFactor,
-    this.child,
-  });
-
-  const SizedBoxCenter.expand({
-    super.key,
-    this.widthFactor,
-    this.heightFactor,
-    this.child,
-  })  : width = double.infinity,
-        height = double.infinity;
-
-  SizedBoxCenter.fromSize({
-    super.key,
-    this.widthFactor,
-    this.heightFactor,
-    this.child,
-    required Size size,
-  })  : width = size.width,
-        height = size.height;
-
-  final double? width;
-  final double? height;
-  final double? widthFactor;
-  final double? heightFactor;
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Center(
-        widthFactor: widthFactor,
-        heightFactor: heightFactor,
-        child: child,
-      ),
-    );
-  }
-}
-
-
-///
-///
-/// row
-///
-///
-
-class RowPadding extends StatelessWidget {
-  const RowPadding({
-    super.key,
-    this.mainAxisAlignment = MainAxisAlignment.center,
-    this.mainAxisSize = MainAxisSize.max,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
-    this.verticalDirection = VerticalDirection.down,
-    this.textDirection,
-    this.textBaseline,
-    this.childCount = 1,
-    required this.padding,
-    required this.child,
-  });
-
-  final MainAxisAlignment mainAxisAlignment;
-  final MainAxisSize mainAxisSize;
-  final CrossAxisAlignment crossAxisAlignment;
-  final VerticalDirection verticalDirection;
-  final TextDirection? textDirection;
-  final TextBaseline? textBaseline;
-  final EdgeInsetsGeometry padding;
-  final int childCount;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: mainAxisAlignment,
-      mainAxisSize: mainAxisSize,
-      crossAxisAlignment: crossAxisAlignment,
-      textDirection: textDirection,
-      verticalDirection: verticalDirection,
-      textBaseline: textBaseline,
-      children: List.generate(childCount, childGenerator),
-    );
-  }
-
-  Widget childGenerator(int index) => Padding(padding: padding, child: child);
-}
-
-class RowPaddingColumn extends StatelessWidget {
-  const RowPaddingColumn({
-    super.key,
-    this.mainAxisAlignmentRow = MainAxisAlignment.center,
-    this.mainAxisAlignmentColumn = MainAxisAlignment.center,
-    this.mainAxisSizeRow = MainAxisSize.max,
-    this.mainAxisSizeColumn = MainAxisSize.max,
-    this.crossAxisAlignmentRow = CrossAxisAlignment.center,
-    this.crossAxisAlignmentColumn = CrossAxisAlignment.center,
-    this.verticalDirectionRow = VerticalDirection.down,
-    this.verticalDirectionColumn = VerticalDirection.down,
-    this.textDirection,
-    this.textBaseline,
-    this.columnCount = 1,
-    required this.padding,
-    required this.children,
-  });
-
-  final MainAxisAlignment mainAxisAlignmentRow;
-  final MainAxisAlignment mainAxisAlignmentColumn;
-  final MainAxisSize mainAxisSizeRow;
-  final MainAxisSize mainAxisSizeColumn;
-  final CrossAxisAlignment crossAxisAlignmentRow;
-  final CrossAxisAlignment crossAxisAlignmentColumn;
-  final VerticalDirection verticalDirectionRow;
-  final VerticalDirection verticalDirectionColumn;
-  final TextDirection? textDirection;
-  final TextBaseline? textBaseline;
-  final EdgeInsetsGeometry padding;
-  final int columnCount;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return RowPadding(
-      mainAxisAlignment: mainAxisAlignmentRow,
-      mainAxisSize: mainAxisSizeRow,
-      crossAxisAlignment: crossAxisAlignmentRow,
-      textDirection: textDirection,
-      verticalDirection: verticalDirectionRow,
-      textBaseline: textBaseline,
-      childCount: columnCount,
-      padding: padding,
-      child: Column(
-        mainAxisAlignment: mainAxisAlignmentColumn,
-        mainAxisSize: mainAxisSizeColumn,
-        crossAxisAlignment: crossAxisAlignmentColumn,
-        textDirection: textDirection,
-        verticalDirection: verticalDirectionColumn,
-        textBaseline: textBaseline,
-        children: children,
-      ),
-    );
-  }
-}
-
-///
-///
-/// column
-///
-///
-
-class ColumnPadding extends StatelessWidget {
-  const ColumnPadding({
-    super.key,
-    this.mainAxisAlignment = MainAxisAlignment.center,
-    this.mainAxisSize = MainAxisSize.max,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
-    this.verticalDirection = VerticalDirection.down,
-    this.textDirection,
-    this.textBaseline,
-    this.childCount = 1,
-    required this.padding,
-    required this.child,
-  });
-
-  final MainAxisAlignment mainAxisAlignment;
-  final MainAxisSize mainAxisSize;
-  final CrossAxisAlignment crossAxisAlignment;
-  final VerticalDirection verticalDirection;
-  final TextDirection? textDirection;
-  final TextBaseline? textBaseline;
-  final EdgeInsetsGeometry padding;
-  final int childCount;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: mainAxisAlignment,
-      mainAxisSize: mainAxisSize,
-      crossAxisAlignment: crossAxisAlignment,
-      textDirection: textDirection,
-      verticalDirection: verticalDirection,
-      textBaseline: textBaseline,
-      children: List.generate(childCount, childGenerator),
-    );
-  }
-
-  Widget childGenerator(int index) => Padding(padding: padding, child: child);
-}
-
-class ColumnPaddingRow extends StatelessWidget {
-  const ColumnPaddingRow({
-    super.key,
-    this.textDirection,
-    this.textBaseline,
-    this.rowCount = 1,
-    this.mainAxisAlignmentRow = MainAxisAlignment.center,
-    this.mainAxisAlignmentColumn = MainAxisAlignment.center,
-    this.mainAxisSizeRow = MainAxisSize.max,
-    this.mainAxisSizeColumn = MainAxisSize.max,
-    this.crossAxisAlignmentRow = CrossAxisAlignment.center,
-    this.crossAxisAlignmentColumn = CrossAxisAlignment.center,
-    this.verticalDirectionRow = VerticalDirection.down,
-    this.verticalDirectionColumn = VerticalDirection.down,
-    required this.padding,
-    required this.children,
-  });
-
-  final MainAxisAlignment mainAxisAlignmentRow;
-  final MainAxisAlignment mainAxisAlignmentColumn;
-  final MainAxisSize mainAxisSizeRow;
-  final MainAxisSize mainAxisSizeColumn;
-  final CrossAxisAlignment crossAxisAlignmentRow;
-  final CrossAxisAlignment crossAxisAlignmentColumn;
-  final VerticalDirection verticalDirectionRow;
-  final VerticalDirection verticalDirectionColumn;
-  final TextDirection? textDirection;
-  final TextBaseline? textBaseline;
-  final EdgeInsetsGeometry padding;
-  final int rowCount;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return ColumnPadding(
-      mainAxisAlignment: mainAxisAlignmentColumn,
-      mainAxisSize: mainAxisSizeColumn,
-      crossAxisAlignment: crossAxisAlignmentColumn,
-      textDirection: textDirection,
-      verticalDirection: verticalDirectionColumn,
-      textBaseline: textBaseline,
-      childCount: rowCount,
-      padding: padding,
-      child: Row(
-        mainAxisAlignment: mainAxisAlignmentRow,
-        mainAxisSize: mainAxisSizeRow,
-        crossAxisAlignment: crossAxisAlignmentRow,
-        textDirection: textDirection,
-        verticalDirection: verticalDirectionRow,
-        textBaseline: textBaseline,
-        children: children,
-      ),
-    );
-  }
-}
-
-///
-///
-///
-class ColumnText extends StatelessWidget {
-  const ColumnText(
-      this.text, {
-        super.key,
-        this.interval = WSizedBox.none,
-        this.lineBuilder = none,
-        this.alignment = MainAxisAlignment.center,
-      });
-
-  static Text none(String line) => Text(line);
-
-  final String text;
-  final Widget interval;
-  final Text Function(String line) lineBuilder;
-  final MainAxisAlignment alignment;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: alignment,
-      children: text.split('\n').fold(
-        [],
-            (list, line) => list
-          ..add(lineBuilder(line))
-          ..add(interval),
-      )..removeLast(),
     );
   }
 }

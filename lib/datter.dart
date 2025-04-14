@@ -1,17 +1,21 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:damath/damath.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 
-part 'src/general/element.dart';
-part 'src/general/responsible.dart';
-part 'src/layout/collection.dart';
-part 'src/layout/function.dart';
-part 'src/layout/others.dart';
-part 'src/layout/geometry.dart';
-part 'src/general/extended.dart';
-part 'src/general/core.dart';
-part 'src/general/value.dart';
+part 'src/diagnosticable/core.dart';
+part 'src/diagnosticable/extended.dart';
+part 'src/diagnosticable/takeaway_box.dart';
+part 'src/diagnosticable/takeaway_style.dart';
+part 'src/diagnosticable/takeaway_sizing.dart';
+part 'src/layout/extended.dart';
+part 'src/layout/extended_collection.dart';
+part 'src/layout/takeaway.dart';
+part 'src/layout/takeaway_constants.dart';
+part 'src/responsible/extended.dart';
+part 'src/responsible/takeaway.dart';
 part 'src/widget/extended.dart';
-part 'src/widget/value.dart';
+part 'src/widget/mix.dart';
+part 'src/widget/takeaway.dart';

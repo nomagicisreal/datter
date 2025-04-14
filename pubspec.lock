@@ -98,10 +98,10 @@ packages:
     dependency: "direct main"
     description:
       name: damath
-      sha256: c15ed999d9a338f81b89bc4481523466aba8303f6382aef4c11bf8b88a1b9187
+      sha256: ac676d2c66bf95b1fba01701df4dd7988a14136429fac9396a35f68a694758bb
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.29"
+    version: "0.0.30"
   fake_async:
     dependency: transitive
     description:

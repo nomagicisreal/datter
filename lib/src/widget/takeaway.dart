@@ -1,6 +1,6 @@
+part of '../../datter.dart';
+
 ///
-///
-/// this file contains:
 ///
 /// stateful widget:
 /// [WProgressIndicator]
@@ -16,33 +16,9 @@
 /// render object widget:
 /// [WSizedBox]
 /// [WColoredBox]
-/// [WTransform]
+/// [FTransform]
 /// [WCustomPaint], [WClipPath]
 /// [WRadioList]
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-part of '../../datter.dart';
-
-///
-///
-///
-///
-///
-/// stateful widget
-///
-///
 ///
 ///
 ///
@@ -74,19 +50,6 @@ extension WImage on Image {
         filterQuality: filterQuality,
       );
 }
-
-///
-///
-///
-///
-///
-/// stateless widget
-///
-///
-///
-///
-///
-///
 
 ///
 ///
@@ -169,17 +132,6 @@ extension WIconMaterial on Icon {
   static const photo_28 = Icon(Icons.photo, size: 28);
   static const readMore = Icon(Icons.read_more);
   static const calendarToday = Icon(Icons.calendar_today);
-
-  static const accountCircleStyle1 = Icon(
-    Icons.account_circle,
-    size: 90,
-    color: Colors.grey,
-  );
-  static const accountCircleStyle2 = Icon(
-    Icons.account_circle,
-    size: 35,
-    color: Colors.grey,
-  );
 }
 
 extension WIconMaterialWhite on Icon {
@@ -268,6 +220,10 @@ extension WSizedBox on SizedBox {
       );
 }
 
+
+///
+///
+///
 extension WColoredBox on ColoredBox {
   static const ColoredBox white = ColoredBox(color: Colors.white);
   static const ColoredBox red = ColoredBox(color: Colors.red);
@@ -281,8 +237,95 @@ extension WColoredBox on ColoredBox {
 
 ///
 ///
+/// [identity]
 ///
-/// painting
+/// [FTransform] is an extension for translating from "my coordinate system" to "dart coordinate system".
+/// the discussion here follows the definitions in the comment above [Radian3.direct].
+/// To distinguish the coordinate system between "my coordinate system" to "dart coordinate system",
+/// it's necessary to read the comment above [Radian3.direct], which shows what "my coordinate system" is.
+///
+/// [Direction3DIn6] is a link between "dart coordinate system" and "my coordinate system",
+/// the comment belows shows the way how "dart coordinate system" can be described by [Direction3DIn6].
+/// take [Offset.fromDirection] for example, its radian 0 ~ 2π going through:
+///   1. [Direction3DIn6.right]
+///   2. [Direction3DIn6.bottom]
+///   3. [Direction3DIn6.left]
+///   4. [Direction3DIn6.top]
+///   5. [Direction3DIn6.right], ...
+/// its evidence that [Offset.fromDirection] start from [Direction3DIn6.right],
+/// and the axis of [Offset.fromDirection] can be presented as "[Direction3DIn6.front] -> [Direction3DIn6.back]".
+/// because only when the perspective comes from [Direction3DIn6.front] to [Direction3DIn6.back],
+/// the order from 1 to 6 is counterclockwise;
+/// it's won't be counterclockwise if "[Direction3DIn6.back] -> [Direction3DIn6.front]".
+///
+/// Not only [Offset], [Transform] and [Matrix4] can also be described by [Direction3DIn6], their:
+///   z axis is [Direction3DIn6.front] -> [Direction3DIn6.back], radian start from [Direction3DIn6.right]
+///   x axis is [Direction3DIn6.left] -> [Direction3DIn6.right], radian start from [Direction3DIn6.back]
+///   y axis is [Direction3DIn6.top] -> [Direction3DIn6.bottom], radian start from [Direction3DIn6.left]
+///
+///
+
+///
+///
+/// [identity], ...
+/// [translateSpace2], ...
+/// [ifInQuadrant], ...
+///
+///
+extension FTransform on Transform {
+  ///
+  ///
+  ///
+  static Transform identity({
+    required Applier<Matrix4> apply,
+    required Widget child,
+  }) =>
+      Transform(
+        transform: apply(Matrix4.identity()),
+        child: child,
+      );
+
+  ///
+  ///
+  ///
+  static Point2 translateSpace2(Point2 p) => Point2(p.x, -p.y);
+
+  static Point3 translateSpace3(Point3 p) => Point3(p.x, -p.z, -p.y);
+
+  ///
+  /// 'right' and 'left' are the same no matter in dart or in math
+  ///
+  static bool ifInQuadrant(double radian, int quadrant) {
+    final r = Radian.moduleBy360Angle(radian);
+    return switch (quadrant) {
+      1 => r.isRangeOpen(Radian.angle_270, Radian.angle_360) ||
+          r.isRangeOpen(-Radian.angle_90, 0),
+      2 => r.isRangeOpen(Radian.angle_180, Radian.angle_270) ||
+          r.isRangeOpen(-Radian.angle_180, -Radian.angle_90),
+      3 => r.isRangeOpen(Radian.angle_90, Radian.angle_180) ||
+          r.isRangeOpen(-Radian.angle_270, -Radian.angle_180),
+      4 => r.isRangeOpen(0, Radian.angle_90) ||
+          r.isRangeOpen(-Radian.angle_360, -Radian.angle_270),
+      _ => throw UnimplementedError(),
+    };
+  }
+
+  static bool ifOnRight(double radian) => Radian2(radian).azimuthalOnRight;
+
+  static bool ifOnLeft(double radian) => Radian2(radian).azimuthalOnLeft;
+
+  static bool ifOnTop(double radian) =>
+      Radian.ifWithinAngle0_180N(Radian.moduleBy360Angle(radian));
+
+  static bool ifOnBottom(double radian) =>
+      Radian.ifWithinAngle0_180(Radian.moduleBy360Angle(radian));
+
+// static List<Direction3DIn6> visibleFacesOf(Radian3 radian) {
+//   // final faces = Direction3DIn6.visibleFacesOf(radian);
+//   throw UnimplementedError();
+// }
+}
+
 ///
 ///
 ///
