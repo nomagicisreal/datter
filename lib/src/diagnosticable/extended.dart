@@ -137,8 +137,7 @@ class Curving extends Curve {
 
 ///
 /// [forward], [reverse]
-/// [invert], ...
-/// [invertInterval], ...
+/// [interval], ...
 /// [CurveFR.of], ...
 /// [CurveFR.flip], ...
 /// [CurveFR.fusionIntervalFlipIn]
@@ -153,76 +152,25 @@ class CurveFR {
   ///
   ///
   ///
+  CurveFR interval(
+      double begin,
+      double end, [
+        bool flipForward = false,
+        bool flipReverse = false,
+      ]) =>
+      CurveFR(
+        forward.interval(begin, end, flipForward),
+        reverse.interval(begin, end, flipReverse),
+      );
+
+  CurveFR intervalForward(double begin, double end, [bool flip = false]) =>
+      CurveFR(forward.interval(begin, end, flip), reverse);
+
+  CurveFR intervalReverse(double begin, double end, [bool flip = false]) =>
+      CurveFR(forward, reverse.interval(begin, end, flip));
+
   CurveFR get invert => CurveFR(reverse, forward);
 
-  CurveFR interval(
-    double begin,
-    double end, [
-    bool flipForward = false,
-    bool flipReverse = false,
-  ]) =>
-      CurveFR(
-        forward.interval(begin, end, flipForward),
-        reverse.interval(begin, end, flipReverse),
-      );
-
-  CurveFR intervalForward(
-    double begin,
-    double end, [
-    bool flipForward = false,
-    bool flipReverse = false,
-  ]) =>
-      CurveFR(
-        forward.interval(begin, end, flipForward),
-        reverse.flippedWhen(flipReverse),
-      );
-
-  CurveFR intervalReverse(
-    double begin,
-    double end, [
-    bool flipForward = false,
-    bool flipReverse = false,
-  ]) =>
-      CurveFR(
-        forward.flippedWhen(flipForward),
-        reverse.interval(begin, end, flipReverse),
-      );
-
-  ///
-  ///
-  ///
-  CurveFR invertInterval(
-    double begin,
-    double end, [
-    bool flipForward = false,
-    bool flipReverse = false,
-  ]) =>
-      CurveFR(
-        reverse.interval(begin, end, flipForward),
-        forward.interval(begin, end, flipReverse),
-      );
-
-  CurveFR invertIntervalForward(
-    double begin,
-    double end, [
-    bool flipForward = false,
-    bool flipReverse = false,
-  ]) =>
-      CurveFR(
-        reverse.interval(begin, end, flipForward),
-        forward.flippedWhen(flipReverse),
-      );
-
-  CurveFR invertIntervalReverse(
-    double begin,
-    double end, [
-    bool flipForward = false,
-    bool flipReverse = false,
-  ]) =>
-      CurveFR(
-        reverse.flippedWhen(flipForward),
-        forward.interval(begin, end, flipReverse),
-      );
 
   ///
   ///

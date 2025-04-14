@@ -27,7 +27,7 @@ class MyHome extends StatefulWidget {
   State<MyHome> createState() => _MyHomeState();
 }
 
-class _MyHomeState extends State<MyHome> with OverlayStateMixin<MyHome> {
+class _MyHomeState extends State<MyHome> {
   bool _toggle = false;
 
   void _onPressed() {

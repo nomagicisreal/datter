@@ -141,7 +141,7 @@ extension OffsetExtension on Offset {
 
 ///
 /// static methods: [keep], ...
-/// instance methods: [flippedWhen], ...
+/// instance methods: [interval], ...
 ///
 extension CurveExtension on Curve {
   ///
@@ -154,10 +154,8 @@ extension CurveExtension on Curve {
   ///
   ///
   ///
-  Curve flippedWhen(bool shouldFlip) => shouldFlip ? flipped : this;
-
   Interval interval(double begin, double end, [bool shouldFlip = false]) =>
-      Interval(begin, end, curve: flippedWhen(shouldFlip));
+      Interval(begin, end, curve: shouldFlip ? flipped : this);
 }
 
 ///
