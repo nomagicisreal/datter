@@ -77,6 +77,7 @@ typedef WidgetGlobalKeysBuilder<S extends State<StatefulWidget>> = Widget
 /// [of], ...
 /// [sandwich], ...
 /// [deviateBuilderOf], ...
+/// [parent_stack], ...
 ///
 extension FWidgetBuilder on WidgetBuilder {
   ///
@@ -175,36 +176,27 @@ extension FWidgetBuilder on WidgetBuilder {
 
     return (child) => (context) => columnBuilder(child);
   }
-}
 
-///
-/// static methods:
-/// [stack], ...
-/// instance methods:
-/// [builderFrom]
-///
-///
-extension FWidgetParentBuilder on WidgetBuilderParent {
   ///
-  /// static methods
-  ///
-  static WidgetBuilderParent stack({
+///
+///
+  static WidgetBuilderParent parent_stack({
     Key? key,
     AlignmentGeometry alignment = AlignmentDirectional.topStart,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
     Clip clipBehavior = Clip.hardEdge,
   }) =>
-      (context, children) => Stack(
-            key: key,
-            alignment: alignment,
-            textDirection: textDirection,
-            fit: fit,
-            clipBehavior: clipBehavior,
-            children: children,
-          );
+          (context, children) => Stack(
+        key: key,
+        alignment: alignment,
+        textDirection: textDirection,
+        fit: fit,
+        clipBehavior: clipBehavior,
+        children: children,
+      );
 
-  static WidgetBuilderParent flex({
+  static WidgetBuilderParent parent_flex({
     required Axis direction,
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
     MainAxisSize mainAxisSize = MainAxisSize.max,
@@ -214,21 +206,23 @@ extension FWidgetParentBuilder on WidgetBuilderParent {
     TextBaseline? textBaseline,
     Clip clipBehavior = Clip.none,
   }) =>
-      (context, children) => Flex(
-            direction: direction,
-            mainAxisAlignment: mainAxisAlignment,
-            mainAxisSize: mainAxisSize,
-            crossAxisAlignment: crossAxisAlignment,
-            textDirection: textDirection,
-            verticalDirection: verticalDirection,
-            textBaseline: textBaseline,
-            clipBehavior: clipBehavior,
-            children: children,
-          );
+          (context, children) => Flex(
+        direction: direction,
+        mainAxisAlignment: mainAxisAlignment,
+        mainAxisSize: mainAxisSize,
+        crossAxisAlignment: crossAxisAlignment,
+        textDirection: textDirection,
+        verticalDirection: verticalDirection,
+        textBaseline: textBaseline,
+        clipBehavior: clipBehavior,
+        children: children,
+      );
+}
 
-  ///
-  /// instance methods
-  ///
+///
+///
+///
+extension FWidgetBuilderParent on WidgetBuilderParent {
   WidgetBuilder builderFrom(Iterable<WidgetBuilder> children) =>
       (context) => this(context, [...children.map((build) => build(context))]);
 }
