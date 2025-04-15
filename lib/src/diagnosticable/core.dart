@@ -10,13 +10,10 @@ part of '../../datter.dart';
 /// [PaintFrom], [PaintingPath], [Painter]
 /// [RectBuilder]
 ///
-///
-/// [WidgetParentBuilder]
-/// [WidgetListBuilder]
-/// [WidgetGlobalKeysBuilder]
+/// [WidgetBuilderParent], ...
 ///
 /// takeaway:
-/// [FWidgetBuilder], [FWidgetParentBuilder]
+/// [FWidgetBuilder], ...
 /// [ColorExtension]
 ///
 ///
@@ -59,12 +56,14 @@ typedef RectBuilder = Rect Function(BuildContext context);
 /// widget
 ///
 ///
-typedef WidgetParentBuilder = Widget Function(
+typedef WidgetBuilderParent = Widget Function(
   BuildContext context,
   List<Widget> children,
 );
 
-typedef WidgetListBuilder = List<Widget> Function(BuildContext context);
+typedef WidgetBuilderList = List<Widget> Function(BuildContext context);
+
+typedef WidgetBuilderCallable = Mixer<BuildContext, VoidCallback, Widget>;
 
 typedef WidgetGlobalKeysBuilder<S extends State<StatefulWidget>> = Widget
     Function(
@@ -185,11 +184,11 @@ extension FWidgetBuilder on WidgetBuilder {
 /// [builderFrom]
 ///
 ///
-extension FWidgetParentBuilder on WidgetParentBuilder {
+extension FWidgetParentBuilder on WidgetBuilderParent {
   ///
   /// static methods
   ///
-  static WidgetParentBuilder stack({
+  static WidgetBuilderParent stack({
     Key? key,
     AlignmentGeometry alignment = AlignmentDirectional.topStart,
     TextDirection? textDirection,
@@ -205,7 +204,7 @@ extension FWidgetParentBuilder on WidgetParentBuilder {
             children: children,
           );
 
-  static WidgetParentBuilder flex({
+  static WidgetBuilderParent flex({
     required Axis direction,
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
     MainAxisSize mainAxisSize = MainAxisSize.max,

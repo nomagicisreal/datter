@@ -9,7 +9,7 @@ part of '../../datter.dart';
 /// stateless widget:
 /// [WDrawer]
 /// [WListView]
-/// [WIcon], [WIconMaterial], [WIconMaterialWhite]
+/// [WIcon]
 /// [WGridPaper]
 /// [WSpacer], [WDivider]
 ///
@@ -80,62 +80,26 @@ extension WListView on ListView {
 ///
 ///
 ///
-// extension WIcon on Icon {
-//   static IconData iconDataOf(Latex operator) => switch (operator) {
-//     Latex.plus => Icons.add,
-//     Latex.minus => Icons.remove,
-//     Latex.multiply => CupertinoIcons.multiply,
-//     Latex.divided => CupertinoIcons.divided,
-//     Latex.modulus => CupertinoIcons.percent,
-//   };
-// }
-
-///
-///
-///
-extension WIconMaterial on Icon {
+extension WIcon on Icon {
   static const check = Icon(Icons.check);
   static const close = Icon(Icons.close);
-
-  static const add = Icon(Icons.add);
-  static const minus = Icon(Icons.remove);
-  static const plus = add;
   static const cross = close;
-  static const multiple = cross;
-  static const questionMark = Icon(Icons.question_mark);
-
+  static const multiple = close;
+  static const add = Icon(Icons.add);
+  static const plus = add;
+  static const minus = Icon(Icons.remove);
+  static const question_mark = Icon(Icons.question_mark);
   static const play = Icon(Icons.play_arrow);
   static const pause = Icon(Icons.pause);
   static const stop = Icon(Icons.stop);
-  static const create = Icon(Icons.create);
-  static const edit = Icon(Icons.edit);
   static const delete = Icon(Icons.delete);
-  static const cancel_24 = Icon(Icons.cancel, size: 24);
-  static const cancelSharp = Icon(Icons.cancel_sharp);
   static const send = Icon(Icons.send);
-
-  static const arrowRight = Icon(Icons.arrow_forward_ios);
-  static const arrowLeft = Icon(Icons.arrow_back_ios);
-  static const arrowRightward = Icon(Icons.arrow_forward);
-  static const arrowLeftward = Icon(Icons.arrow_back);
-  static const chevronLeft = Icon(Icons.chevron_left);
-  static const chevronRight = Icon(Icons.chevron_right);
-
-  static const accountBox = Icon(Icons.account_box);
-  static const accountCircle = Icon(Icons.account_circle);
-  static const backspace = Icon(Icons.backspace);
-  static const email = Icon(Icons.email);
-  static const mailOutline = Icon(Icons.mail_outline);
-  static const password = Icon(Icons.password);
-  static const phone = Icon(Icons.phone);
-  static const photo = Icon(Icons.photo);
-  static const photo_28 = Icon(Icons.photo, size: 28);
-  static const readMore = Icon(Icons.read_more);
-  static const calendarToday = Icon(Icons.calendar_today);
-}
-
-extension WIconMaterialWhite on Icon {
-  static const add = Icon(Icons.add, color: Colors.white);
+  static const chevron_right = Icon(Icons.chevron_right);
+  static const chevron_left = Icon(Icons.chevron_left);
+  static const chevron_right_large = Icon(Icons.arrow_forward_ios);
+  static const chevron_left_large = Icon(Icons.arrow_back_ios);
+  static const arrow_rightward = Icon(Icons.arrow_forward);
+  static const arrow_leftward = Icon(Icons.arrow_back);
 }
 
 extension WGridPaper on GridPaper {
