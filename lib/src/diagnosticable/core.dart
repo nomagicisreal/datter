@@ -10,7 +10,7 @@ part of '../../datter.dart';
 /// [PaintFrom], [PaintingPath], [Painter]
 /// [RectBuilder]
 ///
-/// [WidgetBuilderParent], ...
+/// [WidgetParentBuilder], ...
 ///
 /// takeaway:
 /// [FWidgetBuilder], ...
@@ -56,19 +56,23 @@ typedef RectBuilder = Rect Function(BuildContext context);
 /// widget
 ///
 ///
-typedef WidgetBuilderParent = Widget Function(
+typedef WidgetChildrenBuilder = List<Widget> Function(BuildContext context);
+typedef WidgetValuedBuilder<T> = Widget Function(BuildContext context, T value);
+typedef WidgetChildBuilder = Widget Function(
+  BuildContext context,
+  Widget child,
+);
+typedef WidgetCallableBuilder = Widget Function(
+  BuildContext context,
+  VoidCallback callable,
+);
+typedef WidgetParentBuilder = Widget Function(
   BuildContext context,
   List<Widget> children,
 );
-
-typedef WidgetBuilderList = List<Widget> Function(BuildContext context);
-
-typedef WidgetBuilderCallable = Mixer<BuildContext, VoidCallback, Widget>;
-
-typedef WidgetGlobalKeysBuilder<S extends State<StatefulWidget>> = Widget
-    Function(
+typedef WidgetGlobalKeysBuilder<T extends State> = Widget Function(
   BuildContext context,
-  Map<String, GlobalKey<S>> keys,
+  Map<String, GlobalKey<T>> keys,
 );
 
 ///
@@ -85,7 +89,7 @@ extension FWidgetBuilder on WidgetBuilder {
   ///
   static Widget none(BuildContext _) => WSizedBox.none;
 
-  static Widget progressing(BuildContext _) => WProgressIndicator.circular;
+  static Widget progressing(BuildContext _) => CircularProgressIndicator();
 
   static Widget noneAnimation(Animation animation, Widget child) => child;
 
@@ -178,25 +182,25 @@ extension FWidgetBuilder on WidgetBuilder {
   }
 
   ///
-///
-///
-  static WidgetBuilderParent parent_stack({
+  ///
+  ///
+  static WidgetParentBuilder parent_stack({
     Key? key,
     AlignmentGeometry alignment = AlignmentDirectional.topStart,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
     Clip clipBehavior = Clip.hardEdge,
   }) =>
-          (context, children) => Stack(
-        key: key,
-        alignment: alignment,
-        textDirection: textDirection,
-        fit: fit,
-        clipBehavior: clipBehavior,
-        children: children,
-      );
+      (context, children) => Stack(
+            key: key,
+            alignment: alignment,
+            textDirection: textDirection,
+            fit: fit,
+            clipBehavior: clipBehavior,
+            children: children,
+          );
 
-  static WidgetBuilderParent parent_flex({
+  static WidgetParentBuilder parent_flex({
     required Axis direction,
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
     MainAxisSize mainAxisSize = MainAxisSize.max,
@@ -206,27 +210,26 @@ extension FWidgetBuilder on WidgetBuilder {
     TextBaseline? textBaseline,
     Clip clipBehavior = Clip.none,
   }) =>
-          (context, children) => Flex(
-        direction: direction,
-        mainAxisAlignment: mainAxisAlignment,
-        mainAxisSize: mainAxisSize,
-        crossAxisAlignment: crossAxisAlignment,
-        textDirection: textDirection,
-        verticalDirection: verticalDirection,
-        textBaseline: textBaseline,
-        clipBehavior: clipBehavior,
-        children: children,
-      );
+      (context, children) => Flex(
+            direction: direction,
+            mainAxisAlignment: mainAxisAlignment,
+            mainAxisSize: mainAxisSize,
+            crossAxisAlignment: crossAxisAlignment,
+            textDirection: textDirection,
+            verticalDirection: verticalDirection,
+            textBaseline: textBaseline,
+            clipBehavior: clipBehavior,
+            children: children,
+          );
 }
 
 ///
 ///
 ///
-extension FWidgetBuilderParent on WidgetBuilderParent {
+extension FWidgetParentBuilder on WidgetParentBuilder {
   WidgetBuilder builderFrom(Iterable<WidgetBuilder> children) =>
       (context) => this(context, [...children.map((build) => build(context))]);
 }
-
 
 ///
 /// constants: [distinct20], ...
@@ -291,11 +294,11 @@ extension ColorExtension on Color {
       );
 
   Color minusARGB(int alpha, int red, int green, int blue) => Color.from(
-    alpha: a - alpha,
-    red: r - red,
-    green: g - green,
-    blue: b - blue,
-  );
+        alpha: a - alpha,
+        red: r - red,
+        green: g - green,
+        blue: b - blue,
+      );
 
   Color plusAllRGB(double value) =>
       Color.from(alpha: a, red: r + value, green: g + value, blue: b + value);

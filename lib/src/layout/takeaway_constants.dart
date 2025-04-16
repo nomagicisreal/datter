@@ -55,20 +55,21 @@ extension KGeometry on Size {
   ///
   ///
   static const EdgeInsets edgeInsets_leftBottom_1 =
-  EdgeInsets.only(left: 1, bottom: 1);
+      EdgeInsets.only(left: 1, bottom: 1);
   static const EdgeInsets edgeInsets_left_1 = EdgeInsets.only(left: 1);
-  static const EdgeInsets edgeInsets_leftTop_1 = EdgeInsets.only(left: 1, top: 1);
+  static const EdgeInsets edgeInsets_leftTop_1 =
+      EdgeInsets.only(left: 1, top: 1);
   static const EdgeInsets edgeInsets_top_1 = EdgeInsets.only(top: 1);
   static const EdgeInsets edgeInsets_rightTop_1 =
-  EdgeInsets.only(right: 1, top: 1);
+      EdgeInsets.only(right: 1, top: 1);
   static const EdgeInsets edgeInsets_right_1 = EdgeInsets.only(right: 1);
   static const EdgeInsets edgeInsets_rightBottom_1 =
-  EdgeInsets.only(right: 1, bottom: 1);
+      EdgeInsets.only(right: 1, bottom: 1);
   static const EdgeInsets edgeInsets_bottom_1 = EdgeInsets.only(bottom: 1);
   static const EdgeInsets edgeInsets_horizontal_1 =
-  EdgeInsets.symmetric(horizontal: 1);
+      EdgeInsets.symmetric(horizontal: 1);
   static const EdgeInsets edgeInsets_vertical_1 =
-  EdgeInsets.symmetric(vertical: 1);
+      EdgeInsets.symmetric(vertical: 1);
   static const EdgeInsets edgeInsets_all_1 = EdgeInsets.all(1);
 
   ///
@@ -76,25 +77,24 @@ extension KGeometry on Size {
   ///
   static const BorderRadius borderRadius_0 = BorderRadius.all(Radius.zero);
   static const BorderRadius borderRadius_circularAll_1 =
-  BorderRadius.all(KGeometry.radius_circular_1);
+      BorderRadius.all(KGeometry.radius_circular_1);
   static const BorderRadius borderRadius_circularTopLeft_1 =
-  BorderRadius.only(topLeft: KGeometry.radius_circular_1);
+      BorderRadius.only(topLeft: KGeometry.radius_circular_1);
   static const BorderRadius borderRadius_circularTopRight_1 =
-  BorderRadius.only(topRight: KGeometry.radius_circular_1);
+      BorderRadius.only(topRight: KGeometry.radius_circular_1);
   static const BorderRadius borderRadius_circularBottomLeft_1 =
-  BorderRadius.only(bottomLeft: KGeometry.radius_circular_1);
+      BorderRadius.only(bottomLeft: KGeometry.radius_circular_1);
   static const BorderRadius borderRadius_circularBottomRight_1 =
-  BorderRadius.only(bottomRight: KGeometry.radius_circular_1);
+      BorderRadius.only(bottomRight: KGeometry.radius_circular_1);
   static const BorderRadius borderRadius_circularLeft_1 =
-  BorderRadius.horizontal(left: KGeometry.radius_circular_1);
+      BorderRadius.horizontal(left: KGeometry.radius_circular_1);
   static const BorderRadius borderRadius_circularTop_1 =
-  BorderRadius.vertical(top: KGeometry.radius_circular_1);
+      BorderRadius.vertical(top: KGeometry.radius_circular_1);
   static const BorderRadius borderRadius_circularRight_1 =
-  BorderRadius.horizontal(right: KGeometry.radius_circular_1);
+      BorderRadius.horizontal(right: KGeometry.radius_circular_1);
   static const BorderRadius borderRadius_circularBottom_1 =
-  BorderRadius.vertical(bottom: KGeometry.radius_circular_1);
+      BorderRadius.vertical(bottom: KGeometry.radius_circular_1);
 }
-
 
 ///
 ///
@@ -106,11 +106,13 @@ extension KOffsetPermutation4 on List<Offset> {
   // 3, a, 1, c
   static List<Offset> p0123(List<Offset> list) => list;
 
-  static List<Offset> p1230(List<Offset> list) => list..cloneSwitch();
+  static List<Offset> p1230(List<Offset> list) => list..cloneHeadTailSwitch();
 
-  static List<Offset> p2301(List<Offset> list) => p1230(list)..cloneSwitch();
+  static List<Offset> p2301(List<Offset> list) =>
+      p1230(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p3012(List<Offset> list) => p2301(list)..cloneSwitch();
+  static List<Offset> p3012(List<Offset> list) =>
+      p2301(list)..cloneHeadTailSwitch();
 
   // a, 2, 3, b (add 1, remove b)
   // 2, 3, 1, a
@@ -120,11 +122,14 @@ extension KOffsetPermutation4 on List<Offset> {
     ..add(list[1])
     ..removeAt(1);
 
-  static List<Offset> p2310(List<Offset> list) => p0231(list)..cloneSwitch();
+  static List<Offset> p2310(List<Offset> list) =>
+      p0231(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p3102(List<Offset> list) => p2310(list)..cloneSwitch();
+  static List<Offset> p3102(List<Offset> list) =>
+      p2310(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p1023(List<Offset> list) => p3102(list)..cloneSwitch();
+  static List<Offset> p1023(List<Offset> list) =>
+      p3102(list)..cloneHeadTailSwitch();
 
   // 0, 1, 3, 2 (add 2, remove 2)
   // 1, 3, 2, 0
@@ -134,11 +139,14 @@ extension KOffsetPermutation4 on List<Offset> {
     ..add(list[2])
     ..removeAt(2);
 
-  static List<Offset> p1320(List<Offset> list) => p0132(list)..cloneSwitch();
+  static List<Offset> p1320(List<Offset> list) =>
+      p0132(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p3201(List<Offset> list) => p1320(list)..cloneSwitch();
+  static List<Offset> p3201(List<Offset> list) =>
+      p1320(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p2013(List<Offset> list) => p3201(list)..cloneSwitch();
+  static List<Offset> p2013(List<Offset> list) =>
+      p3201(list)..cloneHeadTailSwitch();
 
   // 1, 3, 0, 2 (add 02, remove 02)
   // 3, 0, 2, 1
@@ -148,11 +156,14 @@ extension KOffsetPermutation4 on List<Offset> {
     ..add(list[1])
     ..removeAt(1);
 
-  static List<Offset> p3021(List<Offset> list) => p1302(list)..cloneSwitch();
+  static List<Offset> p3021(List<Offset> list) =>
+      p1302(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p0213(List<Offset> list) => p3021(list)..cloneSwitch();
+  static List<Offset> p0213(List<Offset> list) =>
+      p3021(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p2130(List<Offset> list) => p0213(list)..cloneSwitch();
+  static List<Offset> p2130(List<Offset> list) =>
+      p0213(list)..cloneHeadTailSwitch();
 
   // 0, 3, 1, 2 (add 12, remove 12)
   // 3, 1, 2, 0
@@ -162,11 +173,14 @@ extension KOffsetPermutation4 on List<Offset> {
     ..add(list[1])
     ..removeAt(1);
 
-  static List<Offset> p3120(List<Offset> list) => p0312(list)..cloneSwitch();
+  static List<Offset> p3120(List<Offset> list) =>
+      p0312(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p1203(List<Offset> list) => p3120(list)..cloneSwitch();
+  static List<Offset> p1203(List<Offset> list) =>
+      p3120(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p2031(List<Offset> list) => p1203(list)..cloneSwitch();
+  static List<Offset> p2031(List<Offset> list) =>
+      p1203(list)..cloneHeadTailSwitch();
 
   // 0, 3, 2, 1 (add 21, remove 21)
   // 3, 2, 1, 0
@@ -176,9 +190,12 @@ extension KOffsetPermutation4 on List<Offset> {
     ..add(list[1])
     ..removeAt(1);
 
-  static List<Offset> p3210(List<Offset> list) => p0321(list)..cloneSwitch();
+  static List<Offset> p3210(List<Offset> list) =>
+      p0321(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p2103(List<Offset> list) => p3210(list)..cloneSwitch();
+  static List<Offset> p2103(List<Offset> list) =>
+      p3210(list)..cloneHeadTailSwitch();
 
-  static List<Offset> p1032(List<Offset> list) => p2103(list)..cloneSwitch();
+  static List<Offset> p1032(List<Offset> list) =>
+      p2103(list)..cloneHeadTailSwitch();
 }

@@ -2,6 +2,8 @@ part of '../../datter.dart';
 
 ///
 ///
+/// * [RadioListMixin]
+///
 /// * [OverlayStateProperty]
 ///     * [OverlayStateNormalMixin]
 ///     * [OverlayStateUpdateToRemoveMixin]
@@ -17,6 +19,16 @@ part of '../../datter.dart';
 ///
 ///
 ///
+
+///
+///
+///
+mixin RadioListMixin<W extends StatefulWidget, T> on State<W> {
+  T? radioOption;
+
+  void onRadioOptionChanged(T? value) => setState(() => radioOption = value);
+}
+
 
 ///
 ///
@@ -159,7 +171,7 @@ class OverlayStreamWidget extends StatefulWidget {
   });
 
   final Stream<String> streamUpdate;
-  final Mapper<String, WidgetBuilderCallable> builderFor;
+  final Mapper<String, WidgetCallableBuilder> builderFor;
   final OverlayStreamUpdateExist updateIfExist;
   final Widget child;
 

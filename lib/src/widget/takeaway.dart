@@ -16,24 +16,12 @@ part of '../../datter.dart';
 /// render object widget:
 /// [WSizedBox]
 /// [WColoredBox]
-/// [FTransform]
 /// [WCustomPaint], [WClipPath]
 /// [WRadioList]
+/// [FTransform]
 ///
 ///
 ///
-
-///
-///
-///
-extension WProgressIndicator on ProgressIndicator {
-  static const circular = CircularProgressIndicator();
-  static const circularBlueGrey = CircularProgressIndicator(
-    color: Colors.blueGrey,
-  );
-  static const linear = LinearProgressIndicator();
-  static const refresh = RefreshProgressIndicator();
-}
 
 extension WImage on Image {
   static assetsInDimension(
@@ -126,22 +114,15 @@ extension WDivider on Divider {
 
 ///
 ///
+/// [height], ...
+/// [sandwich], ...
 ///
-///
-/// render object widgets
-///
-///
-///
-///
-
 extension WSizedBox on SizedBox {
   static const none = SizedBox();
   static const shrink = SizedBox.shrink();
   static const expand = SizedBox.expand();
 
   ///
-  ///
-  /// height, width, square
   ///
   ///
   static SizedBox height(double dimension, {Widget? child}) =>
@@ -169,26 +150,21 @@ extension WSizedBox on SizedBox {
             );
 
   ///
-  /// expand
   ///
-  static SizedBox expandWidth(double height, {Widget? child}) =>
-      SizedBox(height: height, width: double.infinity);
-
-  static SizedBox expandHeight(double width, {Widget? child}) =>
-      SizedBox(height: double.infinity, width: width);
-
-  static SizedBox expandColored(Color color) =>
-      SizedBox.expand(child: ColoredBox(color: color));
-
-  static SizedBox expandCenter({required Widget child}) =>
-      SizedBox.expand(child: Center(child: child));
-
-  static SizedBox expandCenterColored({
-    required Color color,
-    Widget? child,
+  ///
+  static List<Widget> sandwich({
+    bool isWidth = true,
+    required double dimension,
+    required List<Widget> sibling,
   }) =>
-      SizedBox.expand(
-        child: Center(child: ColoredBox(color: color, child: child)),
+      sibling.sandwich(
+        List.generate(
+          sibling.length - 1,
+          isWidth
+              ? (_) => WSizedBox.width(dimension)
+              : (_) => WSizedBox.height(dimension),
+          growable: false,
+        ),
       );
 }
 
@@ -204,97 +180,6 @@ extension WColoredBox on ColoredBox {
   static const ColoredBox blue = ColoredBox(color: Colors.blue);
   static const ColoredBox blueAccent = ColoredBox(color: Colors.blueAccent);
   static const ColoredBox purple = ColoredBox(color: Colors.purple);
-}
-
-///
-///
-/// [identity]
-///
-/// [FTransform] is an extension for translating from "my coordinate system" to "dart coordinate system".
-/// the discussion here follows the definitions in the comment above [Radian3.direct].
-/// To distinguish the coordinate system between "my coordinate system" to "dart coordinate system",
-/// it's necessary to read the comment above [Radian3.direct], which shows what "my coordinate system" is.
-///
-/// [Direction3DIn6] is a link between "dart coordinate system" and "my coordinate system",
-/// the comment belows shows the way how "dart coordinate system" can be described by [Direction3DIn6].
-/// take [Offset.fromDirection] for example, its radian 0 ~ 2π going through:
-///   1. [Direction3DIn6.right]
-///   2. [Direction3DIn6.bottom]
-///   3. [Direction3DIn6.left]
-///   4. [Direction3DIn6.top]
-///   5. [Direction3DIn6.right], ...
-/// its evidence that [Offset.fromDirection] start from [Direction3DIn6.right],
-/// and the axis of [Offset.fromDirection] can be presented as "[Direction3DIn6.front] -> [Direction3DIn6.back]".
-/// because only when the perspective comes from [Direction3DIn6.front] to [Direction3DIn6.back],
-/// the order from 1 to 6 is counterclockwise;
-/// it's won't be counterclockwise if "[Direction3DIn6.back] -> [Direction3DIn6.front]".
-///
-/// Not only [Offset], [Transform] and [Matrix4] can also be described by [Direction3DIn6], their:
-///   z axis is [Direction3DIn6.front] -> [Direction3DIn6.back], radian start from [Direction3DIn6.right]
-///   x axis is [Direction3DIn6.left] -> [Direction3DIn6.right], radian start from [Direction3DIn6.back]
-///   y axis is [Direction3DIn6.top] -> [Direction3DIn6.bottom], radian start from [Direction3DIn6.left]
-///
-///
-
-///
-///
-/// [identity], ...
-/// [translateSpace2], ...
-/// [ifInQuadrant], ...
-///
-///
-extension FTransform on Transform {
-  ///
-  ///
-  ///
-  static Transform identity({
-    required Applier<Matrix4> apply,
-    required Widget child,
-  }) =>
-      Transform(
-        transform: apply(Matrix4.identity()),
-        child: child,
-      );
-
-  ///
-  ///
-  ///
-  static Point2 translateSpace2(Point2 p) => Point2(p.x, -p.y);
-
-  static Point3 translateSpace3(Point3 p) => Point3(p.x, -p.z, -p.y);
-
-  ///
-  /// 'right' and 'left' are the same no matter in dart or in math
-  ///
-  static bool ifInQuadrant(double radian, int quadrant) {
-    final r = Radian.moduleBy360Angle(radian);
-    return switch (quadrant) {
-      1 => r.isRangeOpen(Radian.angle_270, Radian.angle_360) ||
-          r.isRangeOpen(-Radian.angle_90, 0),
-      2 => r.isRangeOpen(Radian.angle_180, Radian.angle_270) ||
-          r.isRangeOpen(-Radian.angle_180, -Radian.angle_90),
-      3 => r.isRangeOpen(Radian.angle_90, Radian.angle_180) ||
-          r.isRangeOpen(-Radian.angle_270, -Radian.angle_180),
-      4 => r.isRangeOpen(0, Radian.angle_90) ||
-          r.isRangeOpen(-Radian.angle_360, -Radian.angle_270),
-      _ => throw UnimplementedError(),
-    };
-  }
-
-  static bool ifOnRight(double radian) => Radian2(radian).azimuthalOnRight;
-
-  static bool ifOnLeft(double radian) => Radian2(radian).azimuthalOnLeft;
-
-  static bool ifOnTop(double radian) =>
-      Radian.ifWithinAngle0_180N(Radian.moduleBy360Angle(radian));
-
-  static bool ifOnBottom(double radian) =>
-      Radian.ifWithinAngle0_180(Radian.moduleBy360Angle(radian));
-
-// static List<Direction3DIn6> visibleFacesOf(Radian3 radian) {
-//   // final faces = Direction3DIn6.visibleFacesOf(radian);
-//   throw UnimplementedError();
-// }
 }
 
 ///
@@ -575,4 +460,115 @@ extension WRadioList on RadioListTile {
           onChanged: onChanged,
         ),
       );
+}
+
+///
+///
+///
+extension WFutureBuilder on FutureBuilder {
+  static FutureBuilder progressOrBuild<T>({
+    WidgetBuilder progressBuilder = FWidgetBuilder.progressing,
+    WidgetBuilder? builderNull,
+    required Future<T> future,
+    required WidgetValuedBuilder<T> builder,
+  }) =>
+      FutureBuilder<T>(
+        future: future,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final data = snapshot.data;
+            if (data == null) {
+              return builderNull?.call(context) ?? (throw UnimplementedError());
+            }
+            return builder(context, data);
+          }
+          return progressBuilder(context);
+        },
+      );
+}
+
+///
+///
+/// [identity]
+///
+/// [FTransform] is an extension for translating from "my coordinate system" to "dart coordinate system".
+/// the discussion here follows the definitions in the comment above [Radian3.direct].
+/// To distinguish the coordinate system between "my coordinate system" to "dart coordinate system",
+/// it's necessary to read the comment above [Radian3.direct], which shows what "my coordinate system" is.
+///
+/// [Direction3DIn6] is a link between "dart coordinate system" and "my coordinate system",
+/// the comment belows shows the way how "dart coordinate system" can be described by [Direction3DIn6].
+/// take [Offset.fromDirection] for example, its radian 0 ~ 2π going through:
+///   1. [Direction3DIn6.right]
+///   2. [Direction3DIn6.bottom]
+///   3. [Direction3DIn6.left]
+///   4. [Direction3DIn6.top]
+///   5. [Direction3DIn6.right], ...
+/// its evidence that [Offset.fromDirection] start from [Direction3DIn6.right],
+/// and the axis of [Offset.fromDirection] can be presented as "[Direction3DIn6.front] -> [Direction3DIn6.back]".
+/// because only when the perspective comes from [Direction3DIn6.front] to [Direction3DIn6.back],
+/// the order from 1 to 6 is counterclockwise;
+/// it's won't be counterclockwise if "[Direction3DIn6.back] -> [Direction3DIn6.front]".
+///
+/// Not only [Offset], [Transform] and [Matrix4] can also be described by [Direction3DIn6], their:
+///   z axis is [Direction3DIn6.front] -> [Direction3DIn6.back], radian start from [Direction3DIn6.right]
+///   x axis is [Direction3DIn6.left] -> [Direction3DIn6.right], radian start from [Direction3DIn6.back]
+///   y axis is [Direction3DIn6.top] -> [Direction3DIn6.bottom], radian start from [Direction3DIn6.left]
+///
+///
+
+///
+///
+/// [identity], ...
+/// [translateSpace2], ...
+/// [ifInQuadrant], ...
+///
+///
+extension FTransform on Transform {
+  ///
+  ///
+  ///
+  static Transform identity({
+    required Applier<Matrix4> apply,
+    required Widget child,
+  }) =>
+      Transform(
+        transform: apply(Matrix4.identity()),
+        child: child,
+      );
+
+  ///
+  ///
+  ///
+  static Point2 translateSpace2(Point2 p) => Point2(p.x, -p.y);
+
+  static Point3 translateSpace3(Point3 p) => Point3(p.x, -p.z, -p.y);
+
+  ///
+  /// 'right' and 'left' are the same no matter in dart or in math
+  ///
+  static bool ifInQuadrant(double radian, int quadrant) {
+    final r = Radian.moduleBy360Angle(radian);
+    return switch (quadrant) {
+      1 => r.isRangeOpen(Radian.angle_270, Radian.angle_360) ||
+          r.isRangeOpen(-Radian.angle_90, 0),
+      2 => r.isRangeOpen(Radian.angle_180, Radian.angle_270) ||
+          r.isRangeOpen(-Radian.angle_180, -Radian.angle_90),
+      3 => r.isRangeOpen(Radian.angle_90, Radian.angle_180) ||
+          r.isRangeOpen(-Radian.angle_270, -Radian.angle_180),
+      4 => r.isRangeOpen(0, Radian.angle_90) ||
+          r.isRangeOpen(-Radian.angle_360, -Radian.angle_270),
+      _ => throw UnimplementedError(),
+    };
+  }
+
+  static bool ifOnRight(double radian) => Radian2(radian).azimuthalOnRight;
+
+  static bool ifOnLeft(double radian) => Radian2(radian).azimuthalOnLeft;
+
+  static bool ifOnTop(double radian) =>
+      Radian.ifWithinAngle0_180N(Radian.moduleBy360Angle(radian));
+
+  static bool ifOnBottom(double radian) =>
+      Radian.ifWithinAngle0_180(Radian.moduleBy360Angle(radian));
 }

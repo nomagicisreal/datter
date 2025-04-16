@@ -108,7 +108,7 @@ extension GlobalKeyExtension on GlobalKey {
 ///
 /// [closeKeyboardIfShowing]
 /// [showSnackbar], [showSnackbarWithMessage]
-/// [showDialogOptionsSupply], [showDialogOptionActions], [showDialogListAndGetItem], [showDialogDecideTureOfFalse]
+/// [showDialogMap], [showDialogMapActions], [showDialogList], [showDialogBinary]
 ///
 extension BuildContextExtension on BuildContext {
   // AppLocalizations get loc => AppLocalizations.of(this)!;
@@ -283,11 +283,15 @@ extension BuildContextExtension on BuildContext {
       scaffoldMessenger.showSnackBar(snackBar);
 
   void showSnackBarMessage(
-    String message, [
+    String message, {
     Duration duration = KCore.durationMilli500,
-  ]) =>
+    bool center = true,
+  }) =>
       scaffoldMessenger.showSnackBar(
-        SnackBar(content: Text(message), duration: duration),
+        SnackBar(
+          content: center ? Center(child: Text(message)) : Text(message),
+          duration: duration,
+        ),
       );
 
   void showMaterialBanner(MaterialBanner banner) =>
@@ -299,135 +303,78 @@ extension BuildContextExtension on BuildContext {
       scaffoldMessenger.hideCurrentMaterialBanner(reason: reason);
 
   ///
-  /// dialog
   ///
-  Future<T?> showDialogOptionsSupply<T>({
-    required String title,
-    required String content,
-    required Supplier<Map<String, T>> optionsSupply,
-  }) {
-    final options = optionsSupply();
-    return showDialog(
-      context: this,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: options.keys
-            .map((optionTitle) => TextButton(
-                  onPressed: () => context.navigator.pop(options[optionTitle]),
-                  child: Text(optionTitle),
-                ))
-            .toList(),
-      ),
-    );
-  }
-
-  Future<T?> showDialogOptionActions<T>({
-    required String title,
-    required String? content,
-    required Map<String, Supplier<T>> optionActions,
-  }) async {
-    final actions = <Widget>[];
-    T? returnValue;
-    optionActions.forEach((label, action) {
-      actions.add(TextButton(
-        onPressed: () {
-          navigator.pop();
-          returnValue = action();
-        },
-        child: Text(label),
-      ));
-    });
-    await showDialog(
+  ///
+  Future<bool?> showDialogBinary({
+    required Widget textEnsure,
+    required Widget textCancel,
+    required WidgetParentBuilder builder,
+  }) =>
+      showDialog(
         context: this,
-        builder: (context) => content == null
-            ? SimpleDialog(title: Text(title), children: actions)
-            : AlertDialog(
-                title: Text(title),
-                content: Text(content),
-                actions: actions,
-              ));
-    return returnValue;
-  }
-
-  Future<void> showDialogEnsureCancel({
-    required String textEnsure,
-    required String textCancel,
-    WidgetBuilder? content,
-    VoidCallback? onEnsure,
-    VoidCallback? onCancel,
-  }) async =>
-      showDialog<void>(
-        context: this,
-        useRootNavigator: false,
-        builder: (context) => AlertDialog(
-          content: content?.call(context),
-          actions: [
+        builder: (context) => builder(
+          context,
+          [
             TextButton(
-              onPressed: onCancel ?? context.navigator.pop,
-              child: Text(textCancel),
+              onPressed: () => context.navigator.pop(true),
+              child: textEnsure,
             ),
-            if (onEnsure != null)
-              TextButton(onPressed: onEnsure, child: Text(textEnsure)),
+            TextButton(
+              onPressed: () => context.navigator.pop(false),
+              child: textCancel,
+            ),
           ],
         ),
       );
 
-  Future<T?> showDialogListAndGetItem<T>(
-      {required String title, required List<T> itemList, Size? size}) async {
-    late final T? selectedItem;
-    await showDialog(
-      context: this,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: SizedBox.fromSize(
-          size: KGeometry.size_w1_h2.flipped * 100,
-          child: ListView.builder(
-            itemCount: itemList.length,
-            itemBuilder: (context, index) {
-              final item = itemList[index];
-              return Center(
-                child: TextButton(
-                  onPressed: () {
-                    selectedItem = item;
-                    context.navigator.pop();
-                  },
-                  child: Text(item.toString()),
-                ),
-              );
-            },
+  Future<T?> showDialogList<T>({
+    required List<T> items,
+    required WidgetParentBuilder builder,
+  }) =>
+      showDialog(
+        context: this,
+        builder: (context) => builder(
+          context,
+          items.mapToList(
+            (item) => TextButton(
+              onPressed: () => context.navigator.pop(item),
+              child: Text(item.toString()),
+            ),
           ),
         ),
-      ),
-    );
-    return selectedItem;
-  }
+      );
 
-  Future<bool?> showDialogDecideTureOfFalse(
-    Widget iconProcess,
-    Widget iconCancel,
-  ) async {
-    bool? result;
-    await showDialog(
+  Future<T?> showDialogMap<T>({
+    required Map<String, T> options,
+    required WidgetParentBuilder builder,
+  }) =>
+      showDialog(
         context: this,
-        builder: (context) => SimpleDialog(
-              children: [
-                TextButton(
-                  onPressed: () {
-                    result = true;
-                    context.navigator.pop();
-                  },
-                  child: iconProcess,
-                ),
-                TextButton(
-                  onPressed: () {
-                    result = false;
-                    context.navigator.pop();
-                  },
-                  child: iconCancel,
-                ),
-              ],
-            ));
-    return result;
-  }
+        builder: (context) => builder(
+          context,
+          options.keys.fold(
+            [],
+            (list, title) => list
+              ..add(TextButton(
+                onPressed: () => context.navigator.pop(options[title]),
+                child: Text(title),
+              )),
+          ),
+        ),
+      );
+
+  ///
+  ///
+  ///
+  void showGeneralDialogFadeIn(
+    RoutePageBuilder pageBuilder, {
+    Duration duration = KCore.durationMilli200,
+  }) =>
+      showGeneralDialog(
+        context: this,
+        pageBuilder: pageBuilder,
+        transitionBuilder: (context, a1, a2, child) =>
+            FadeTransition(opacity: a1, child: child),
+        transitionDuration: duration,
+      );
 }
