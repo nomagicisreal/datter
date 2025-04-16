@@ -316,12 +316,12 @@ extension BuildContextExtension on BuildContext {
           context,
           [
             TextButton(
-              onPressed: () => context.navigator.pop(true),
-              child: textEnsure,
-            ),
-            TextButton(
               onPressed: () => context.navigator.pop(false),
               child: textCancel,
+            ),
+            TextButton(
+              onPressed: () => context.navigator.pop(true),
+              child: textEnsure,
             ),
           ],
         ),
@@ -366,9 +366,9 @@ extension BuildContextExtension on BuildContext {
   ///
   ///
   ///
-  void showGeneralDialogFadeIn(
-    RoutePageBuilder pageBuilder, {
+  void showGeneralDialogFadeIn({
     Duration duration = KCore.durationMilli200,
+    required RoutePageBuilder pageBuilder,
   }) =>
       showGeneralDialog(
         context: this,

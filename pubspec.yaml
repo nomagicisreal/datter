@@ -1,6 +1,6 @@
 name: datter
 description: project for common flutter usecase.
-version: 0.0.10
+version: 0.0.11
 repository: https://github.com/nomagicisreal/datter
 
 environment:
