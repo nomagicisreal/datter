@@ -98,17 +98,19 @@ extension GlobalKeyExtension on GlobalKey {
 }
 
 ///
+/// [isKeyboardShowing]
 /// [theme], [themeText], .... , [colorScheme]
 /// [sizeMedia], [mediaViewInsets]
-/// [isKeyboardShowing]
 ///
 /// [renderBox]
 /// [scaffold], [scaffoldMessenger]
 /// [navigator]
 ///
 /// [closeKeyboardIfShowing]
-/// [showSnackbar], [showSnackbarWithMessage]
-/// [showDialogMap], [showDialogMapActions], [showDialogList], [showDialogBinary]
+/// [showSnackbar], ...
+/// [showMaterialBanner], ...
+/// [showDialogTapToContinue], ...
+///
 ///
 extension BuildContextExtension on BuildContext {
   // AppLocalizations get loc => AppLocalizations.of(this)!;
@@ -125,9 +127,6 @@ extension BuildContextExtension on BuildContext {
     }
   }
 
-  ///
-  ///
-  ///
   bool get isKeyboardShowing => mediaViewInsetsBottom > 0;
 
   ///
@@ -279,10 +278,11 @@ extension BuildContextExtension on BuildContext {
   ///
   /// snackbar, material banner
   ///
-  void showSnackbar(SnackBar snackBar) =>
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackbar(
+          SnackBar snackBar) =>
       scaffoldMessenger.showSnackBar(snackBar);
 
-  void showSnackBarMessage(
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBarMessage(
     String message, {
     Duration duration = KCore.durationMilli500,
     bool center = true,
@@ -294,8 +294,27 @@ extension BuildContextExtension on BuildContext {
         ),
       );
 
-  void showMaterialBanner(MaterialBanner banner) =>
-      scaffoldMessenger.showMaterialBanner(banner);
+  ///
+  ///
+  ///
+  ScaffoldFeatureController<MaterialBanner, MaterialBannerClosedReason>
+      showMaterialBanner(MaterialBanner banner) =>
+          scaffoldMessenger.showMaterialBanner(banner);
+
+  ScaffoldFeatureController<MaterialBanner, MaterialBannerClosedReason>
+  showMaterialBannerMessageActions(
+      String message, {
+        bool center = true,
+        VoidCallback? onVisible,
+        required List<Widget> actions,
+      }) => scaffoldMessenger.showMaterialBanner(
+    MaterialBanner(
+      elevation: 10,
+      onVisible: onVisible,
+      content: center ? Center(child: Text(message)) : Text(message),
+      actions: actions,
+    ),
+  );
 
   void hideMaterialBanner({
     MaterialBannerClosedReason reason = MaterialBannerClosedReason.dismiss,
@@ -305,6 +324,18 @@ extension BuildContextExtension on BuildContext {
   ///
   ///
   ///
+  Future<void> showDialogTapToContinue({required WidgetBuilder builder}) =>
+      showDialog(
+        context: this,
+        builder: (context) => Stack(
+          fit: StackFit.expand,
+          children: [
+            builder(context),
+            GestureDetector(onTap: context.navigator.pop),
+          ],
+        ),
+      );
+
   Future<bool?> showDialogBinary({
     required Widget textEnsure,
     required Widget textCancel,

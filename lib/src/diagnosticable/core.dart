@@ -79,8 +79,7 @@ typedef WidgetGlobalKeysBuilder<T extends State> = Widget Function(
 /// static methods:
 /// [none], ...
 /// [of], ...
-/// [sandwich], ...
-/// [deviateBuilderOf], ...
+/// [applier_deviate], ...
 /// [parent_stack], ...
 ///
 extension FWidgetBuilder on WidgetBuilder {
@@ -98,7 +97,7 @@ extension FWidgetBuilder on WidgetBuilder {
   ///
   static WidgetBuilder of(Widget child) => (_) => child;
 
-  static WidgetBuilder clipPath_reclipNever({
+  static WidgetBuilder ofClipPath_reclipNever({
     Key? key,
     Clip clipBehavior = Clip.antiAlias,
     required SizingPath sizingPath,
@@ -111,47 +110,32 @@ extension FWidgetBuilder on WidgetBuilder {
             child: builder(context),
           );
 
-  ///
-  ///
-  ///
-  static List<WidgetBuilder> sandwich({
-    Axis direction = Axis.vertical,
-    VerticalDirection verticalDirection = VerticalDirection.down,
-    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.center,
-    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
-    MainAxisSize mainAxisSize = MainAxisSize.max,
-    Clip clipBehavior = Clip.none,
-    TextDirection textDirection = TextDirection.ltr,
-    TextBaseline? textBaseline,
-    required int breadCount,
-    required Generator<WidgetBuilder> bread,
-    required Generator<WidgetBuilder> meat,
-  }) {
-    List<WidgetBuilder> children(int index) => [
-          bread(index),
-          if (index < breadCount - 1) meat(index),
-        ];
-
-    return List<WidgetBuilder>.generate(
-      breadCount,
-      (index) => (context) => Flex(
-            direction: direction,
-            mainAxisAlignment: mainAxisAlignment,
-            mainAxisSize: mainAxisSize,
-            crossAxisAlignment: crossAxisAlignment,
-            textDirection: textDirection,
-            verticalDirection: verticalDirection,
-            textBaseline: textBaseline,
-            clipBehavior: clipBehavior,
-            children: children(index).mapToList((build) => build(context)),
-          ),
-    );
-  }
+  static WidgetBuilder ofStack_centerOnSurface({
+    double? widthFactor,
+    double? heightFactor,
+    VoidCallback? onTapSurface,
+    required Color colorSurface,
+    required WidgetBuilder builder,
+  }) =>
+      (context) => Stack(
+            fit: StackFit.expand,
+            children: [
+              GestureDetector(
+                onTap: onTapSurface,
+                child: ColoredBox(color: colorSurface),
+              ),
+              Center(
+                widthFactor: widthFactor,
+                heightFactor: heightFactor,
+                child: builder(context),
+              ),
+            ],
+          );
 
   ///
   ///
   ///
-  static Applier<WidgetBuilder> deviateBuilderOf(Alignment alignment) {
+  static Applier<WidgetBuilder> applier_deviate(Alignment alignment) {
     final x = alignment.x;
     final y = alignment.y;
     Row rowOf(List<Widget> children) => Row(

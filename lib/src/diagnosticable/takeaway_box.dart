@@ -5,7 +5,7 @@ part of '../../datter.dart';
 /// [FBoxConstraints]
 /// [FBoxShadow]
 /// [FBorderSide], [FBorderBox], [FBorderInput], [FBorderOutlined]
-/// [FDecorationBox], [FDecorationShape], [FDecorationInput]
+/// [FDecorationInput]
 ///
 ///
 
@@ -281,110 +281,10 @@ extension FBorderOutlined on OutlinedBorder {
 
 ///
 ///
-///
-/// [FDecorationBox]
-///   [FDecorationBox.rectangle]
-///   [FDecorationBox.circle]
-///
-/// [FDecorationShape]
-///   [FDecorationShape.box]
-///   [FDecorationShape.input]
-///   [FDecorationShape.outlined]
-///
-/// [FDecorationInput]
-///   [FDecorationInput.rowLabelIconText]
-///   [FDecorationInput.style1]
+/// [rowLabelIconText], ...
+/// [style1], ...
 ///
 ///
-
-// box decoration
-extension FDecorationBox on BoxDecoration {
-  static BoxDecoration rectangle({
-    Color? color,
-    DecorationImage? image,
-    Border? border,
-    BorderRadiusGeometry? borderRadius,
-    List<BoxShadow>? boxShadow,
-    BlendMode? backgroundBlendMode,
-  }) =>
-      BoxDecoration(
-        color: color,
-        image: image,
-        border: border,
-        borderRadius: borderRadius,
-        boxShadow: boxShadow,
-        backgroundBlendMode: backgroundBlendMode,
-        shape: BoxShape.rectangle,
-      );
-
-  static BoxDecoration circle({
-    Color? color,
-    DecorationImage? image,
-    Border? border,
-    BorderRadiusGeometry? borderRadius,
-    List<BoxShadow>? boxShadow,
-    BlendMode? backgroundBlendMode,
-  }) =>
-      BoxDecoration(
-        color: color,
-        image: image,
-        border: border,
-        borderRadius: borderRadius,
-        boxShadow: boxShadow,
-        backgroundBlendMode: backgroundBlendMode,
-        shape: BoxShape.circle,
-      );
-}
-
-// shape decoration
-extension FDecorationShape on ShapeDecoration {
-  static ShapeDecoration box({
-    required BoxBorder shape,
-    Color? color,
-    DecorationImage? image,
-    List<BoxShadow>? shadows,
-    Gradient? gradient,
-  }) =>
-      ShapeDecoration(
-        shape: shape,
-        color: color,
-        image: image,
-        gradient: gradient,
-        shadows: shadows,
-      );
-
-  static ShapeDecoration input({
-    required InputBorder shape,
-    Color? color,
-    DecorationImage? image,
-    List<BoxShadow>? shadows,
-    Gradient? gradient,
-  }) =>
-      ShapeDecoration(
-        shape: shape,
-        color: color,
-        image: image,
-        gradient: gradient,
-        shadows: shadows,
-      );
-
-  static ShapeDecoration outlined({
-    required OutlinedBorder shape,
-    Color? color,
-    DecorationImage? image,
-    List<BoxShadow>? shadows,
-    Gradient? gradient,
-  }) =>
-      ShapeDecoration(
-        shape: shape,
-        color: color,
-        image: image,
-        gradient: gradient,
-        shadows: shadows,
-      );
-}
-
-// input decoration
 extension FDecorationInput on InputDecoration {
   static InputDecoration rowLabelIconText({
     InputBorder? border,

@@ -17,5 +17,4 @@ part 'src/layout/takeaway_constants.dart';
 part 'src/responsible/extended.dart';
 part 'src/responsible/takeaway.dart';
 part 'src/widget/extended.dart';
-part 'src/widget/mix.dart';
 part 'src/widget/takeaway.dart';

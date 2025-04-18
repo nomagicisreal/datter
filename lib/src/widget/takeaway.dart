@@ -3,15 +3,11 @@ part of '../../datter.dart';
 ///
 ///
 /// stateful widget:
-/// [WProgressIndicator]
 /// [WImage]
 ///
 /// stateless widget:
-/// [WDrawer]
-/// [WListView]
 /// [WIcon]
 /// [WGridPaper]
-/// [WSpacer], [WDivider]
 ///
 /// render object widget:
 /// [WSizedBox]
@@ -24,7 +20,7 @@ part of '../../datter.dart';
 ///
 
 extension WImage on Image {
-  static assetsInDimension(
+  static Image assetsInDimension(
     String path,
     double dimension, {
     Alignment alignment = Alignment.center,
@@ -36,32 +32,6 @@ extension WImage on Image {
         width: dimension,
         alignment: alignment,
         filterQuality: filterQuality,
-      );
-}
-
-///
-///
-///
-extension WDrawer on Drawer {
-  static const none = Drawer();
-}
-
-///
-///
-///
-extension WListView on ListView {
-  static ListView get fakeBigSmall_25 => ListView.builder(
-        padding: KGeometry.edgeInsets_vertical_1 * 8,
-        itemCount: 25,
-        itemBuilder: (context, index) => Container(
-          margin: KGeometry.edgeInsets_horizontal_1 * 24 +
-              KGeometry.edgeInsets_vertical_1 * 8,
-          height: index.isOdd ? 128 : 36,
-          decoration: BoxDecoration(
-            borderRadius: KGeometry.borderRadius_circularAll_1 * 8,
-            color: Colors.grey.shade600,
-          ),
-        ),
       );
 }
 
@@ -103,15 +73,6 @@ extension WGridPaper on GridPaper {
   ];
 }
 
-extension WSpacer on Spacer {
-  static const Spacer none = Spacer();
-}
-
-extension WDivider on Divider {
-  static const white = Divider(color: Colors.white);
-  static const black_3 = Divider(thickness: 3);
-}
-
 ///
 ///
 /// [height], ...
@@ -134,10 +95,10 @@ extension WSizedBox on SizedBox {
   static Widget squareColored({
     required double dimension,
     required Color color,
-    bool center = false,
+    bool centered = false,
     Widget? child,
   }) =>
-      center
+      centered
           ? Center(
               child: SizedBox.square(
                 dimension: dimension,
@@ -153,14 +114,14 @@ extension WSizedBox on SizedBox {
   ///
   ///
   static List<Widget> sandwich({
-    bool isWidth = true,
+    Axis axis = Axis.horizontal,
     required double dimension,
     required List<Widget> sibling,
   }) =>
       sibling.sandwich(
         List.generate(
           sibling.length - 1,
-          isWidth
+          axis == Axis.horizontal
               ? (_) => WSizedBox.width(dimension)
               : (_) => WSizedBox.height(dimension),
           growable: false,

@@ -67,6 +67,9 @@ implements State<T>, OverlayStateProperty {
     growable: false,
   );
 
+  ///
+  ///
+  ///
   OverlayEntryInsertionNormal overlayInsert({
     bool opaque = false,
     bool maintainState = false,
@@ -84,6 +87,17 @@ implements State<T>, OverlayStateProperty {
     context.overlay.insert(entry, below: below, above: above);
     _overlays.add(entry);
     return OverlayEntryInsertionNormal._(entry, this);
+  }
+
+  Future<S?> overlayInsertWaitingFuture<S>({
+    required Future<S?> future,
+    required WidgetBuilder waiting,
+  }) async {
+    final entry = OverlayEntry(builder: waiting);
+    context.overlay.insert(entry);
+    final result = await future;
+    entry.remove();
+    return result;
   }
 }
 
