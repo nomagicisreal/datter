@@ -1,6 +1,9 @@
+library;
+
+export 'package:damath/damath.dart';
+
 import 'dart:async';
 import 'dart:math' as math;
-
 import 'package:damath/damath.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
