@@ -89,8 +89,8 @@ implements State<T>, OverlayStateProperty {
     return OverlayEntryInsertionNormal._(entry, this);
   }
 
-  Future<S?> overlayInsertWaitingFuture<S>({
-    required Future<S?> future,
+  Future<S> overlayInsertWaitingFuture<S>({
+    required Future<S> future,
     required WidgetBuilder waiting,
   }) async {
     final entry = OverlayEntry(builder: waiting);
