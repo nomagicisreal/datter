@@ -11,7 +11,6 @@ part of '../../datter.dart';
 ///
 /// render object widget:
 /// [WSizedBox]
-/// [WColoredBox]
 /// [WCustomPaint], [WClipPath]
 /// [WRadioList]
 /// [FTransform]
@@ -86,12 +85,6 @@ extension WSizedBox on SizedBox {
   ///
   ///
   ///
-  static SizedBox height(double dimension, {Widget? child}) =>
-      SizedBox(height: dimension, child: child);
-
-  static SizedBox width(double dimension, {Widget? child}) =>
-      SizedBox(width: dimension, child: child);
-
   static Widget squareColored({
     required double dimension,
     required Color color,
@@ -122,25 +115,11 @@ extension WSizedBox on SizedBox {
         List.generate(
           sibling.length - 1,
           axis == Axis.horizontal
-              ? (_) => WSizedBox.width(dimension)
-              : (_) => WSizedBox.height(dimension),
+              ? (_) => SizedBox(width: dimension)
+              : (_) => SizedBox(height: dimension),
           growable: false,
         ),
       );
-}
-
-///
-///
-///
-extension WColoredBox on ColoredBox {
-  static const ColoredBox white = ColoredBox(color: Colors.white);
-  static const ColoredBox red = ColoredBox(color: Colors.red);
-  static const ColoredBox orange = ColoredBox(color: Colors.orange);
-  static const ColoredBox yellow = ColoredBox(color: Colors.yellow);
-  static const ColoredBox green = ColoredBox(color: Colors.green);
-  static const ColoredBox blue = ColoredBox(color: Colors.blue);
-  static const ColoredBox blueAccent = ColoredBox(color: Colors.blueAccent);
-  static const ColoredBox purple = ColoredBox(color: Colors.purple);
 }
 
 ///
