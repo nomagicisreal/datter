@@ -1,9 +1,13 @@
 library;
 
+export 'product/overlay_model.dart';
+
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:damath/damath.dart';
+import 'package:flutter/foundation.dart' show nonVirtual;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show FrameCallback;
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 
 part 'src/diagnosticable/core.dart';

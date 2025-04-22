@@ -2,279 +2,208 @@ part of '../../datter.dart';
 
 ///
 ///
-/// * [OverlayStateProperty]
-///     * [OverlayStateNormalMixin]
-///     * [OverlayStateUpdateToRemoveMixin]
-///
-/// * [OverlayEntryInsertion]
-///     * [OverlayEntryInsertionNormal]
-///     * [OverlayEntryInsertionUpdateToRemove]
-///         --[OverlayStreamWidget]
-///             * [OverlayStreamUpdateExist]
-///
-///
+/// *
+/// * [FrameCallbackInitMixin]
+/// * [StreamSubscriptionInitMixin]
+/// *
+/// * [MaterialColorMixin]
+/// * [FabLocationMixin]
+/// *
+/// * [DialogRichMixin]
+/// *
+/// * [TextEditingControllerMixin]
+/// * [FormKeyMixin]
 /// * [RadioListMixin]
-/// * [DialogBinarySimpleMixin]
-/// * [FormTextEditingMixin]
+/// * [Form1By1Mixin], [Form2By2Mixin]
+/// *
+/// * [ListItemStateMixin]
 /// * [ImageBuilderMixin]
-///
-///
-///
-/// [GlobalKeysWidget]
-/// [StreamWidget]
-///
+/// *
+/// *
 ///
 ///
 
 ///
 ///
-/// In tradition, when we want to insert an overlay in an stateful widget state, we have to use
-///   1. [OverlayState.insert] by [BuildContextExtension.overlay]
-///   2. [OverlayPortalController.toggle]
-/// both of them have to name an instance,
-///   for 1, naming an [OverlayEntry] to handle [OverlayEntry.markNeedsBuild] and [OverlayEntry.remove].
-///   for 2, naming and holding an [OverlayPortalController] for passing it to [OverlayPortal.controller]
-/// for now, without instance we can still update and remove overlay by [overlays]
 ///
-///
-abstract interface class OverlayStateProperty {
-  const OverlayStateProperty();
-
-  List<OverlayEntryInsertion> get _overlays;
-
-  List<OverlayEntryInsertion> get overlays;
-}
-
-///
-/// Excluding [overlayInsert], it's unnecessary to create function [overlayUpdate] and [overlayRemove].
-/// for update, it's possible to include removing after updating finished, may be async or sync.
-/// for remove, naming as a function is a bad practice for entry required updating before remove.
-/// therefore, update and remove should be customized by [OverlayStateAbstract] implementation.
-/// See Also [OverlayEntryInsertion]
-///
-mixin OverlayStateNormalMixin<T extends StatefulWidget>
-    implements State<T>, OverlayStateProperty {
-  final List<OverlayEntryInsertion> _overlays = [];
-
-  @override
-  List<OverlayEntryInsertion> get overlays => List.of(
-        _overlays,
-        growable: false,
-      );
-
-  ///
-  ///
-  ///
-  OverlayEntryInsertionNormal overlayInsert({
-    bool opaque = false,
-    bool maintainState = false,
-    bool canSizeOverlay = false,
-    required WidgetBuilder builder,
-    OverlayEntry? below,
-    OverlayEntry? above,
-  }) {
-    final entry = OverlayEntry(
-      opaque: opaque,
-      maintainState: maintainState,
-      canSizeOverlay: canSizeOverlay,
-      builder: builder,
-    );
-    context.overlay.insert(entry, below: below, above: above);
-    final insertion = OverlayEntryInsertionNormal(entry, this);
-    _overlays.add(insertion);
-    return insertion;
-  }
-
-  OverlayEntryInsertionUpdateToRemove overlayInsertUpdateToRemove({
-    bool opaque = false,
-    bool maintainState = false,
-    bool canSizeOverlay = false,
-    OverlayEntry? below,
-    OverlayEntry? above,
-    required WidgetCallableBuilder builder,
-  }) {
-    late final OverlayEntry entry;
-    late final OverlayEntryInsertionUpdateToRemove insertion;
-    entry = OverlayEntry(
-      opaque: opaque,
-      maintainState: maintainState,
-      builder: (context) => builder(context, () {
-        entry.remove();
-        _overlays.remove(insertion);
-      }),
-    );
-    insertion = OverlayEntryInsertionUpdateToRemove(entry, this);
-    context.overlay.insert(entry, below: below, above: above);
-    _overlays.add(insertion);
-    return insertion;
-  }
-
-  ///
-  ///
-  ///
-  Future<S> overlayWaitingFuture<S>({
-    required Future<S> future,
-    required WidgetBuilder waiting,
-  }) async {
-    final entry = OverlayEntry(builder: waiting);
-    context.overlay.insert(entry);
-    final result = await future;
-    entry.remove();
-    return result;
-  }
-
-  Future<S> overlayWaitingFutureUpdateToRemove<S>({
-    required Future<S> future,
-    required WidgetCallableBuilder waiting,
-  }) async {
-    late final OverlayEntry entry;
-    entry = OverlayEntry(builder: (context) => waiting(context, entry.remove));
-    context.overlay.insert(entry);
-    final result = await future;
-    entry.markNeedsBuild();
-    return result;
-  }
-}
-
-///
-/// prevent stateful widget state implement [OverlayStateProperty] from accessing to [OverlayEntry.remove],
-///
-abstract base class OverlayEntryInsertion {
-  final OverlayEntry _entry;
-  final OverlayStateProperty _owner;
-
-  const OverlayEntryInsertion(this._entry, this._owner);
-
-  void markNeedsBuild() => _entry.markNeedsBuild();
-
-  void remove() => throw Exception(
-        "cannot directly remove entry, use 'markNeedsBuild()' instead",
-      );
-}
-
-final class OverlayEntryInsertionUpdateToRemove
-    extends OverlayEntryInsertionNormal {
-  const OverlayEntryInsertionUpdateToRemove(super._entry, super.owner);
-}
-
-final class OverlayEntryInsertionNormal extends OverlayEntryInsertion {
-  const OverlayEntryInsertionNormal(super._entry, super._owner);
-
-  @override
-  void remove() {
-    _owner._overlays.remove(_entry);
-    _entry.remove();
-  }
-}
-
-///
-///
-///
-class OverlayStreamWidget extends StatefulWidget {
-  const OverlayStreamWidget({
-    super.key,
-    required this.streamUpdate,
-    required this.builderFor,
-    required this.updateIfExist,
-    required this.child,
-  });
-
-  final Stream<String> streamUpdate;
-  final Mapper<String, WidgetCallableBuilder> builderFor;
-  final OverlayStreamUpdateExist updateIfExist;
-  final Widget child;
-
-  @override
-  State<OverlayStreamWidget> createState() => _OverlayStreamWidgetState();
-
-  static void updateExist(
-    List<OverlayEntry> overlays,
-    Map<String, OverlayEntry> exists,
-    String key,
-    OverlayEntry insertion,
-  ) {
-    insertion.markNeedsBuild();
-  }
-}
-
-class _OverlayStreamWidgetState extends State<OverlayStreamWidget>
-    with OverlayStateNormalMixin<OverlayStreamWidget> {
-  late final StreamSubscription<String> subscription;
-  final Map<String, OverlayEntryInsertion> exists = {};
+mixin FrameCallbackInitMixin<T extends StatefulWidget> on State<T> {
+  FrameCallback get frameCallbackInitial;
 
   @override
   void initState() {
-    subscription = widget.streamUpdate.listen(
-      (key) => exists[key].consumeNotNull(
-        (value) => widget.updateIfExist(overlays, exists, key, value),
-        () => exists.putIfAbsent(
-          key,
-          () => overlayInsertUpdateToRemove(builder: widget.builderFor(key)),
-        ),
-      ),
-    );
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(frameCallbackInitial);
+  }
+}
+
+///
+///
+///
+mixin StreamSubscriptionInitMixin<T extends StatefulWidget, S> on State<T> {
+  late final StreamSubscription<S> _subscription;
+
+  Stream<S> get streamInit;
+
+  Consumer<S> get streamConsumerInit;
+
+  Function? get streamOnErrorInit;
+
+  VoidCallback? streamOnDoneInit;
+
+  bool? streamCancelOnErrorInit;
+
+  @override
+  void initState() {
+    super.initState();
+    _subscription = streamInit.listen(
+      streamConsumerInit,
+      onError: streamOnErrorInit,
+      onDone: streamOnDoneInit,
+      cancelOnError: streamCancelOnErrorInit,
+    );
   }
 
   @override
   void dispose() {
-    subscription.cancel();
     super.dispose();
+    _subscription.cancel();
   }
-
-  @override
-  Widget build(BuildContext context) => widget.child;
 }
 
-typedef OverlayStreamUpdateExist = void Function(
-  List<OverlayEntryInsertion> insertions,
-  Map<String, OverlayEntryInsertion> exists,
-  String key,
-  OverlayEntryInsertion insertion,
-);
+///
+///
+///
+mixin MaterialColorMixin<T extends StatefulWidget> on State<T> {
+  late MaterialColor? _color;
 
-///
-///
-///
-mixin RadioListMixin<W extends StatefulWidget, T> on State<W> {
-  late final List<T?> options;
-
-  int get optionCount => 1;
+  MaterialColor? get colorInit => null;
 
   @override
   void initState() {
     super.initState();
-    options = List.filled(optionCount, null, growable: false);
+    _color = colorInit;
   }
 
-  ///
-  ///
-  ///
-  void onRadioOptionChanged(T? value, [int index = 0]) =>
-      setState(() => options[index] = value);
+  @nonVirtual
+  MaterialColor? get color => _color;
 
-  void clearRadioOptions() {
-    for (var i = 0; i < optionCount; i++) {
-      options[i] = null;
-    }
-  }
+  @nonVirtual
+  set color(MaterialColor? color) => setState(() => _color = color);
 }
 
 ///
 ///
 ///
-mixin DialogBinarySimpleMixin<T extends StatefulWidget> on State<T> {
+mixin FabLocationMixin<T extends StatefulWidget> on State<T> {
+  late FloatingActionButtonLocation? _location;
+
+  FloatingActionButtonLocation? get fabLocationInit => null;
+
+  @override
+  void initState() {
+    super.initState();
+    _location = fabLocationInit;
+  }
+
+  @nonVirtual
+  FloatingActionButtonLocation? get fabLocation => _location;
+
+  @nonVirtual
+  set fabLocation(FloatingActionButtonLocation? location) =>
+      setState(() => _location = location);
+}
+
+///
+///
+///
+///
+///
+///
+mixin DialogRichMixin<T extends StatefulWidget> on State<T> {
+  Future<void> showDialogTapToContinue({required WidgetBuilder builder}) =>
+      showDialog(
+        context: context,
+        builder: (context) => Stack(
+          fit: StackFit.expand,
+          children: [
+            builder(context),
+            GestureDetector(onTap: context.navigator.pop),
+          ],
+        ),
+      );
+
+  Future<bool?> showDialogBinary({
+    required Widget textEnsure,
+    required Widget textCancel,
+    required WidgetParentBuilder builder,
+  }) =>
+      showDialog(
+        context: context,
+        builder: (context) => builder(
+          context,
+          [
+            TextButton(
+              onPressed: () => context.navigator.pop(false),
+              child: textCancel,
+            ),
+            TextButton(
+              onPressed: () => context.navigator.pop(true),
+              child: textEnsure,
+            ),
+          ],
+        ),
+      );
+
+  Future<I?> showDialogList<I>({
+    required List<I> items,
+    required WidgetParentBuilder builder,
+  }) =>
+      showDialog<I>(
+        context: context,
+        builder: (context) => builder(
+          context,
+          items.mapToList(
+            (item) => TextButton(
+              onPressed: () => context.navigator.pop(item),
+              child: Text(item.toString()),
+            ),
+          ),
+        ),
+      );
+
+  Future<V?> showDialogMap<V>({
+    required Map<String, V> options,
+    required WidgetParentBuilder builder,
+  }) =>
+      showDialog(
+        context: context,
+        builder: (context) => builder(
+          context,
+          options.keys.fold(
+            [],
+            (list, title) => list
+              ..add(TextButton(
+                onPressed: () => context.navigator.pop(options[title]),
+                child: Text(title),
+              )),
+          ),
+        ),
+      );
+
+  ///
+  ///
+  ///
   Future<bool?> dialogBinarySimple({
     required String title,
     required String ensure,
     required String cancel,
-  }) => context.showDialogBinary(
-    textEnsure: Text(ensure),
-    textCancel: Text(cancel),
-    builder:
-        (context, children) =>
-        SimpleDialog(title: Center(child: Text(title)), children: children),
-  );
+  }) =>
+      showDialogBinary(
+        textEnsure: Text(ensure),
+        textCancel: Text(cancel),
+        builder: (context, children) =>
+            SimpleDialog(title: Center(child: Text(title)), children: children),
+      );
 
   Future<bool> dialogUntilDoubleEnsure({
     required Supplier<Future<bool?>> check,
@@ -287,10 +216,10 @@ mixin DialogBinarySimpleMixin<T extends StatefulWidget> on State<T> {
       requiredFinish = await check();
       if (requiredFinish == true &&
           await dialogBinarySimple(
-            title: verbose,
-            ensure: verboseEnsure,
-            cancel: verboseCancel,
-          ) ==
+                title: verbose,
+                ensure: verboseEnsure,
+                cancel: verboseCancel,
+              ) ==
               true) {
         return true;
       }
@@ -301,59 +230,95 @@ mixin DialogBinarySimpleMixin<T extends StatefulWidget> on State<T> {
 
 ///
 ///
-/// [keyForm], ...
-/// [validate_notEmpty], ...
 ///
 ///
-mixin FormTextEditingMixin<T extends StatefulWidget> on State<T> {
-  final GlobalKey<FormState> keyForm = GlobalKey<FormState>();
-  late final List<TextEditingController> textEditors;
+mixin TextEditingControllerMixin<T extends StatefulWidget> on State<T> {
+  ///
+  /// if required [TextInputType.number], text editing controller also needs to be as follow:
+  /// ```
+  /// TextEditingController.fromValue(
+  ///   TextEditingValue(
+  ///     text: '',
+  ///     selection: TextSelection.collapsed(offset: 0),
+  ///   ),
+  /// )
+  /// ```
+  /// see https://stackoverflow.com/questions/68895441/flutter-textformfield-textinputtype-number-is-not-working-properly-when-i-use-c
+  ///
+  late final List<TextEditingController> textEditingControllers;
 
-  // see https://stackoverflow.com/questions/68895441/flutter-textformfield-textinputtype-number-is-not-working-properly-when-i-use-c
-  int get countTextEditor => 1;
+  int get countTextEditingController;
 
-  bool get requireTextControllerCollapsed => true;
+  Generator<TextEditingController> get generateTextEditingControllers;
 
   @override
   void initState() {
     super.initState();
-    textEditors = List.generate(
-      countTextEditor,
-          (_) =>
-      requireTextControllerCollapsed
-          ? TextEditingController.fromValue(
-        TextEditingValue(
-          text: '',
-          selection: TextSelection.collapsed(offset: 0),
-        ),
-      )
-          : TextEditingController(),
+    textEditingControllers = List.generate(
+      countTextEditingController,
+      generateTextEditingControllers,
       growable: false,
     );
   }
 
-  ///
-  ///
-  ///
-  void clearTextEditors() {
-    for (var editor in textEditors) {
-      editor.clear();
+  @override
+  void dispose() {
+    super.dispose();
+    for (var editors in textEditingControllers) {
+      editors.dispose();
     }
   }
 
   ///
   ///
   ///
-  static FormFieldValidator<String> validate_notEmpty(
-      {required String messageEmpty}) =>
-          (value) => value == null || value.isEmpty ? messageEmpty : null;
+  void clearTextEditingControllers() {
+    for (var editor in textEditingControllers) {
+      editor.clear();
+    }
+  }
+}
 
-  static FormFieldValidator<String> validate_length({
+///
+/// [keyForm], ...
+/// [validator_notEmpty], ...
+///
+mixin FormKeyMixin<T extends StatefulWidget> on State<T> {
+  final GlobalKey<FormState> keyForm = GlobalKey<FormState>();
+
+  void formFinish();
+
+  void formReform({required bool keepAnswer});
+
+  Future<bool> goFormFinishOrReform();
+
+  Future<void> formFinishOrReform({
+    bool keepAnswerIfReform = true,
+    VoidCallback? callbackReset,
+    VoidCallback? callbackFinish,
+  }) async {
+    if (await goFormFinishOrReform()) {
+      formFinish();
+      callbackFinish?.call();
+      return;
+    }
+    formReform(keepAnswer: keepAnswerIfReform);
+    callbackReset?.call();
+  }
+
+  ///
+  ///
+  ///
+  static FormFieldValidator<String> validator_notEmpty(
+          {required String messageEmpty}) =>
+      (value) => value == null || value.isEmpty ? messageEmpty : null;
+
+  static FormFieldValidator<String> validator_length({
     required int count,
     required String messageEmpty,
     required String messageLengthWrong,
   }) =>
-          (value) {
+      (value) {
         if (value == null || value.isEmpty) return messageEmpty;
         if (value.length != count) return messageLengthWrong;
         return null;
@@ -363,27 +328,280 @@ mixin FormTextEditingMixin<T extends StatefulWidget> on State<T> {
     required String messageEmpty,
     required String messageNotInt,
   }) =>
-          (value) {
+      (value) {
         if (value == null || value.isEmpty) return messageEmpty;
         final v = int.tryParse(value);
         if (v == null) return messageNotInt;
         return null;
       };
 
-  static FormFieldValidator<String> validate_intBetween({
+  ///
+  ///
+  ///
+  static FormFieldValidator<String> validator_intBetween({
     required int min,
     required int max,
+    required String messageEmpty,
+    required String messageNotInt,
+    required String messageOutOfRange,
+  }) =>
+      min > max
+          ? (throw StateError('there is no integer between $min ~ $max'))
+          : (value) {
+              if (value == null || value.isEmpty) return messageEmpty;
+              final v = int.tryParse(value);
+              if (v == null) return messageNotInt;
+              if (v.isOutsideOpen(min, max)) {
+                return '$messageOutOfRange: $min~$max';
+              }
+              return null;
+            };
+
+  static FormFieldValidator<String> validator_intWithin({
+    required int floor,
+    required int ceil,
     required String messageEmpty,
     required String messageNoInt,
     required String messageOutOfRange,
   }) =>
-          (value) {
-        if (value == null || value.isEmpty) return messageEmpty;
-        final v = int.tryParse(value);
-        if (v == null) return messageNoInt;
-        if (v.isOutsideOpen(min, max)) return '$messageOutOfRange: $min~$max';
-        return null;
-      };
+      floor + 1 >= ceil
+          ? throw StateError('there is no integer within $floor ~ $ceil')
+          : (value) {
+              if (value == null || value.isEmpty) return messageEmpty;
+              final v = int.tryParse(value);
+              if (v == null) return messageNoInt;
+              if (v.isOutsideClose(floor, ceil)) {
+                return floor + 2 == ceil
+                    ? '$messageOutOfRange: ${floor + 1}'
+                    : '$messageOutOfRange: ${floor + 1}~${ceil - 1}';
+              }
+              return null;
+            };
+}
+
+///
+///
+///
+mixin RadioListMixin<T extends StatefulWidget> on State<T>
+    implements TextEditingControllerMixin<T> {
+  ///
+  ///
+  ///
+  @override
+  int get countTextEditingController => 1;
+
+  ///
+  ///
+  ///
+  void _onRadioOptionChanged(String? value) =>
+      setState(() => textEditingControllers.first.text = value ?? '');
+
+  List<RadioListTile<String?>> radioListOptions(List<String> options) =>
+      List.of(
+        options.mapToList(
+          (option) => RadioListTile<String?>(
+            groupValue: textEditingControllers.first.text,
+            title: Text(option),
+            value: option,
+            onChanged: _onRadioOptionChanged,
+          ),
+        ),
+        growable: false,
+      );
+}
+
+///
+///
+///
+mixin Form1By1Mixin<T extends StatefulWidget> on State<T>
+    implements FormKeyMixin<T>, TextEditingControllerMixin<T> {
+  int get formQuestionStepInit => 1;
+
+  List<String> get formQuestionsInit;
+
+  ///
+  ///
+  ///
+  late int _formQuestionStep;
+  late final Map<String, String?> formAnswers;
+
+  String get _formQuestionCurrent =>
+      formAnswers.keys.elementAt(_formQuestionStep - 1);
+
+  ///
+  ///
+  ///
+  @override
+  int get countTextEditingController => 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _formQuestionStep = formQuestionStepInit;
+    formAnswers = formQuestionsInit.iterator.toMapKeys();
+  }
+
+  @override
+  void formFinish() => setState(() => formAnswers.reset());
+
+  @override
+  void formReform({required bool keepAnswer}) => setState(() {
+        _formQuestionStep = formQuestionStepInit;
+        if (keepAnswer) return;
+        textEditingControllers.first.clear();
+        formAnswers.reset();
+      });
+
+  ///
+  ///
+  ///
+  bool goFormNext(String question, String answer);
+
+  void formNext() {
+    if (!keyForm.currentState!.validate()) return;
+    if (goFormNext(_formQuestionCurrent, textEditingControllers.first.text)) {
+      textEditingControllers.first.clear();
+      setState(() => _formQuestionStep++);
+    }
+  }
+}
+
+///
+///
+///
+mixin Form2By2Mixin<T extends StatefulWidget> on State<T>
+    implements FormKeyMixin<T>, TextEditingControllerMixin<T> {
+  ///
+  ///
+  ///
+  int get formQuestionStepInit => 1;
+
+  int get formQuestionStepAInit => 1;
+
+  int get formQuestionStepBInit => 1;
+
+  List<String> get formQuestionsAInit;
+
+  List<String> get formQuestionsBInit;
+
+  ///
+  ///
+  ///
+  late int _step;
+  late int _stepA;
+  late int _stepB;
+  late final Map<String, String?> answersA;
+  late final Map<String, String?> answersB;
+
+  String get _formQuestionACurrent => answersA.keys.elementAt(_stepA - 1);
+
+  String get _formQuestionBCurrent => answersB.keys.elementAt(_stepB - 1);
+
+  ///
+  ///
+  ///
+  @override
+  int get countTextEditingController => 2;
+
+  @override
+  void initState() {
+    super.initState();
+    _step = formQuestionStepInit;
+    _stepA = formQuestionStepAInit;
+    _stepB = formQuestionStepBInit;
+    answersA = formQuestionsAInit.iterator.toMapKeys();
+    answersB = formQuestionsBInit.iterator.toMapKeys();
+  }
+
+  @override
+  void formFinish() => setState(() {
+        answersA.reset();
+        answersB.reset();
+      });
+
+  @override
+  void formReform({required bool keepAnswer}) => setState(() {
+        _step = formQuestionStepInit;
+        _stepA = formQuestionStepAInit;
+        _stepB = formQuestionStepBInit;
+        if (keepAnswer) return;
+        clearTextEditingControllers();
+        answersA.reset();
+        answersB.reset();
+      });
+
+  ///
+  ///
+  ///
+  Widget questionAnswerA(int index);
+
+  Widget questionAnswerB(int index);
+
+  Widget get centerBetweenAB;
+
+  List<Widget> get children => [
+        if (_stepA == _step) questionAnswerA(_step),
+        if (_step == _stepA && _step == _stepB) centerBetweenAB,
+        if (_stepB == _step) questionAnswerB(_step),
+      ];
+
+  ///
+  ///
+  ///
+  bool goFormNext(String qA, String qB, String aA, String aB);
+
+  bool haveToAnswerNextA(String qA, String qB, String aA, String aB);
+
+  bool haveToAnswerNextB(String qA, String qB, String aA, String aB);
+
+  void formNext() {
+    if (!keyForm.currentState!.validate()) return;
+    final qA = _formQuestionACurrent;
+    final qB = _formQuestionBCurrent;
+    final aA = textEditingControllers[0].text;
+    final aB = textEditingControllers[1].text;
+    if (!goFormNext(qA, qB, aA, aB)) return;
+    clearTextEditingControllers();
+    if (haveToAnswerNextA(qA, qB, aA, aB)) _stepA = _step + 1;
+    if (haveToAnswerNextB(qA, qB, aA, aB)) _stepB = _step + 1;
+    setState(() => _step++);
+  }
+}
+
+///
+///
+///
+mixin ListItemStateMixin<T extends StatefulWidget, I, S> on State<T> {
+  late final List<I> _listItems;
+  late final Map<S, WidgetValuedBuilder<I>> _listItemBuilders;
+
+  List<I> get listItemsInit;
+
+  Map<S, WidgetValuedBuilder<I>> get listItemBuilders;
+
+  Mapper<I, S> get listItemToState;
+
+  @override
+  void initState() {
+    super.initState();
+    _listItems = listItemsInit;
+    _listItemBuilders = Map.unmodifiable(_listItemBuilders);
+  }
+
+  Widget? itemBuilder(BuildContext context, int index) =>
+      _listItemBuilders[listItemToState(_listItems[index])]!(
+        context,
+        _listItems[index],
+      );
+
+  void listItemUpdate({
+    int? index,
+    required I itemNew,
+    required PredicatorFusionor<I> fusion,
+  }) {
+    index ??= _listItems.indexWhere((itemOld) => fusion(itemOld, itemNew));
+    setState(() => _listItems[index!] = itemNew);
+  }
 }
 
 ///
@@ -393,119 +611,26 @@ mixin ImageBuilderMixin<T extends StatefulWidget> on State<T> {
   ///
   ///
   ///
-  static ImageErrorWidgetBuilder error_of(Widget child) =>
-          (context, error, trace) => child;
-
-  ///
-  ///
-  ///
   Color get colorProgressIndicator_imageLoading => Colors.blueGrey;
 
   ImageLoadingBuilder imageLoadingCircular(WidgetChildBuilder builder) =>
-          (context, child, loadingProgress) => loadingProgress == null
+      (context, child, loadingProgress) => loadingProgress == null
           ? child
           : builder(
-        context,
-        CircularProgressIndicator(
-          color: colorProgressIndicator_imageLoading,
-          value: loadingProgress.expectedTotalBytes != null &&
-              loadingProgress.expectedTotalBytes != null
-              ? loadingProgress.cumulativeBytesLoaded /
-              loadingProgress.expectedTotalBytes!
-              : null,
-        ),
-      );
-}
+              context,
+              CircularProgressIndicator(
+                color: colorProgressIndicator_imageLoading,
+                value: loadingProgress.expectedTotalBytes != null &&
+                        loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            );
 
-///
-///
-///
-class GlobalKeysWidget<S extends State<StatefulWidget>> extends StatefulWidget {
-  const GlobalKeysWidget({
-    super.key,
-    required this.keysName,
-    required this.builder,
-  });
-
-  final Set<String> keysName;
-  final WidgetGlobalKeysBuilder<S> builder;
-
-  static GlobalKey<S> toGlobalKey<S extends State<StatefulWidget>>(
-    String key,
-  ) =>
-      GlobalKey<S>(debugLabel: key);
-
-  @override
-  State<GlobalKeysWidget<S>> createState() => _GlobalKeysWidgetState<S>();
-}
-
-class _GlobalKeysWidgetState<S extends State<StatefulWidget>>
-    extends State<GlobalKeysWidget<S>> {
-  final Map<String, GlobalKey<S>> keys = {};
-
-  @override
-  void initState() {
-    final names = widget.keysName;
-    keys.addAll(Map.fromIterables(
-      names,
-      names.map(GlobalKeysWidget.toGlobalKey),
-    ));
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant GlobalKeysWidget<S> oldWidget) {
-    keys.migrateInto(widget.keysName, GlobalKeysWidget.toGlobalKey);
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  Widget build(BuildContext context) => widget.builder(context, keys);
-}
-
-///
-///
-///
-class StreamWidget<T> extends StatelessWidget {
-  const StreamWidget({
-    super.key,
-    this.initialData,
-    this.waitingDataBuilder,
-    this.activeBuilder,
-    this.doneConnectBuilder,
-    this.noneConnectionBuilder,
-    required this.stream,
-    required this.builder,
-    this.child,
-  });
-
-  final T? initialData;
-  final Stream<T> stream;
-  final ValueWidgetBuilder<T?> builder;
-  final ValueWidgetBuilder<T?>? activeBuilder;
-  final ValueWidgetBuilder<T?>? waitingDataBuilder;
-  final ValueWidgetBuilder<T?>? doneConnectBuilder;
-  final ValueWidgetBuilder<T?>? noneConnectionBuilder;
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<T>(
-      initialData: initialData,
-      stream: stream,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          throw UnimplementedError(snapshot.error.toString());
-        }
-        final status = snapshot.connectionState;
-        return (switch (status) {
-              ConnectionState.none => noneConnectionBuilder,
-              ConnectionState.waiting => waitingDataBuilder,
-              ConnectionState.active => activeBuilder,
-              ConnectionState.done => doneConnectBuilder,
-            } ??
-            this.builder)(context, snapshot.data, child);
-      },
-    );
-  }
+  ///
+  ///
+  ///
+  static ImageErrorWidgetBuilder error_of(Widget child) =>
+      (context, error, trace) => child;
 }

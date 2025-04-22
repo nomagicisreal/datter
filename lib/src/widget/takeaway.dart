@@ -385,44 +385,58 @@ extension WClipPath on ClipPath {
 ///
 ///
 ///
-///
-extension WRadioList on RadioListTile {
-  static List<RadioListTile<String?>> listString({
-    required String? optionsHost,
-    required List<String> options,
-    required ValueChanged<String?> onChanged,
-  }) =>
-      options.mapToList(
-        (option) => RadioListTile<String?>(
-          groupValue: optionsHost,
-          title: Text(option),
-          value: option,
-          onChanged: onChanged,
-        ),
-      );
-}
-
-///
-///
-///
-extension WFutureBuilder on FutureBuilder {
-  static FutureBuilder progressOrBuild<T>({
+extension WAwaitBuilder on FutureBuilder {
+  ///
+  ///
+  ///
+  static FutureBuilder<T> future_progressingOrBuild<T>({
     WidgetBuilder progressBuilder = FWidgetBuilder.progressing,
     WidgetBuilder? builderNull,
     required Future<T> future,
-    required WidgetValuedBuilder<T> builder,
+    required WidgetValuedBuilder<T?> builder,
   }) =>
       FutureBuilder<T>(
         future: future,
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final data = snapshot.data;
-            if (data == null) {
-              return builderNull?.call(context) ?? (throw UnimplementedError());
-            }
-            return builder(context, data);
-          }
+          if (snapshot.hasData) return builder(context, snapshot.data);
           return progressBuilder(context);
+        },
+      );
+
+  ///
+  ///
+  ///
+  static StreamBuilder<T> stream_normal<T>({
+    Key? key,
+    T? initialData,
+    ValueWidgetBuilder<T?>? noneConnectionBuilder,
+    ValueWidgetBuilder<T?>? doneConnectBuilder,
+    ValueWidgetBuilder<Object?>? errorBuilder,
+    ValueWidgetBuilder<T?>? waitingDataBuilder,
+    ValueWidgetBuilder<T?>? activeBuilder,
+    WidgetBuilder noDataBuilder = FWidgetBuilder.progressing,
+    required Stream<T> stream,
+    required ValueWidgetBuilder<T?> builder,
+    Widget? child,
+  }) =>
+      StreamBuilder<T>(
+        key: key,
+        initialData: initialData,
+        stream: stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return errorBuilder?.call(context, snapshot.error, child) ??
+                (throw UnimplementedError());
+          }
+          if (!snapshot.hasData) return noDataBuilder(context);
+          final status = snapshot.connectionState;
+          return (switch (status) {
+                ConnectionState.none => noneConnectionBuilder,
+                ConnectionState.waiting => waitingDataBuilder,
+                ConnectionState.active => activeBuilder,
+                ConnectionState.done => doneConnectBuilder,
+              } ??
+              builder)(context, snapshot.data, child);
         },
       );
 }

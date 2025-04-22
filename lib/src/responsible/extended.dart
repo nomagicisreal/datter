@@ -110,6 +110,7 @@ extension GlobalKeyExtension on GlobalKey {
 /// [showSnackbar], ...
 /// [showMaterialBanner], ...
 /// [showDialogTapToContinue], ...
+/// [showMenuEntries], ...
 ///
 ///
 extension BuildContextExtension on BuildContext {
@@ -324,79 +325,6 @@ extension BuildContextExtension on BuildContext {
   ///
   ///
   ///
-  Future<void> showDialogTapToContinue({required WidgetBuilder builder}) =>
-      showDialog(
-        context: this,
-        builder: (context) => Stack(
-          fit: StackFit.expand,
-          children: [
-            builder(context),
-            GestureDetector(onTap: context.navigator.pop),
-          ],
-        ),
-      );
-
-  Future<bool?> showDialogBinary({
-    required Widget textEnsure,
-    required Widget textCancel,
-    required WidgetParentBuilder builder,
-  }) =>
-      showDialog(
-        context: this,
-        builder: (context) => builder(
-          context,
-          [
-            TextButton(
-              onPressed: () => context.navigator.pop(false),
-              child: textCancel,
-            ),
-            TextButton(
-              onPressed: () => context.navigator.pop(true),
-              child: textEnsure,
-            ),
-          ],
-        ),
-      );
-
-  Future<T?> showDialogList<T>({
-    required List<T> items,
-    required WidgetParentBuilder builder,
-  }) =>
-      showDialog(
-        context: this,
-        builder: (context) => builder(
-          context,
-          items.mapToList(
-            (item) => TextButton(
-              onPressed: () => context.navigator.pop(item),
-              child: Text(item.toString()),
-            ),
-          ),
-        ),
-      );
-
-  Future<T?> showDialogMap<T>({
-    required Map<String, T> options,
-    required WidgetParentBuilder builder,
-  }) =>
-      showDialog(
-        context: this,
-        builder: (context) => builder(
-          context,
-          options.keys.fold(
-            [],
-            (list, title) => list
-              ..add(TextButton(
-                onPressed: () => context.navigator.pop(options[title]),
-                child: Text(title),
-              )),
-          ),
-        ),
-      );
-
-  ///
-  ///
-  ///
   void showGeneralDialogFadeIn({
     Duration duration = KCore.durationMilli200,
     required RoutePageBuilder pageBuilder,
@@ -408,4 +336,91 @@ extension BuildContextExtension on BuildContext {
             FadeTransition(opacity: a1, child: child),
         transitionDuration: duration,
       );
+
+  ///
+  ///
+  ///
+  Future<T?> showMenuEntries<T>({
+    RelativeRect? position,
+    PopupMenuPositionBuilder? positionBuilder,
+    required List<PopupMenuEntry<T>> items,
+    T? initialValue,
+    double? elevation,
+    Color? shadowColor,
+    Color? surfaceTintColor,
+    String? semanticLabel,
+    ShapeBorder? shape,
+    EdgeInsetsGeometry? padding,
+    Color? color,
+    bool useRootNavigator = false,
+    BoxConstraints? constraints,
+    Clip clipBehavior = Clip.none,
+    RouteSettings? routeSettings,
+    AnimationStyle? popUpAnimationStyle,
+    bool? requestFocus,
+  }) => showMenu(
+    context: this,
+    positionBuilder: positionBuilder,
+    items: items,
+    initialValue: initialValue,
+    elevation: elevation,
+    shadowColor: shadowColor,
+    surfaceTintColor: surfaceTintColor,
+    semanticLabel: semanticLabel,
+    menuPadding: padding,
+    color: color,
+    useRootNavigator: useRootNavigator,
+    constraints: constraints,
+    clipBehavior: clipBehavior,
+    routeSettings: routeSettings,
+    popUpAnimationStyle: popUpAnimationStyle,
+    requestFocus: requestFocus,
+  );
+
+  ///
+  ///
+  ///
+  Future<T?> showBottomSheet<T>({
+    required BuildContext context,
+    required WidgetBuilder builder,
+    Color? backgroundColor,
+    String? barrierLabel,
+    double? elevation,
+    ShapeBorder? shape,
+    Clip? clipBehavior,
+    BoxConstraints? constraints,
+    Color? barrierColor,
+    bool isScrollControlled = false,
+    double scrollControlDisabledMaxHeightRatio = 9.0 / 16.0,
+    bool useRootNavigator = false,
+    bool isDismissible = true,
+    bool enableDrag = true,
+    bool? showDragHandle,
+    bool useSafeArea = false,
+    RouteSettings? routeSettings,
+    AnimationController? transitionAnimationController,
+    Offset? anchorPoint,
+    AnimationStyle? sheetAnimationStyle,
+  }) => showModalBottomSheet(
+    context: this,
+    builder: builder,
+    backgroundColor: backgroundColor,
+    barrierLabel: barrierLabel,
+    elevation: elevation,
+    shape: shape,
+    clipBehavior: clipBehavior,
+    constraints: constraints,
+    barrierColor: backgroundColor,
+    isScrollControlled: isScrollControlled,
+    scrollControlDisabledMaxHeightRatio: scrollControlDisabledMaxHeightRatio,
+    useRootNavigator: useRootNavigator,
+    isDismissible: isDismissible,
+    enableDrag: enableDrag,
+    showDragHandle: showDragHandle,
+    useSafeArea: useSafeArea,
+    routeSettings: routeSettings,
+    transitionAnimationController: transitionAnimationController,
+    anchorPoint: anchorPoint,
+    sheetAnimationStyle: sheetAnimationStyle,
+  );
 }

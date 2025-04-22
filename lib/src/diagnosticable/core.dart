@@ -114,23 +114,23 @@ extension FWidgetBuilder on WidgetBuilder {
     double? widthFactor,
     double? heightFactor,
     VoidCallback? onTapSurface,
-    required Color colorSurface,
+    required Mapper<BuildContext, Color> colorSurface,
     required WidgetBuilder builder,
   }) =>
-      (context) => Stack(
-            fit: StackFit.expand,
-            children: [
-              GestureDetector(
-                onTap: onTapSurface,
-                child: ColoredBox(color: colorSurface),
-              ),
-              Center(
-                widthFactor: widthFactor,
-                heightFactor: heightFactor,
-                child: builder(context),
-              ),
-            ],
-          );
+          (context) => Stack(
+        fit: StackFit.expand,
+        children: [
+          GestureDetector(
+            onTap: onTapSurface,
+            child: ColoredBox(color: colorSurface(context)),
+          ),
+          Center(
+            widthFactor: widthFactor,
+            heightFactor: heightFactor,
+            child: builder(context),
+          ),
+        ],
+      );
 
   ///
   ///
@@ -164,6 +164,15 @@ extension FWidgetBuilder on WidgetBuilder {
 
     return (child) => (context) => columnBuilder(child);
   }
+
+  ///
+  ///
+  ///
+  static RoutePageBuilder routePageBuilder_of(Widget child) =>
+          (_, __, ___) => child;
+
+  static RoutePageBuilder routePageBuilder_ofBuilder(WidgetBuilder builder) =>
+          (context, animation, secondaryAnimation) => builder(context);
 
   ///
   ///

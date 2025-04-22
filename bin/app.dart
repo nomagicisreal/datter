@@ -42,7 +42,11 @@ class _MyHomeState extends State<MyHome> {
         title: Text('data'),
       ),
       body: Center(
-        child: Text('hello'),
+        child: SizedBox(
+          width: 300,
+          height: 300,
+          child: Column(),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _onPressed,
