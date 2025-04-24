@@ -2,24 +2,21 @@ part of '../../datter.dart';
 
 ///
 ///
-/// *
 /// * [FrameCallbackInitMixin]
 /// * [StreamSubscriptionInitMixin]
-/// *
+///
 /// * [MaterialColorMixin]
 /// * [FabLocationMixin]
-/// *
+///
 /// * [DialogRichMixin]
-/// *
+///
 /// * [TextEditingControllerMixin]
 /// * [FormKeyMixin]
 /// * [RadioListMixin]
 /// * [Form1By1Mixin], [Form2By2Mixin]
-/// *
+///
 /// * [ListItemStateMixin]
 /// * [ImageBuilderMixin]
-/// *
-/// *
 ///
 ///
 
@@ -135,59 +132,50 @@ mixin DialogRichMixin<T extends StatefulWidget> on State<T> {
   Future<bool?> showDialogBinary({
     required Widget textEnsure,
     required Widget textCancel,
-    required WidgetParentBuilder builder,
+    required Parenting builder,
   }) =>
       showDialog(
         context: context,
-        builder: (context) => builder(
-          context,
-          [
-            TextButton(
-              onPressed: () => context.navigator.pop(false),
-              child: textCancel,
-            ),
-            TextButton(
-              onPressed: () => context.navigator.pop(true),
-              child: textEnsure,
-            ),
-          ],
-        ),
+        builder: (context) => builder([
+          TextButton(
+            onPressed: () => context.navigator.pop(false),
+            child: textCancel,
+          ),
+          TextButton(
+            onPressed: () => context.navigator.pop(true),
+            child: textEnsure,
+          ),
+        ]),
       );
 
   Future<I?> showDialogList<I>({
     required List<I> items,
-    required WidgetParentBuilder builder,
+    required Parenting builder,
   }) =>
       showDialog<I>(
         context: context,
-        builder: (context) => builder(
-          context,
-          items.mapToList(
-            (item) => TextButton(
-              onPressed: () => context.navigator.pop(item),
-              child: Text(item.toString()),
-            ),
+        builder: (context) => builder(items.mapToList(
+          (item) => TextButton(
+            onPressed: () => context.navigator.pop(item),
+            child: Text(item.toString()),
           ),
-        ),
+        )),
       );
 
   Future<V?> showDialogMap<V>({
     required Map<String, V> options,
-    required WidgetParentBuilder builder,
+    required Parenting builder,
   }) =>
       showDialog(
         context: context,
-        builder: (context) => builder(
-          context,
-          options.keys.fold(
-            [],
-            (list, title) => list
-              ..add(TextButton(
-                onPressed: () => context.navigator.pop(options[title]),
-                child: Text(title),
-              )),
-          ),
-        ),
+        builder: (context) => builder(options.keys.fold(
+          [],
+          (list, title) => list
+            ..add(TextButton(
+              onPressed: () => context.navigator.pop(options[title]),
+              child: Text(title),
+            )),
+        )),
       );
 
   ///
@@ -201,7 +189,7 @@ mixin DialogRichMixin<T extends StatefulWidget> on State<T> {
       showDialogBinary(
         textEnsure: Text(ensure),
         textCancel: Text(cancel),
-        builder: (context, children) =>
+        builder: (children) =>
             SimpleDialog(title: Center(child: Text(title)), children: children),
       );
 

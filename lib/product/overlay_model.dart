@@ -34,7 +34,7 @@ import 'package:flutter/material.dart'
 ///   * [OverlayPlan] helps [OverlayMixin.overlayInsert] to create concrete [OverlayModel]
 ///
 ///
-mixin OverlayMixin<T extends StatefulWidget> implements State<T> {
+base mixin OverlayMixin<T extends StatefulWidget> implements State<T> {
   ///
   /// [_overlays] is a private list,
   /// empowering subclass to simultaneously control many overlay,
@@ -78,7 +78,7 @@ mixin OverlayMixin<T extends StatefulWidget> implements State<T> {
 ///
 ///
 ///
-mixin OverlayFutureMixin<T extends StatefulWidget> on State<T>
+base mixin OverlayFutureMixin<T extends StatefulWidget> on State<T>
     implements OverlayMixin<T> {
   Future<S> overlayWaitingFuture<S>({
     required Future<S> future,
@@ -97,7 +97,7 @@ mixin OverlayFutureMixin<T extends StatefulWidget> on State<T>
 ///
 ///
 ///
-mixin OverlayStreamMixin<T extends StatefulWidget> on State<T>
+base mixin OverlayStreamMixin<T extends StatefulWidget> on State<T>
     implements OverlayMixin<T> {
   Stream<OverlayModel> overlayListenStream<S>({
     required Stream<S> stream,
@@ -132,7 +132,7 @@ mixin OverlayStreamMixin<T extends StatefulWidget> on State<T>
 ///   * [_OverlayModelRemovableMixin], [_OverlayModelUpdatableMixin], [_OverlayModelInsertableMixin]
 ///   * [_OmR], ... [_OmRU], ..., [_OmRUI] are the other concrete [OverlayModel] implementations
 ///
-base class OverlayModel {
+final class OverlayModel {
   final OverlayMixin _owner;
   OverlayEntry? _below; // only for insertion
   OverlayEntry? _above; // only for insertion
@@ -265,8 +265,8 @@ final class OverlayPlan {
   final bool canSizeOverlay;
 
   const OverlayPlan({
-    this.isRemovable = false,
-    this.isUpdatable = false,
+    required this.isRemovable,
+    required this.isUpdatable,
     this.isInsertable = false,
     required WidgetBuilder this.builder,
     this.opaque = false,
@@ -275,8 +275,8 @@ final class OverlayPlan {
   });
 
   const OverlayPlan.model({
-    this.isRemovable = false,
-    this.isUpdatable = false,
+    required this.isRemovable,
+    required this.isUpdatable,
     this.isInsertable = false,
     required OverlayModelBuilder this.builder,
     this.opaque = false,

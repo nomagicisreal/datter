@@ -13,7 +13,7 @@ part of '../../datter.dart';
 /// [WidgetParentBuilder], ...
 ///
 /// takeaway:
-/// [FWidgetBuilder], ...
+/// [FWidgetBuilder].
 /// [ColorExtension]
 ///
 ///
@@ -66,14 +66,11 @@ typedef WidgetCallableBuilder = Widget Function(
   BuildContext context,
   VoidCallback callable,
 );
-typedef WidgetParentBuilder = Widget Function(
-  BuildContext context,
-  List<Widget> children,
-);
 typedef WidgetGlobalKeysBuilder<T extends State> = Widget Function(
   BuildContext context,
   Map<String, GlobalKey<T>> keys,
 );
+typedef Parenting = Widget Function(List<Widget> children);
 
 ///
 /// static methods:
@@ -117,20 +114,20 @@ extension FWidgetBuilder on WidgetBuilder {
     required Mapper<BuildContext, Color> colorSurface,
     required WidgetBuilder builder,
   }) =>
-          (context) => Stack(
-        fit: StackFit.expand,
-        children: [
-          GestureDetector(
-            onTap: onTapSurface,
-            child: ColoredBox(color: colorSurface(context)),
-          ),
-          Center(
-            widthFactor: widthFactor,
-            heightFactor: heightFactor,
-            child: builder(context),
-          ),
-        ],
-      );
+      (context) => Stack(
+            fit: StackFit.expand,
+            children: [
+              GestureDetector(
+                onTap: onTapSurface,
+                child: ColoredBox(color: colorSurface(context)),
+              ),
+              Center(
+                widthFactor: widthFactor,
+                heightFactor: heightFactor,
+                child: builder(context),
+              ),
+            ],
+          );
 
   ///
   ///
@@ -169,22 +166,22 @@ extension FWidgetBuilder on WidgetBuilder {
   ///
   ///
   static RoutePageBuilder routePageBuilder_of(Widget child) =>
-          (_, __, ___) => child;
+      (_, __, ___) => child;
 
   static RoutePageBuilder routePageBuilder_ofBuilder(WidgetBuilder builder) =>
-          (context, animation, secondaryAnimation) => builder(context);
+      (context, animation, secondaryAnimation) => builder(context);
 
   ///
   ///
   ///
-  static WidgetParentBuilder parent_stack({
+  static Parenting parent_stack({
     Key? key,
     AlignmentGeometry alignment = AlignmentDirectional.topStart,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
     Clip clipBehavior = Clip.hardEdge,
   }) =>
-      (context, children) => Stack(
+      (children) => Stack(
             key: key,
             alignment: alignment,
             textDirection: textDirection,
@@ -193,7 +190,7 @@ extension FWidgetBuilder on WidgetBuilder {
             children: children,
           );
 
-  static WidgetParentBuilder parent_flex({
+  static Parenting parent_flex({
     required Axis direction,
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
     MainAxisSize mainAxisSize = MainAxisSize.max,
@@ -203,7 +200,7 @@ extension FWidgetBuilder on WidgetBuilder {
     TextBaseline? textBaseline,
     Clip clipBehavior = Clip.none,
   }) =>
-      (context, children) => Flex(
+      (children) => Flex(
             direction: direction,
             mainAxisAlignment: mainAxisAlignment,
             mainAxisSize: mainAxisSize,
@@ -214,14 +211,6 @@ extension FWidgetBuilder on WidgetBuilder {
             clipBehavior: clipBehavior,
             children: children,
           );
-}
-
-///
-///
-///
-extension FWidgetParentBuilder on WidgetParentBuilder {
-  WidgetBuilder builderFrom(Iterable<WidgetBuilder> children) =>
-      (context) => this(context, [...children.map((build) => build(context))]);
 }
 
 ///
