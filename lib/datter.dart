@@ -1,7 +1,5 @@
 library;
 
-export 'product/overlay_model.dart';
-
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:damath/damath.dart';

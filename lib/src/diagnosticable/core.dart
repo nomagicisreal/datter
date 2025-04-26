@@ -10,7 +10,7 @@ part of '../../datter.dart';
 /// [PaintFrom], [PaintingPath], [Painter]
 /// [RectBuilder]
 ///
-/// [WidgetParentBuilder], ...
+/// [Parenting]
 ///
 /// takeaway:
 /// [FWidgetBuilder].

@@ -1,9 +1,6 @@
 part of '../../datter.dart';
 
 ///
-/// methods:
-/// [lerperFrom]
-///
 /// classes:
 /// [CubicOffset]
 /// [RRegularPolygonCubicOnEdge]
@@ -23,72 +20,6 @@ part of '../../datter.dart';
 ///
 ///
 
-///
-/// [lerperFrom]
-///
-Lerper<T> lerperFrom<T>(T begin, T end) {
-  try {
-    return DoubleExtension.lerperFrom(begin, end);
-  } on StateError catch (e) {
-    if (e.message == FErrorMessage.lerperNoImplementation) {
-      return switch (begin) {
-        Size _ => (t) => Size.lerp(begin, end as Size, t)!,
-        Rect _ => (t) => Rect.lerp(begin, end as Rect, t)!,
-        Color _ => (t) => Color.lerp(begin, end as Color, t)!,
-        EdgeInsets _ => (t) => EdgeInsets.lerp(begin, end as EdgeInsets?, t)!,
-        RelativeRect _ => (t) =>
-            RelativeRect.lerp(begin, end as RelativeRect?, t)!,
-        AlignmentGeometry _ => (t) =>
-            AlignmentGeometry.lerp(begin, end as AlignmentGeometry?, t)!,
-        SizingPath _ => throw ArgumentError(
-            'Use BetweenPath instead of Between<SizingPath>',
-          ),
-        Decoration _ => switch (begin) {
-            BoxDecoration _ => end is BoxDecoration && begin.shape == end.shape
-                ? (t) => BoxDecoration.lerp(begin, end, t)!
-                : throw UnimplementedError(
-                    'BoxShape should not be interpolated'),
-            ShapeDecoration _ => switch (end) {
-                ShapeDecoration _ => begin.shape == end.shape
-                    ? (t) => ShapeDecoration.lerp(begin, end, t)!
-                    : switch (begin.shape) {
-                        CircleBorder _ || RoundedRectangleBorder _ => switch (
-                              end.shape) {
-                            CircleBorder _ || RoundedRectangleBorder _ => (t) =>
-                                Decoration.lerp(begin, end, t)!,
-                            _ => throw UnimplementedError(
-                                "'$begin shouldn't be interpolated to $end'",
-                              ),
-                          },
-                        _ => throw UnimplementedError(
-                            "'$begin shouldn't be interpolated to $end'",
-                          ),
-                      },
-                _ => throw UnimplementedError(),
-              },
-            _ => throw UnimplementedError(),
-          },
-        ShapeBorder _ => switch (begin) {
-            BoxBorder _ => switch (end) {
-                BoxBorder _ => (t) => BoxBorder.lerp(begin, end, t)!,
-                _ => throw UnimplementedError(),
-              },
-            InputBorder _ => switch (end) {
-                InputBorder _ => (t) => ShapeBorder.lerp(begin, end, t)!,
-                _ => throw UnimplementedError(),
-              },
-            OutlinedBorder _ => switch (end) {
-                OutlinedBorder _ => (t) => OutlinedBorder.lerp(begin, end, t)!,
-                _ => throw UnimplementedError(),
-              },
-            _ => throw UnimplementedError(),
-          },
-        _ => Tween<T>(begin: begin, end: end).transform,
-      } as Lerper<T>;
-    }
-    rethrow;
-  }
-}
 
 ///
 /// [x], ...
