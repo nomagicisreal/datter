@@ -109,7 +109,7 @@ extension FRectBuilder on RectBuilder {
 extension FExtruding2D on Extruding2D {
   static Mapper<double, Rect> directOnSize({
     required Rect rect,
-    required Direction2D direction,
+    required DirectionIn8 direction,
     required double width,
     required double height,
     bool timesOrPlus = true,
@@ -122,14 +122,14 @@ extension FExtruding2D on Extruding2D {
 
   static Mapper<double, Rect> directOnWidth({
     required Rect rect,
-    required Direction2D direction,
+    required DirectionIn8 direction,
     required double width,
   }) =>
       fromRectDirection(rect, direction).translateOnWidth(width);
 
   static Mapper<double, Rect> directByDimension({
     required Rect rect,
-    required Direction2D direction,
+    required DirectionIn8 direction,
     required double dimension,
     bool timesOrPlus = true,
   }) =>
@@ -138,58 +138,58 @@ extension FExtruding2D on Extruding2D {
         timesOrPlus: timesOrPlus,
       );
 
-  static Extruding2D fromRectDirection(Rect rect, Direction2D direction) =>
+  static Extruding2D fromRectDirection(Rect rect, DirectionIn8 direction) =>
       switch (direction) {
-        Direction2DIn4.top || Direction2DIn8.top => () {
+        DirectionIn8.top => () {
             final origin = rect.topCenter;
             return (width, length) => Rect.fromPoints(
                   origin + Offset(width / 2, 0),
                   origin + Offset(-width / 2, -length),
                 );
           }(),
-        Direction2DIn4.left || Direction2DIn8.left => () {
+        DirectionIn8.left => () {
             final origin = rect.centerLeft;
             return (width, length) => Rect.fromPoints(
                   origin + Offset(0, width / 2),
                   origin + Offset(-length, -width / 2),
                 );
           }(),
-        Direction2DIn4.right || Direction2DIn8.right => () {
+        DirectionIn8.right => () {
             final origin = rect.centerRight;
             return (width, length) => Rect.fromPoints(
                   origin + Offset(0, width / 2),
                   origin + Offset(length, -width / 2),
                 );
           }(),
-        Direction2DIn4.bottom || Direction2DIn8.bottom => () {
+        DirectionIn8.bottom => () {
             final origin = rect.bottomCenter;
             return (width, length) => Rect.fromPoints(
                   origin + Offset(width / 2, 0),
                   origin + Offset(-width / 2, length),
                 );
           }(),
-        Direction2DIn8.topLeft => () {
+        DirectionIn8.topLeft => () {
             final origin = rect.topLeft;
             return (width, length) => Rect.fromPoints(
                   origin,
                   origin + Offset(-length, -length) * DoubleExtension.sqrt1_2,
                 );
           }(),
-        Direction2DIn8.topRight => () {
+        DirectionIn8.topRight => () {
             final origin = rect.topRight;
             return (width, length) => Rect.fromPoints(
                   origin,
                   origin + Offset(length, -length) * DoubleExtension.sqrt1_2,
                 );
           }(),
-        Direction2DIn8.bottomLeft => () {
+        DirectionIn8.bottomLeft => () {
             final origin = rect.bottomLeft;
             return (width, length) => Rect.fromPoints(
                   origin,
                   origin + Offset(-length, length) * DoubleExtension.sqrt1_2,
                 );
           }(),
-        Direction2DIn8.bottomRight => () {
+        DirectionIn8.bottomRight => () {
             final origin = rect.bottomRight;
             return (width, length) => Rect.fromPoints(
                   origin,

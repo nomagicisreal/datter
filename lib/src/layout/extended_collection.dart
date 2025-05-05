@@ -50,15 +50,10 @@ extension OffsetExtension on Offset {
   ///
   static Offset keep(Offset v) => v;
 
-  static Offset fromPoint(Point point) => switch (point) {
-        Point2() => Offset(point.x, point.y),
-        Point3() => throw UnimplementedError(),
-      };
+  static Offset fromPoint(Point2 point) => Offset(point.x, point.y);
 
-  static Offset unitFromDirection(Direction direction) => switch (direction) {
-        Direction2D() => fromPoint(Point2.unitFromDirection(direction)),
-        Direction3D() => throw UnimplementedError(),
-      };
+  static Offset unitFromDirection(DirectionIn8 direction) =>
+      OffsetExtension.fromPoint(Point2.unitOfDirection(direction));
 
   ///
   ///
@@ -112,7 +107,7 @@ extension OffsetExtension on Offset {
   double distanceHalfTo(Offset p) => (p - this).distance / 2;
 
   double directionPerpendicular({bool counterclockwise = true}) =>
-      direction + Radian.angle_90 * (counterclockwise ? 1 : -1);
+      direction + DoubleExtension.radian_angle90 * (counterclockwise ? 1 : -1);
 
   ///
   ///

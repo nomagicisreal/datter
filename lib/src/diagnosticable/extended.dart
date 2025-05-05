@@ -122,14 +122,14 @@ class Curving extends Curve {
   ///
   ///
   ///
-  Curving.sinPeriodOf(int times)
-      : mapping = DoubleExtension.applyOnPeriodSinByTimes(times);
+  Curving.sinPeriodOf(double times)
+      : mapping = DoubleExtension.applyOnPeriod(times, math.sin);
 
-  Curving.cosPeriodOf(int times)
-      : mapping = DoubleExtension.applyOnPeriodCosByTimes(times);
+  Curving.cosPeriodOf(double times)
+      : mapping = DoubleExtension.applyOnPeriod(times, math.cos);
 
-  Curving.tanPeriodOf(int times)
-      : mapping = DoubleExtension.applyOnPeriodTanByTimes(times);
+  Curving.tanPeriodOf(double times)
+      : mapping = DoubleExtension.applyOnPeriod(times, math.tan);
 
   @override
   double transformInternal(double t) => mapping(t);
@@ -209,24 +209,6 @@ class CurveFR {
   CurveFR.flipIntervalReverseOf(Curve curve, double begin, double end)
       : forward = curve,
         reverse = curve.interval(begin, end, true);
-
-  ///
-  ///
-  ///
-  static Synthesizer<CurveFR, double, double, CurveFR> fusionIntervalFlipIn(
-    int steps,
-  ) =>
-      (curve, begin, end) => curve.interval(begin / steps, end / steps);
-
-  static Synthesizer<int, double, double, CurveFR>
-      fusionIntervalFlipForSymmetryPeriodSinIn(
-    int steps,
-  ) =>
-          (times, begin, end) =>
-              CurveFR.of(Curving.sinPeriodOf(times)).interval(
-                begin / steps,
-                end / steps,
-              );
 
   ///
   /// [all].length == 43, see https://api.flutter.dev/flutter/animation/Curves-class.html?gclid=CjwKCAiA-bmsBhAGEiwAoaQNmg9ZfimSGJRAty3QNZ0AA32ztq51qPlJfFPBsFc5Iv1n-EgFQtULyxoC8q0QAvD_BwE&gclsrc=aw.ds

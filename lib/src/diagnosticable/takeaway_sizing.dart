@@ -299,7 +299,7 @@ extension FSizingPath on SizingPath {
   }) {
     final tipA = rootA.direct(direction, length);
     final rootB = rootA.direct(
-      direction + Radian.angle_90 * (clockwise ? 1 : -1),
+      direction + DoubleExtension.radian_angle90 * (clockwise ? 1 : -1),
       width,
     );
     final tipB = rootB.direct(direction, length);

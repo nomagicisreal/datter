@@ -475,7 +475,8 @@ extension WAwaitBuilder on FutureBuilder {
 ///
 /// [identity], ...
 /// [translateSpace2], ...
-/// [ifInQuadrant], ...
+/// [ifInQuadrant], ... (Notice that the coordinate system should be in consistent with [Transform] widget)
+///
 ///
 ///
 extension FTransform on Transform {
@@ -499,30 +500,87 @@ extension FTransform on Transform {
   static Point3 translateSpace3(Point3 p) => Point3(p.x, -p.z, -p.y);
 
   ///
-  /// 'right' and 'left' are the same no matter in dart or in math
+  /// 'right' and 'left' are the same no matter in flutter or in math.
+  /// 'top' and 'bottom' are different between in flutter and in math
   ///
+  static bool ifOnRight(double radian) =>
+      FTransform.ifInQuadrant(radian, 1) || FTransform.ifInQuadrant(radian, 4);
+
+  static bool ifOnLeft(double radian) =>
+      FTransform.ifInQuadrant(radian, 2) || FTransform.ifInQuadrant(radian, 3);
+
+  // different from math
+  static bool ifOnBottom(double radian) =>
+      FTransform.ifInQuadrant(radian, 1) || FTransform.ifInQuadrant(radian, 2);
+
+  static bool ifOnTop(double radian) =>
+      FTransform.ifInQuadrant(radian, 3) || FTransform.ifInQuadrant(radian, 4);
+
   static bool ifInQuadrant(double radian, int quadrant) {
-    final r = Radian.moduleBy360Angle(radian);
+    final r = radian % DoubleExtension.radian_angle360;
     return switch (quadrant) {
-      1 => r.isRangeOpen(Radian.angle_270, Radian.angle_360) ||
-          r.isRangeOpen(-Radian.angle_90, 0),
-      2 => r.isRangeOpen(Radian.angle_180, Radian.angle_270) ||
-          r.isRangeOpen(-Radian.angle_180, -Radian.angle_90),
-      3 => r.isRangeOpen(Radian.angle_90, Radian.angle_180) ||
-          r.isRangeOpen(-Radian.angle_270, -Radian.angle_180),
-      4 => r.isRangeOpen(0, Radian.angle_90) ||
-          r.isRangeOpen(-Radian.angle_360, -Radian.angle_270),
+      1 => r.isRangeOpen(
+            DoubleExtension.radian_angle270,
+            DoubleExtension.radian_angle360,
+          ) ||
+          r.isRangeOpen(-DoubleExtension.radian_angle90, 0),
+      2 => r.isRangeOpen(
+            DoubleExtension.radian_angle180,
+            DoubleExtension.radian_angle270,
+          ) ||
+          r.isRangeOpen(-DoubleExtension.radian_angle180,
+              -DoubleExtension.radian_angle90),
+      3 => r.isRangeOpen(
+            DoubleExtension.radian_angle90,
+            DoubleExtension.radian_angle180,
+          ) ||
+          r.isRangeOpen(-DoubleExtension.radian_angle270,
+              -DoubleExtension.radian_angle180),
+      4 => r.isRangeOpen(0, DoubleExtension.radian_angle90) ||
+          r.isRangeOpen(-DoubleExtension.radian_angle360,
+              -DoubleExtension.radian_angle270),
       _ => throw UnimplementedError(),
     };
   }
 
-  static bool ifOnRight(double radian) => Radian2(radian).azimuthalOnRight;
-
-  static bool ifOnLeft(double radian) => Radian2(radian).azimuthalOnLeft;
-
-  static bool ifOnTop(double radian) =>
-      Radian.ifWithinAngle0_180N(Radian.moduleBy360Angle(radian));
-
-  static bool ifOnBottom(double radian) =>
-      Radian.ifWithinAngle0_180(Radian.moduleBy360Angle(radian));
+// ///
+// ///
+// ///
+// static Transform formFromDirection({
+//   double zDeep = 100,
+//   required Direction3DIn6 direction,
+//   required Widget child,
+// }) =>
+//     switch (direction) {
+//       Direction3DIn6.front => Transform(
+//         transform: Matrix4.identity(),
+//         alignment: Alignment.center,
+//         child: child,
+//       ),
+//       Direction3DIn6.back => Transform(
+//         alignment: Alignment.center,
+//         transform: Matrix4.identity()..translateOf(Point3.ofZ(-zDeep)),
+//         child: child,
+//       ),
+//       Direction3DIn6.left => Transform(
+//         alignment: Alignment.centerLeft,
+//         transform: Matrix4.identity()..rotateY(DoubleExtension.radian_angle90),
+//         child: child,
+//       ),
+//       Direction3DIn6.right => Transform(
+//         alignment: Alignment.centerRight,
+//         transform: Matrix4.identity()..rotateY(-DoubleExtension.radian_angle90),
+//         child: child,
+//       ),
+//       Direction3DIn6.top => Transform(
+//         alignment: Alignment.topCenter,
+//         transform: Matrix4.identity()..rotateX(-DoubleExtension.radian_angle90),
+//         child: child,
+//       ),
+//       Direction3DIn6.bottom => Transform(
+//         alignment: Alignment.bottomCenter,
+//         transform: Matrix4.identity()..rotateX(DoubleExtension.radian_angle90),
+//         child: child,
+//       ),
+//     };
 }

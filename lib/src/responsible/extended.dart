@@ -285,7 +285,7 @@ extension BuildContextExtension on BuildContext {
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBarMessage(
     String message, {
-    Duration duration = KCore.durationMilli500,
+    Duration duration = DurationExtension.milli500,
     bool center = true,
   }) =>
       scaffoldMessenger.showSnackBar(
@@ -326,7 +326,7 @@ extension BuildContextExtension on BuildContext {
   ///
   ///
   void showGeneralDialogFadeIn({
-    Duration duration = KCore.durationMilli200,
+    Duration duration = DurationExtension.milli200,
     required RoutePageBuilder pageBuilder,
   }) =>
       showGeneralDialog(

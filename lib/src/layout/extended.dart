@@ -20,7 +20,6 @@ part of '../../datter.dart';
 ///
 ///
 
-
 ///
 /// [x], ...
 /// [a], ...
@@ -178,7 +177,7 @@ class RRegularPolygonCubicOnEdge extends RegularPolygon
     double radiusCircumscribedCircle, {
     Size? size,
   }) {
-    final step = Radian.angle_360 / n;
+    final step = DoubleExtension.radian_angle360 / n;
     final center = size?.center(Offset.zero) ?? Offset.zero;
     return List.generate(
       n,
@@ -258,24 +257,15 @@ extension RectExtension on Rect {
   ///
   double get distanceDiagonal => size.diagonal;
 
-  Offset offsetFromDirection(Direction direction) => switch (direction) {
-        Direction2D() => () {
-            final direction2DIn8 = switch (direction) {
-              Direction2DIn4() => direction.toDirection8,
-              Direction2DIn8() => direction,
-            };
-            return switch (direction2DIn8) {
-              Direction2DIn8.top => topCenter,
-              Direction2DIn8.left => centerLeft,
-              Direction2DIn8.right => centerRight,
-              Direction2DIn8.bottom => bottomCenter,
-              Direction2DIn8.topLeft => topLeft,
-              Direction2DIn8.topRight => topRight,
-              Direction2DIn8.bottomLeft => bottomLeft,
-              Direction2DIn8.bottomRight => bottomRight,
-            };
-          }(),
-        Direction3D() => throw UnimplementedError(),
+  Offset offsetFromDirection(DirectionIn8 direction) => switch (direction) {
+        DirectionIn8.top => topCenter,
+        DirectionIn8.left => centerLeft,
+        DirectionIn8.right => centerRight,
+        DirectionIn8.bottom => bottomCenter,
+        DirectionIn8.topLeft => topLeft,
+        DirectionIn8.topRight => topRight,
+        DirectionIn8.bottomLeft => bottomLeft,
+        DirectionIn8.bottomRight => bottomRight,
       };
 }
 
@@ -284,18 +274,15 @@ extension RectExtension on Rect {
 /// instance methods: [flipped], ...
 ///
 extension AlignmentExtension on Alignment {
-  static Alignment fromDirection(Direction2D direction) => switch (direction) {
-        Direction2DIn4() => fromDirection(direction.toDirection8),
-        Direction2DIn8() => switch (direction) {
-            Direction2DIn8.top => Alignment.topCenter,
-            Direction2DIn8.left => Alignment.centerLeft,
-            Direction2DIn8.right => Alignment.centerRight,
-            Direction2DIn8.bottom => Alignment.bottomCenter,
-            Direction2DIn8.topLeft => Alignment.topLeft,
-            Direction2DIn8.topRight => Alignment.topRight,
-            Direction2DIn8.bottomLeft => Alignment.bottomLeft,
-            Direction2DIn8.bottomRight => Alignment.bottomRight,
-          }
+  static Alignment fromDirection(DirectionIn8 direction) => switch (direction) {
+        DirectionIn8.top => Alignment.topCenter,
+        DirectionIn8.left => Alignment.centerLeft,
+        DirectionIn8.right => Alignment.centerRight,
+        DirectionIn8.bottom => Alignment.bottomCenter,
+        DirectionIn8.topLeft => Alignment.topLeft,
+        DirectionIn8.topRight => Alignment.topRight,
+        DirectionIn8.bottomLeft => Alignment.bottomLeft,
+        DirectionIn8.bottomRight => Alignment.bottomRight,
       };
 
   Alignment get flipped => Alignment(-x, -y);
@@ -306,15 +293,33 @@ extension AlignmentExtension on Alignment {
   }
 
   (double, double) get radianBoundaryForSide => switch (this) {
-        Alignment.center => (0, Radian.angle_360),
-        Alignment.centerLeft => (-Radian.angle_90, Radian.angle_90),
-        Alignment.centerRight => (Radian.angle_90, Radian.angle_270),
-        Alignment.topCenter => (0, Radian.angle_180),
-        Alignment.topLeft => (0, Radian.angle_90),
-        Alignment.topRight => (Radian.angle_90, Radian.angle_180),
-        Alignment.bottomCenter => (Radian.angle_180, Radian.angle_360),
-        Alignment.bottomLeft => (Radian.angle_270, Radian.angle_360),
-        Alignment.bottomRight => (Radian.angle_180, Radian.angle_270),
+        Alignment.center => (0, DoubleExtension.radian_angle360),
+        Alignment.centerLeft => (
+            -DoubleExtension.radian_angle90,
+            DoubleExtension.radian_angle90
+          ),
+        Alignment.centerRight => (
+            DoubleExtension.radian_angle90,
+            DoubleExtension.radian_angle270
+          ),
+        Alignment.topCenter => (0, DoubleExtension.radian_angle180),
+        Alignment.topLeft => (0, DoubleExtension.radian_angle90),
+        Alignment.topRight => (
+            DoubleExtension.radian_angle90,
+            DoubleExtension.radian_angle180
+          ),
+        Alignment.bottomCenter => (
+            DoubleExtension.radian_angle180,
+            DoubleExtension.radian_angle360
+          ),
+        Alignment.bottomLeft => (
+            DoubleExtension.radian_angle270,
+            DoubleExtension.radian_angle360
+          ),
+        Alignment.bottomRight => (
+            DoubleExtension.radian_angle180,
+            DoubleExtension.radian_angle270
+          ),
         _ => throw UnimplementedError(),
       };
 

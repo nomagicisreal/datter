@@ -585,7 +585,7 @@ mixin ListItemStateMixin<T extends StatefulWidget, I, S> on State<T> {
   void listItemUpdate({
     int? index,
     required I itemNew,
-    required PredicatorFusionor<I> fusion,
+    required PredicatorReducer<I> fusion,
   }) {
     index ??= _listItems.indexWhere((itemOld) => fusion(itemOld, itemNew));
     setState(() => _listItems[index!] = itemNew);

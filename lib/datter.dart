@@ -1,5 +1,8 @@
 library;
 
+export 'package:overlay_model/overlay_model.dart';
+export 'package:mationani/mationani.dart';
+
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:damath/damath.dart';
