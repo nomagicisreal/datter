@@ -226,7 +226,7 @@ extension FSizingPath on SizingPath {
     bool clockwise = true,
   }) {
     final radius =
-        Radius.circular(OffsetExtension.distanceHalfTo(arcEnd, arcStart));
+        Radius.circular(arcEnd.distanceHalfTo(arcStart));
     return (size) => Path()
       ..arcFromStartToEnd(arcStart, arcEnd,
           radius: radius, clockwise: clockwise)
@@ -245,7 +245,7 @@ extension FSizingPath on SizingPath {
           ..moveToPoint(start)
           ..arcToPoint(
             end,
-            radius: Radius.circular(OffsetExtension.distanceHalfTo(end, start)),
+            radius: Radius.circular(end.distanceHalfTo(start)),
             clockwise: clockwise,
           )
           ..close();
@@ -270,8 +270,8 @@ extension FSizingPath on SizingPath {
     double r, {
     bool clockwise = true,
   }) {
-    final arcStart = OffsetExtension.direct(arcCenter, dStart, r);
-    final arcEnd = OffsetExtension.direct(arcCenter, dEnd, r);
+    final arcStart = arcCenter.direct(dStart, r);
+    final arcEnd = arcCenter.direct(dEnd, r);
     return (size) => Path()
       ..moveToPoint(arcStart)
       ..arcToPoint(arcEnd, radius: Radius.circular(r), clockwise: clockwise)
@@ -295,13 +295,12 @@ extension FSizingPath on SizingPath {
     required double direction,
     bool clockwise = true,
   }) {
-    final tipA = OffsetExtension.direct(rootA, direction, length);
-    final rootB = OffsetExtension.direct(
-      rootA,
+    final tipA = rootA.direct(direction, length);
+    final rootB = rootA.direct(
       direction + DoubleExtension.radian_angle90 * (clockwise ? 1 : -1),
       width,
     );
-    final tipB = OffsetExtension.direct(rootB, direction, length);
+    final tipB = rootB.direct(direction, length);
     final radius = Radius.circular((width / 2));
     return (size) => Path()
       ..moveToPoint(rootA)

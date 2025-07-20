@@ -70,64 +70,58 @@ extension OffsetExtension on Offset {
   ///
   ///
   ///
-  static Offset parallelUnitBetween(Offset p, Offset q) {
-    final offset = q - p;
+  Offset parallelUnitBetween(Offset q) {
+    final offset = q - this;
     return offset / offset.distance;
   }
 
-  static Offset parallelVectorOf(Offset p, Offset q, double t) => (q - p) * t;
+  Offset parallelVectorOf(Offset q, double t) => (q - this) * t;
 
-  static Offset parallelOffsetOf(Offset p, Offset q, double t) =>
-      p + parallelVectorOf(p, q, t);
+  Offset parallelOffsetOf(Offset q, double t) => this + parallelVectorOf(q, t);
 
-  static Offset parallelOffsetUnitOf(Offset p, Offset q, double t) =>
-      p + parallelUnitBetween(p, q) * t;
+  Offset parallelOffsetUnitOf(Offset q, double t) =>
+      this + parallelUnitBetween(q) * t;
 
-  static Offset parallelOffsetUnitOnCenterOf(Offset p, Offset q, double t) =>
-      middleTo(p, q) + parallelUnitBetween(p, q) * t;
+  Offset parallelOffsetUnitOnCenterOf(Offset q, double t) =>
+      middleTo(q) + parallelUnitBetween(q) * t;
 
   ///
   ///
   ///
-  static Offset perpendicularUnitOf(Offset p, Offset q) =>
-      (q - p).toPerpendicularUnit;
+  Offset perpendicularUnitOf(Offset q) => (q - this).toPerpendicularUnit;
 
-  static Offset perpendicularVectorOf(Offset p, Offset q, double t) =>
-      (q - p).toPerpendicular * t;
+  Offset perpendicularVectorOf(Offset q, double t) =>
+      (q - this).toPerpendicular * t;
 
-  static Offset perpendicularOffsetOf(Offset p, Offset q, double t) =>
-      p + perpendicularVectorOf(p, q, t);
+  Offset perpendicularOffsetOf(Offset q, double t) =>
+      this + perpendicularVectorOf(q, t);
 
-  static Offset perpendicularOffsetUnitOf(Offset p, Offset q, double t) =>
-      p + perpendicularUnitOf(p, q) * t;
+  Offset perpendicularOffsetUnitOf(Offset q, double t) =>
+      this + perpendicularUnitOf(q) * t;
 
-  static Offset perpendicularOffsetUnitFromCenterOf(
-    Offset p,
+  Offset perpendicularOffsetUnitFromCenterOf(
     Offset q,
     double t,
   ) =>
-      middleTo(p, q) + perpendicularUnitOf(p, q) * t;
+      middleTo(q) + perpendicularUnitOf(q) * t;
 
   ///
   ///
   ///
-  static Offset direct(
-    Offset offset,
+  Offset direct(
     double direction, [
     double distance = 1,
   ]) =>
-      offset + Offset.fromDirection(direction, distance);
+      this + Offset.fromDirection(direction, distance);
 
-  static Offset middleTo(Offset p, Offset q) => (p + q) / 2;
+  Offset middleTo(Offset q) => (this + q) / 2;
 
-  static double distanceHalfTo(Offset p, Offset q) => (q - p).distance / 2;
+  double distanceHalfTo(Offset q) => (q - this).distance / 2;
 
-  static double directionPerpendicular(
-    Offset offset, {
+  double directionPerpendicular({
     bool counterclockwise = true,
   }) =>
-      offset.direction +
-      DoubleExtension.radian_angle90 * (counterclockwise ? 1 : -1);
+      direction + DoubleExtension.radian_angle90 * (counterclockwise ? 1 : -1);
 
   ///
   /// [isBottomRightFrom], ...
@@ -148,10 +142,10 @@ extension OffsetExtension on Offset {
   Offset get toReciprocal => Offset(1 / dx, 1 / dy);
 
   Offset get toPerpendicularUnit =>
-      Offset.fromDirection(directionPerpendicular(this));
+      Offset.fromDirection(directionPerpendicular());
 
   Offset get toPerpendicular =>
-      Offset.fromDirection(directionPerpendicular(this), distance);
+      Offset.fromDirection(directionPerpendicular(), distance);
 }
 
 ///
@@ -306,8 +300,8 @@ extension ListOffsetExtension on List<Offset> {
     final begin = this[insertionIndex - 1];
     final end = this[insertionIndex];
 
-    final unitParallel = OffsetExtension.parallelUnitBetween(begin, end);
-    final point = OffsetExtension.middleTo(begin, end) +
+    final unitParallel = begin.parallelUnitBetween(end);
+    final point = begin.middleTo(end) +
         unitParallel.toPerpendicular * dPerpendicular;
 
     return this
@@ -324,15 +318,13 @@ extension ListOffsetExtension on List<Offset> {
     final n = length;
     return asMap().map((i, current) {
       // offset from current corner to previous corner
-      final previous = OffsetExtension.parallelOffsetUnitOf(
-        current,
+      final previous = current.parallelOffsetUnitOf(
         i == 0 ? last : this[i - 1],
         timesEdgeUnit,
       );
 
       // offset from current corner to next corner
-      final next = OffsetExtension.parallelOffsetUnitOf(
-        current,
+      final next = current.parallelOffsetUnitOf(
         i == n - 1 ? first : this[i + 1],
         timesEdgeUnit,
       );
@@ -341,8 +333,8 @@ extension ListOffsetExtension on List<Offset> {
         CubicOffset.fromPoints([
           previous,
           next,
-          OffsetExtension.parallelOffsetOf(previous, current, timesEdge),
-          OffsetExtension.parallelOffsetOf(current, next, timesEdge),
+          previous.parallelOffsetOf(current, timesEdge),
+          current.parallelOffsetOf(next, timesEdge),
         ]),
       );
     });
