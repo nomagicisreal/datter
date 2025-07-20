@@ -8,7 +8,6 @@ part of '../../datter.dart';
 ///
 ///
 
-
 ///
 /// instance methods: [combine], ...
 /// static methods:
@@ -30,10 +29,10 @@ extension FSizingPath on SizingPath {
   ///
   ///
   SizingPath combine(
-      SizingPath another, {
-        PathOperation operation = PathOperation.union,
-      }) =>
-          (size) => Path.combine(operation, this(size), another(size));
+    SizingPath another, {
+    PathOperation operation = PathOperation.union,
+  }) =>
+      (size) => Path.combine(operation, this(size), another(size));
 
   ///
   ///
@@ -41,9 +40,9 @@ extension FSizingPath on SizingPath {
   static SizingPath of(Path value) => (_) => value;
 
   static SizingPath combineAll(
-      Iterable<SizingPath> iterable, {
-        PathOperation operation = PathOperation.union,
-      }) =>
+    Iterable<SizingPath> iterable, {
+    PathOperation operation = PathOperation.union,
+  }) =>
       iterable.reduce((a, b) => a.combine(b, operation: operation));
 
   ///
@@ -52,35 +51,35 @@ extension FSizingPath on SizingPath {
   static SizingPath lineTo(Offset point) => (_) => Path()..lineToPoint(point);
 
   static SizingPath lineToFromSize(SizingOffset point) =>
-          (size) => Path()..lineToPoint(point(size));
+      (size) => Path()..lineToPoint(point(size));
 
   ///
   ///
   ///
   static SizingPath connect(Offset a, Offset b) =>
-          (size) => Path()..lineFromAToB(a, b);
+      (size) => Path()..lineFromAToB(a, b);
 
   static SizingPath connectAll({
     Offset begin = Offset.zero,
     required Iterable<Offset> points,
     PathFillType pathFillType = PathFillType.nonZero,
   }) =>
-          (size) => Path()
+      (size) => Path()
         ..lineFromAToAll(begin, points)
         ..fillType = pathFillType;
 
   static SizingPath connectFromSize(
-      SizingOffset a,
-      SizingOffset b,
-      ) =>
-          (size) => Path()..lineFromAToB(a(size), b(size));
+    SizingOffset a,
+    SizingOffset b,
+  ) =>
+      (size) => Path()..lineFromAToB(a(size), b(size));
 
   static SizingPath connectAllFromSize({
     SizingOffset begin = FSizingOffset.zero,
     required SizingOffsetIterable points,
     PathFillType pathFillType = PathFillType.nonZero,
   }) =>
-          (size) => Path()
+      (size) => Path()
         ..lineFromAToAll(begin(size), points(size))
         ..fillType = pathFillType;
 
@@ -88,41 +87,41 @@ extension FSizingPath on SizingPath {
   ///
   ///
   static SizingPath bezierQuadratic(
-      Offset controlPoint,
-      Offset end, {
-        Offset begin = Offset.zero,
-      }) =>
+    Offset controlPoint,
+    Offset end, {
+    Offset begin = Offset.zero,
+  }) =>
       begin == Offset.zero
           ? (size) => Path()..quadraticBezierToPoint(controlPoint, end)
           : (size) => Path()
-        ..moveToPoint(begin)
-        ..quadraticBezierToPoint(controlPoint, end);
+            ..moveToPoint(begin)
+            ..quadraticBezierToPoint(controlPoint, end);
 
   static SizingPath bezierCubic(
-      Offset c1,
-      Offset c2,
-      Offset end, {
-        Offset begin = Offset.zero,
-      }) =>
+    Offset c1,
+    Offset c2,
+    Offset end, {
+    Offset begin = Offset.zero,
+  }) =>
       begin == Offset.zero
           ? (size) => Path()..cubicToPoint(c1, c2, end)
           : (size) => Path()
-        ..moveToPoint(begin)
-        ..cubicToPoint(c1, c2, end);
+            ..moveToPoint(begin)
+            ..cubicToPoint(c1, c2, end);
 
   ///
   ///
   ///
   static SizingPath get rectFullSize =>
-          (size) => Path()..addRect(Offset.zero & size);
+      (size) => Path()..addRect(Offset.zero & size);
 
   static SizingPath rect(Rect rect) => (size) => Path()..addRect(rect);
 
   static SizingPath rectFromZeroToSize(Size size) =>
-          (_) => Path()..addRect(Offset.zero & size);
+      (_) => Path()..addRect(Offset.zero & size);
 
   static SizingPath rectFromZeroToOffset(Offset offset) =>
-          (size) => Path()..addRect(Rect.fromPoints(Offset.zero, offset));
+      (size) => Path()..addRect(Rect.fromPoints(Offset.zero, offset));
 
   static SizingPath rRect(RRect rRect) => (size) => Path()..addRRect(rRect);
 
@@ -144,27 +143,27 @@ extension FSizingPath on SizingPath {
   /// see [RRegularPolygonCubicOnEdge.cubicPoints] and its subclasses for creating [cornersCubic]
   ///
   static SizingPath polygon(List<Offset> corners) =>
-          (size) => Path()..addPolygon(corners, false);
+      (size) => Path()..addPolygon(corners, false);
 
   static SizingPath polygonFromSize(SizingOffsetList corners) =>
-          (size) => Path()..addPolygon(corners(size), false);
+      (size) => Path()..addPolygon(corners(size), false);
 
   static SizingPath _polygonCubic(
-      SizingCubicOffsetIterable points,
-      double scale, {
-        Companion<CubicOffset, Size>? adjust,
-      }) {
+    SizingCubicOffsetIterable points,
+    double scale, {
+    Companion<CubicOffset, Size>? adjust,
+  }) {
     final Applier<Iterable<CubicOffset>> scaled = scale == 1
         ? FKeep.applier
         : (corners) => corners.map((cubics) => cubics * scale);
 
     Path from(Iterable<CubicOffset> offsets) =>
         scaled(offsets).iterator.foldByIndex(
-          Path(),
+              Path(),
               (path, points, index) => path
-            ..moveOrLineToPoint(points.a, index == 0)
-            ..cubicToPoint(points.b, points.c, points.d),
-        )..close();
+                ..moveOrLineToPoint(points.a, index == 0)
+                ..cubicToPoint(points.b, points.c, points.d),
+            )..close();
 
     return adjust == null
         ? (size) => from(points(size))
@@ -172,63 +171,62 @@ extension FSizingPath on SizingPath {
   }
 
   static SizingPath polygonCubic(
-      Iterable<CubicOffset> cornersCubic, {
-        double scale = 1,
-        Companion<CubicOffset, Size>? adjust,
-      }) =>
+    Iterable<CubicOffset> cornersCubic, {
+    double scale = 1,
+    Companion<CubicOffset, Size>? adjust,
+  }) =>
       _polygonCubic((_) => cornersCubic, scale, adjust: adjust);
 
   static SizingPath polygonCubicFromSize(
-      SizingCubicOffsetIterable cornersCubic, {
-        double scale = 1,
-        Companion<CubicOffset, Size>? adjust,
-      }) =>
+    SizingCubicOffsetIterable cornersCubic, {
+    double scale = 1,
+    Companion<CubicOffset, Size>? adjust,
+  }) =>
       _polygonCubic(cornersCubic, scale, adjust: adjust);
 
   ///
   ///
   ///
   static SizingPath shapeBorder(
-      ShapeBorder shape, {
-        TextDirection? textDirection,
-        bool outerPath = true,
-        SizingRect sizingRect = FSizingRect.full,
-      }) =>
+    ShapeBorder shape, {
+    TextDirection? textDirection,
+    bool outerPath = true,
+    SizingRect sizingRect = FSizingRect.full,
+  }) =>
       outerPath
           ? shapeBorderOuter(shape, sizingRect, textDirection)
           : shapeBorderInner(shape, sizingRect, textDirection);
 
   static SizingPath shapeBorderOuter(
-      ShapeBorder shape,
-      SizingRect sizingRect,
-      TextDirection? textDirection,
-      ) =>
-          (size) => shape.getOuterPath(
-        sizingRect(size),
-        textDirection: textDirection,
-      );
+    ShapeBorder shape,
+    SizingRect sizingRect,
+    TextDirection? textDirection,
+  ) =>
+      (size) => shape.getOuterPath(
+            sizingRect(size),
+            textDirection: textDirection,
+          );
 
   static SizingPath shapeBorderInner(
-      ShapeBorder shape,
-      SizingRect sizingRect,
-      TextDirection? textDirection,
-      ) =>
-          (size) => shape.getInnerPath(
-        sizingRect(size),
-        textDirection: textDirection,
-      );
-
-
+    ShapeBorder shape,
+    SizingRect sizingRect,
+    TextDirection? textDirection,
+  ) =>
+      (size) => shape.getInnerPath(
+            sizingRect(size),
+            textDirection: textDirection,
+          );
 
   ///
   ///
   ///
   static SizingPath pie(
-      Offset arcStart,
-      Offset arcEnd, {
-        bool clockwise = true,
-      }) {
-    final radius = Radius.circular(arcEnd.distanceHalfTo(arcStart));
+    Offset arcStart,
+    Offset arcEnd, {
+    bool clockwise = true,
+  }) {
+    final radius =
+        Radius.circular(OffsetExtension.distanceHalfTo(arcEnd, arcStart));
     return (size) => Path()
       ..arcFromStartToEnd(arcStart, arcEnd,
           radius: radius, clockwise: clockwise)
@@ -240,14 +238,14 @@ extension FSizingPath on SizingPath {
     required SizingOffset arcEnd,
     bool clockwise = true,
   }) =>
-          (size) {
+      (size) {
         final start = arcStart(size);
         final end = arcEnd(size);
         return Path()
           ..moveToPoint(start)
           ..arcToPoint(
             end,
-            radius: Radius.circular(end.distanceHalfTo(start)),
+            radius: Radius.circular(OffsetExtension.distanceHalfTo(end, start)),
             clockwise: clockwise,
           )
           ..close();
@@ -255,25 +253,25 @@ extension FSizingPath on SizingPath {
 
   static SizingPath pieOfLeftRight(bool isRight) => isRight
       ? FSizingPath.pieFromSize(
-    arcStart: (size) => Offset.zero,
-    arcEnd: (size) => size.bottomLeft(Offset.zero),
-    clockwise: true,
-  )
+          arcStart: (size) => Offset.zero,
+          arcEnd: (size) => size.bottomLeft(Offset.zero),
+          clockwise: true,
+        )
       : FSizingPath.pieFromSize(
-    arcStart: (size) => size.topRight(Offset.zero),
-    arcEnd: (size) => size.bottomRight(Offset.zero),
-    clockwise: false,
-  );
+          arcStart: (size) => size.topRight(Offset.zero),
+          arcEnd: (size) => size.bottomRight(Offset.zero),
+          clockwise: false,
+        );
 
   static SizingPath pieFromCenterDirectionRadius(
-      Offset arcCenter,
-      double dStart,
-      double dEnd,
-      double r, {
-        bool clockwise = true,
-      }) {
-    final arcStart = arcCenter.direct(dStart, r);
-    final arcEnd = arcCenter.direct(dEnd, r);
+    Offset arcCenter,
+    double dStart,
+    double dEnd,
+    double r, {
+    bool clockwise = true,
+  }) {
+    final arcStart = OffsetExtension.direct(arcCenter, dStart, r);
+    final arcEnd = OffsetExtension.direct(arcCenter, dEnd, r);
     return (size) => Path()
       ..moveToPoint(arcStart)
       ..arcToPoint(arcEnd, radius: Radius.circular(r), clockwise: clockwise)
@@ -297,12 +295,13 @@ extension FSizingPath on SizingPath {
     required double direction,
     bool clockwise = true,
   }) {
-    final tipA = rootA.direct(direction, length);
-    final rootB = rootA.direct(
+    final tipA = OffsetExtension.direct(rootA, direction, length);
+    final rootB = OffsetExtension.direct(
+      rootA,
       direction + DoubleExtension.radian_angle90 * (clockwise ? 1 : -1),
       width,
     );
-    final tipB = rootB.direct(direction, length);
+    final tipB = OffsetExtension.direct(rootB, direction, length);
     final radius = Radius.circular((width / 2));
     return (size) => Path()
       ..moveToPoint(rootA)
@@ -325,7 +324,7 @@ extension FSizingPath on SizingPath {
     required SizingDouble tipWidth,
     required SizingDouble bodyLength,
   }) =>
-          (size) {
+      (size) {
         final width = size.width;
         final height = size.height;
         final flatLength = tipWidth(size);
@@ -344,17 +343,17 @@ extension FSizingPath on SizingPath {
   ///
   ///
   ///
-  // static SizingPath trapezium({
-  //   required SizingOffset topLeftMargin,
-  //   required Applier<Size> body,
-  //   required SizingDouble bodyShortest,
-  //   Direction2DIn4 shortestSide = Direction2DIn4.top,
-  // }) =>
-  //         (size) {
-  //       // final origin = topLeftMargin(size);
-  //       // final bodySize = body(size);
-  //       throw UnimplementedError();
-  //     };
+// static SizingPath trapezium({
+//   required SizingOffset topLeftMargin,
+//   required Applier<Size> body,
+//   required SizingDouble bodyShortest,
+//   Direction2DIn4 shortestSide = Direction2DIn4.top,
+// }) =>
+//         (size) {
+//       // final origin = topLeftMargin(size);
+//       // final bodySize = body(size);
+//       throw UnimplementedError();
+//     };
 }
 
 ///

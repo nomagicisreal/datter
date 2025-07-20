@@ -6,9 +6,6 @@ part of '../../datter.dart';
 /// [RRegularPolygonCubicOnEdge]
 ///
 /// extensions:
-/// [SizeExtension]
-/// [OffsetExtension]
-///
 /// [CurveExtension]
 /// [CubicExtension]
 ///

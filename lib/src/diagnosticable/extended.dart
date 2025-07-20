@@ -7,6 +7,7 @@ part of '../../datter.dart';
 /// [Curving], [CurveFR]
 ///
 /// [PathExtension]
+/// [DateTimeRangeExtension]
 ///
 ///
 
@@ -394,4 +395,68 @@ extension PathExtension on Path {
 
   void addRectFromLTWH(double left, double top, double width, double height) =>
       addRect(Rect.fromLTWH(left, top, width, height));
+}
+
+
+///
+///
+///
+extension DateTimeRangeExtension on DateTimeRange {
+  ///
+  ///
+  ///
+  static DateTimeRange weeksFrom(
+      DateTime focusedDate, {
+        int startingDay = DateTime.sunday,
+        int count = 1,
+      }) {
+    final start = DateTimeExtension.firstDateOfWeek(
+      focusedDate,
+      startingDay,
+    );
+    return DateTimeRange(
+      start: start,
+      end: start.add(DurationExtension.day1 * DateTime.daysPerWeek * count),
+    );
+  }
+
+  static DateTimeRange weeksIneMonthFrom(
+      DateTime focusedDate, [
+        int startingDay = DateTime.sunday,
+      ]) =>
+      DateTimeRange(
+        start: DateTimeExtension.firstDateOfWeekInMonth(
+          focusedDate,
+          startingDay,
+        ),
+        end: DateTimeExtension.lastDateOfWeekInMonth(focusedDate, startingDay),
+      );
+
+  ///
+  /// [scopes]
+  ///
+  int scopes([
+    int startingWeekday = DateTime.sunday,
+    int daysPerScope = DateTime.daysPerWeek,
+  ]) =>
+      (DateTimeExtension.firstDateOfWeek(start, startingWeekday)
+          .difference(
+        DateTimeExtension.lastDateOfWeek(end, startingWeekday),
+      )
+          .inDays
+          .abs() +
+          1) ~/
+          daysPerScope;
+
+  ///
+  /// [datesWithin]
+  ///
+  List<DateTime> get datesWithin => List.generate(
+    duration.inDays + 1,
+        (index) => DateTime.utc(
+      start.year,
+      start.month,
+      start.day + index,
+    ),
+  );
 }

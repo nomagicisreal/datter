@@ -17,6 +17,7 @@ part of '../../datter.dart';
 ///
 /// * [ListItemStateMixin]
 /// * [ImageBuilderMixin]
+/// * [GestureDetectorDragMixin]
 ///
 ///
 
@@ -621,4 +622,41 @@ mixin ImageBuilderMixin<T extends StatefulWidget> on State<T> {
   ///
   static ImageErrorWidgetBuilder error_of(Widget child) =>
       (context, error, trace) => child;
+}
+
+
+///
+///
+///
+mixin GestureDetectorDragMixin<T extends StatefulWidget> on State<T> {
+  Offset? dragStart;
+  Offset? dragCurrent;
+
+  void onDragStart(DragStartDetails details) =>
+      dragStart = details.globalPosition;
+
+  GestureDragUpdateCallback onDragUpdateFrom([
+    VoidCallback? continuousCallback,
+  ]) =>
+          (details) {
+        dragCurrent = details.globalPosition;
+        if (continuousCallback == null) return;
+        continuousCallback();
+      };
+
+  GestureDragEndCallback onDragEndFrom({
+    required double Function(Offset begin, Offset end) difference,
+    required double threshold,
+    required DirectionIn4 Function(double d) direction,
+    required Consumer<DirectionIn4> onDrag,
+  }) =>
+          (details) {
+        final begin = dragStart;
+        final end = dragCurrent;
+        if (begin != null && end != null) {
+          final d = difference(begin, end);
+          if (d.abs() > threshold) onDrag(direction(d));
+        }
+        dragStart = null;
+      };
 }

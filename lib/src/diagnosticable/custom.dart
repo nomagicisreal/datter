@@ -2,24 +2,43 @@ part of '../../datter.dart';
 
 ///
 ///
-/// this file contains:
+/// enum:
+/// [ResponsiveShape]
+/// [ScrollWay2D]
+///
+/// typedefs:
 /// [Extruding2D]
 /// [TextFormFieldValidator]
 ///
 /// [SizingPath], [SizingOffset], ...
-/// [PaintFrom], [PaintingPath], [Painter]
-/// [RectBuilder]
+/// [PaintFrom], [PaintingPath], [Painter], ...
+/// [RectBuilder], ...
 ///
-/// [Parenting]
+/// [WidgetChildrenBuilder], ...
+/// [ConstraintsBuilder], ...
 ///
 /// takeaway:
 /// [FWidgetBuilder].
 /// [ColorExtension]
+/// [DebugUtils]
 ///
 ///
 ///
 ///
 
+enum ResponsiveShape {
+  horizontalRail,
+  horizontalView, // for screen
+  almostSquare,
+  verticalView, // for phone
+  verticalRail,
+}
+
+enum ScrollWay2D { horizontal, vertical, graph }
+
+///
+///
+///
 typedef Extruding2D = Rect Function(double width, double height);
 
 typedef TextFormFieldValidator = FormFieldValidator<String> Function(
@@ -71,6 +90,26 @@ typedef WidgetGlobalKeysBuilder<T extends State> = Widget Function(
   Map<String, GlobalKey<T>> keys,
 );
 typedef Parenting = Widget Function(List<Widget> children);
+
+///
+///
+///
+typedef ConstraintsBuilder = Widget Function(
+  BuildContext context,
+  BoxConstraints constraints,
+);
+
+typedef ConstraintsChildrenBuilder = List<Widget> Function(
+  BuildContext context,
+  BoxConstraints constraints,
+);
+
+typedef StyleWidgetBuilder<T> = Widget Function(T style);
+
+typedef StylePositionedLayout<T> = Positioned4Double Function(
+  T style,
+  BoxConstraints constraints,
+);
 
 ///
 /// static methods:
@@ -287,4 +326,12 @@ extension ColorExtension on Color {
 
   Color minusAllRGB(double value) =>
       Color.from(alpha: a, red: r - value, green: g - value, blue: b - value);
+}
+
+///
+///
+///
+extension DebugUtils<T> on T {
+  void printThis([Mapper<T, String>? mapper]) =>
+      print(mapper?.call(this) ?? ':::::$this');
 }

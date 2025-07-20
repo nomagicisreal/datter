@@ -35,10 +35,10 @@ class BetweenPathOffset extends BetweenPath<Offset> {
 
   static OnAnimatePath<Offset> animateStadium(
       Offset o, double direction, double r) {
-    Offset topOf(Offset p) =>
-        p.direct(direction - DoubleExtension.radian_angle90, r);
-    Offset bottomOf(Offset p) =>
-        p.direct(direction + DoubleExtension.radian_angle90, r);
+    Offset topOf(Offset p) => OffsetExtension.direct(
+        p, direction - DoubleExtension.radian_angle90, r);
+    Offset bottomOf(Offset p) => OffsetExtension.direct(
+        p, direction + DoubleExtension.radian_angle90, r);
     final oTop = topOf(o);
     final oBottom = bottomOf(o);
 

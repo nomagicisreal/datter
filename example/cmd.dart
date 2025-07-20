@@ -7,7 +7,7 @@ void main() {
   print(hello.value);
   print(hello.value == world.value);
   print(['1', '2'] == ['1', '2']);
-  print(['1', '2'].isEqualTo(['1', '2']));
+  print(['1', '2'].isEqual(['1', '2']));
 }
 
 

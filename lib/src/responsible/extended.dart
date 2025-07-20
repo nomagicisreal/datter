@@ -109,7 +109,6 @@ extension GlobalKeyExtension on GlobalKey {
 /// [closeKeyboardIfShowing]
 /// [showSnackbar], ...
 /// [showMaterialBanner], ...
-/// [showDialogTapToContinue], ...
 /// [showMenuEntries], ...
 ///
 ///
@@ -303,19 +302,20 @@ extension BuildContextExtension on BuildContext {
           scaffoldMessenger.showMaterialBanner(banner);
 
   ScaffoldFeatureController<MaterialBanner, MaterialBannerClosedReason>
-  showMaterialBannerMessageActions(
-      String message, {
-        bool center = true,
-        VoidCallback? onVisible,
-        required List<Widget> actions,
-      }) => scaffoldMessenger.showMaterialBanner(
-    MaterialBanner(
-      elevation: 10,
-      onVisible: onVisible,
-      content: center ? Center(child: Text(message)) : Text(message),
-      actions: actions,
-    ),
-  );
+      showMaterialBannerMessageActions(
+    String message, {
+    bool center = true,
+    VoidCallback? onVisible,
+    required List<Widget> actions,
+  }) =>
+          scaffoldMessenger.showMaterialBanner(
+            MaterialBanner(
+              elevation: 10,
+              onVisible: onVisible,
+              content: center ? Center(child: Text(message)) : Text(message),
+              actions: actions,
+            ),
+          );
 
   void hideMaterialBanner({
     MaterialBannerClosedReason reason = MaterialBannerClosedReason.dismiss,
@@ -358,24 +358,25 @@ extension BuildContextExtension on BuildContext {
     RouteSettings? routeSettings,
     AnimationStyle? popUpAnimationStyle,
     bool? requestFocus,
-  }) => showMenu(
-    context: this,
-    positionBuilder: positionBuilder,
-    items: items,
-    initialValue: initialValue,
-    elevation: elevation,
-    shadowColor: shadowColor,
-    surfaceTintColor: surfaceTintColor,
-    semanticLabel: semanticLabel,
-    menuPadding: padding,
-    color: color,
-    useRootNavigator: useRootNavigator,
-    constraints: constraints,
-    clipBehavior: clipBehavior,
-    routeSettings: routeSettings,
-    popUpAnimationStyle: popUpAnimationStyle,
-    requestFocus: requestFocus,
-  );
+  }) =>
+      showMenu(
+        context: this,
+        positionBuilder: positionBuilder,
+        items: items,
+        initialValue: initialValue,
+        elevation: elevation,
+        shadowColor: shadowColor,
+        surfaceTintColor: surfaceTintColor,
+        semanticLabel: semanticLabel,
+        menuPadding: padding,
+        color: color,
+        useRootNavigator: useRootNavigator,
+        constraints: constraints,
+        clipBehavior: clipBehavior,
+        routeSettings: routeSettings,
+        popUpAnimationStyle: popUpAnimationStyle,
+        requestFocus: requestFocus,
+      );
 
   ///
   ///
@@ -401,26 +402,28 @@ extension BuildContextExtension on BuildContext {
     AnimationController? transitionAnimationController,
     Offset? anchorPoint,
     AnimationStyle? sheetAnimationStyle,
-  }) => showModalBottomSheet(
-    context: this,
-    builder: builder,
-    backgroundColor: backgroundColor,
-    barrierLabel: barrierLabel,
-    elevation: elevation,
-    shape: shape,
-    clipBehavior: clipBehavior,
-    constraints: constraints,
-    barrierColor: backgroundColor,
-    isScrollControlled: isScrollControlled,
-    scrollControlDisabledMaxHeightRatio: scrollControlDisabledMaxHeightRatio,
-    useRootNavigator: useRootNavigator,
-    isDismissible: isDismissible,
-    enableDrag: enableDrag,
-    showDragHandle: showDragHandle,
-    useSafeArea: useSafeArea,
-    routeSettings: routeSettings,
-    transitionAnimationController: transitionAnimationController,
-    anchorPoint: anchorPoint,
-    sheetAnimationStyle: sheetAnimationStyle,
-  );
+  }) =>
+      showModalBottomSheet(
+        context: this,
+        builder: builder,
+        backgroundColor: backgroundColor,
+        barrierLabel: barrierLabel,
+        elevation: elevation,
+        shape: shape,
+        clipBehavior: clipBehavior,
+        constraints: constraints,
+        barrierColor: backgroundColor,
+        isScrollControlled: isScrollControlled,
+        scrollControlDisabledMaxHeightRatio:
+            scrollControlDisabledMaxHeightRatio,
+        useRootNavigator: useRootNavigator,
+        isDismissible: isDismissible,
+        enableDrag: enableDrag,
+        showDragHandle: showDragHandle,
+        useSafeArea: useSafeArea,
+        routeSettings: routeSettings,
+        transitionAnimationController: transitionAnimationController,
+        anchorPoint: anchorPoint,
+        sheetAnimationStyle: sheetAnimationStyle,
+      );
 }

@@ -2,6 +2,9 @@ part of '../../datter.dart';
 
 ///
 ///
+/// [SizeExtension]
+/// [OffsetExtension]
+///
 /// [IterableOffsetExtension]
 /// [ListOffsetExtension]
 ///
@@ -34,17 +37,26 @@ extension SizeExtension on Size {
 }
 
 ///
-/// static methods:
-/// [keep], ...
-/// [parallelUnitOf], ...
-/// [perpendicularUnitOf], ...
 ///
-/// instance methods:
+/// [differenceVertical], ...
+///
+/// [keep], ...
+/// [parallelUnitBetween], ...
+/// [perpendicularUnitOf], ...
 /// [direct], ...
-/// [isAtBottomRightOf], ...
+/// [isBottomRightFrom], ...
 /// [toSize], ...
 ///
 extension OffsetExtension on Offset {
+  ///
+  /// [differenceVertical], [differenceHorizontal]
+  ///
+  static double differenceVertical(Offset begin, Offset end) =>
+      end.dy - begin.dy;
+
+  static double differenceHorizontal(Offset begin, Offset end) =>
+      end.dx - begin.dx;
+
   ///
   ///
   ///
@@ -58,80 +70,88 @@ extension OffsetExtension on Offset {
   ///
   ///
   ///
-  static Offset parallelUnitOf(Offset a, Offset b) {
-    final offset = b - a;
+  static Offset parallelUnitBetween(Offset p, Offset q) {
+    final offset = q - p;
     return offset / offset.distance;
   }
 
-  static Offset parallelVectorOf(Offset a, Offset b, double t) => (b - a) * t;
+  static Offset parallelVectorOf(Offset p, Offset q, double t) => (q - p) * t;
 
-  static Offset parallelOffsetOf(Offset a, Offset b, double t) =>
-      a + parallelVectorOf(a, b, t);
+  static Offset parallelOffsetOf(Offset p, Offset q, double t) =>
+      p + parallelVectorOf(p, q, t);
 
-  static Offset parallelOffsetUnitOf(Offset a, Offset b, double t) =>
-      a + parallelUnitOf(a, b) * t;
+  static Offset parallelOffsetUnitOf(Offset p, Offset q, double t) =>
+      p + parallelUnitBetween(p, q) * t;
 
-  static Offset parallelOffsetUnitOnCenterOf(Offset a, Offset b, double t) =>
-      a.middleTo(b) + parallelUnitOf(a, b) * t;
+  static Offset parallelOffsetUnitOnCenterOf(Offset p, Offset q, double t) =>
+      middleTo(p, q) + parallelUnitBetween(p, q) * t;
 
   ///
   ///
   ///
-  static Offset perpendicularUnitOf(Offset a, Offset b) =>
-      (b - a).toPerpendicularUnit;
+  static Offset perpendicularUnitOf(Offset p, Offset q) =>
+      (q - p).toPerpendicularUnit;
 
-  static Offset perpendicularVectorOf(Offset a, Offset b, double t) =>
-      (b - a).toPerpendicular * t;
+  static Offset perpendicularVectorOf(Offset p, Offset q, double t) =>
+      (q - p).toPerpendicular * t;
 
-  static Offset perpendicularOffsetOf(Offset a, Offset b, double t) =>
-      a + perpendicularVectorOf(a, b, t);
+  static Offset perpendicularOffsetOf(Offset p, Offset q, double t) =>
+      p + perpendicularVectorOf(p, q, t);
 
-  static Offset perpendicularOffsetUnitOf(Offset a, Offset b, double t) =>
-      a + perpendicularUnitOf(a, b) * t;
+  static Offset perpendicularOffsetUnitOf(Offset p, Offset q, double t) =>
+      p + perpendicularUnitOf(p, q) * t;
 
   static Offset perpendicularOffsetUnitFromCenterOf(
-    Offset a,
-    Offset b,
+    Offset p,
+    Offset q,
     double t,
   ) =>
-      a.middleTo(b) + perpendicularUnitOf(a, b) * t;
+      middleTo(p, q) + perpendicularUnitOf(p, q) * t;
 
   ///
   ///
   ///
-  Offset direct(double direction, [double distance = 1]) =>
-      this + Offset.fromDirection(direction, distance);
+  static Offset direct(
+    Offset offset,
+    double direction, [
+    double distance = 1,
+  ]) =>
+      offset + Offset.fromDirection(direction, distance);
 
-  Offset middleTo(Offset p) => (p + this) / 2;
+  static Offset middleTo(Offset p, Offset q) => (p + q) / 2;
 
-  double distanceHalfTo(Offset p) => (p - this).distance / 2;
+  static double distanceHalfTo(Offset p, Offset q) => (q - p).distance / 2;
 
-  double directionPerpendicular({bool counterclockwise = true}) =>
-      direction + DoubleExtension.radian_angle90 * (counterclockwise ? 1 : -1);
-
-  ///
-  ///
-  ///
-  bool isAtBottomRightOf(Offset offset) => this > offset;
-
-  bool isAtTopLeftOf(Offset offset) => this < offset;
-
-  bool isAtBottomLeftOf(Offset offset) => dx < offset.dx && dy > offset.dy;
-
-  bool isAtTopRightOf(Offset offset) => dx > offset.dx && dy < offset.dy;
+  static double directionPerpendicular(
+    Offset offset, {
+    bool counterclockwise = true,
+  }) =>
+      offset.direction +
+      DoubleExtension.radian_angle90 * (counterclockwise ? 1 : -1);
 
   ///
+  /// [isBottomRightFrom], ...
   ///
+  bool isBottomRightFrom(Offset q) => this > q;
+
+  bool isTopLeftFrom(Offset q) => this < q;
+
+  bool isBottomLeftFrom(Offset q) => dx < q.dx && dy > q.dy;
+
+  bool isTopRightFrom(Offset q) => dx > q.dx && dy < q.dy;
+
   ///
-  Size get toSize => Size(dx, dy);
+  /// [toSize], ...
+  ///
+  Size get toSize => Size(dy, dx);
 
   Offset get toReciprocal => Offset(1 / dx, 1 / dy);
 
   Offset get toPerpendicularUnit =>
-      Offset.fromDirection(directionPerpendicular());
+      Offset.fromDirection(directionPerpendicular(this));
 
   Offset get toPerpendicular =>
-      Offset.fromDirection(directionPerpendicular(), distance);
+      Offset.fromDirection(directionPerpendicular(this), distance);
 }
 
 ///
@@ -286,9 +306,9 @@ extension ListOffsetExtension on List<Offset> {
     final begin = this[insertionIndex - 1];
     final end = this[insertionIndex];
 
-    final unitParallel = OffsetExtension.parallelUnitOf(begin, end);
-    final point =
-        begin.middleTo(end) + unitParallel.toPerpendicular * dPerpendicular;
+    final unitParallel = OffsetExtension.parallelUnitBetween(begin, end);
+    final point = OffsetExtension.middleTo(begin, end) +
+        unitParallel.toPerpendicular * dPerpendicular;
 
     return this
       ..insertAll(insertionIndex, [

@@ -13,6 +13,9 @@ part of '../../datter.dart';
 ///
 ///
 extension FBoxConstraints on BoxConstraints {
+  static double shortSide(BoxConstraints constraints) =>
+      math.min(constraints.maxHeight, constraints.maxWidth);
+
   static BoxConstraints keep(BoxConstraints v) => v;
 
   static BoxConstraints keepLoosen(BoxConstraints constraints) =>
