@@ -154,11 +154,11 @@ class CurveFR {
   ///
   ///
   CurveFR interval(
-      double begin,
-      double end, [
-        bool flipForward = false,
-        bool flipReverse = false,
-      ]) =>
+    double begin,
+    double end, [
+    bool flipForward = false,
+    bool flipReverse = false,
+  ]) =>
       CurveFR(
         forward.interval(begin, end, flipForward),
         reverse.interval(begin, end, flipReverse),
@@ -171,7 +171,6 @@ class CurveFR {
       CurveFR(forward, reverse.interval(begin, end, flip));
 
   CurveFR get invert => CurveFR(reverse, forward);
-
 
   ///
   ///
@@ -397,23 +396,27 @@ extension PathExtension on Path {
       addRect(Rect.fromLTWH(left, top, width, height));
 }
 
-
 ///
 ///
 ///
 extension DateTimeRangeExtension on DateTimeRange {
   ///
+  /// [weekAfter], [weeksFrom], [weeksIneMonthFrom]
   ///
-  ///
-  static DateTimeRange weeksFrom(
-      DateTime focusedDate, {
-        int startingDay = DateTime.sunday,
-        int count = 1,
-      }) {
-    final start = DateTimeExtension.firstDateOfWeek(
-      focusedDate,
-      startingDay,
-    );
+  static DateTimeRange weekAfter(DateTime date) => DateTimeRange(
+        start: date,
+        end: date.add(DurationExtension.day1 * DateTime.daysPerWeek),
+      );
+
+  static DateTimeRange weeksFrom({
+    DateTime? date,
+    Duration startPending = Duration.zero,
+    int startingWeekday = DateTime.sunday,
+    int count = 1,
+  }) {
+    final start = (date ?? DateTime.now())
+        .add(startPending)
+        .firstDateOfWeek(startingWeekday);
     return DateTimeRange(
       start: start,
       end: start.add(DurationExtension.day1 * DateTime.daysPerWeek * count),
@@ -421,42 +424,31 @@ extension DateTimeRangeExtension on DateTimeRange {
   }
 
   static DateTimeRange weeksIneMonthFrom(
-      DateTime focusedDate, [
-        int startingDay = DateTime.sunday,
-      ]) =>
+    DateTime date, [
+    int startingWeekday = DateTime.sunday,
+  ]) =>
       DateTimeRange(
-        start: DateTimeExtension.firstDateOfWeekInMonth(
-          focusedDate,
-          startingDay,
-        ),
-        end: DateTimeExtension.lastDateOfWeekInMonth(focusedDate, startingDay),
+        start: date.firstDateOfMonth.firstDateOfWeek(startingWeekday),
+        end: date.lastDateOfMonth.lastDateOfWeek(startingWeekday),
       );
 
   ///
-  /// [scopes]
+  /// [toDates], [toWeeks]
   ///
-  int scopes([
-    int startingWeekday = DateTime.sunday,
-    int daysPerScope = DateTime.daysPerWeek,
-  ]) =>
-      (DateTimeExtension.firstDateOfWeek(start, startingWeekday)
-          .difference(
-        DateTimeExtension.lastDateOfWeek(end, startingWeekday),
-      )
-          .inDays
-          .abs() +
-          1) ~/
-          daysPerScope;
+  List<DateTime> get toDates => List.generate(
+        duration.inDays + 1,
+        (index) => DateTime(
+          start.year,
+          start.month,
+          start.day + index,
+        ),
+      );
 
-  ///
-  /// [datesWithin]
-  ///
-  List<DateTime> get datesWithin => List.generate(
-    duration.inDays + 1,
-        (index) => DateTime.utc(
-      start.year,
-      start.month,
-      start.day + index,
-    ),
-  );
+  DateTimeRange toWeeks([
+    int startingWeekday = DateTime.sunday,
+  ]) =>
+      DateTimeRange(
+        start: start.firstDateOfWeek(startingWeekday),
+        end: end.lastDateOfWeek(startingWeekday),
+      );
 }
