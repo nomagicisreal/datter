@@ -65,10 +65,10 @@ extension Matrix4Extension on Matrix4 {
   Matrix4 get perspectiveIdentity => Matrix4.identity()..copyPerspective(this);
 
   void translateOf(Point3 point3) =>
-      translate(v64.Vector3(point3.x, point3.y, point3.z));
+      translate(point3.x, point3.y, point3.z);
 
   void translateFor(Offset offset) =>
-      translate(v64.Vector3(offset.dx, offset.dy, 0));
+      translate(offset.dx, offset.dy, 0);
 
   void rotateOf(Point3 point3) => this
     ..rotateX(point3.x)

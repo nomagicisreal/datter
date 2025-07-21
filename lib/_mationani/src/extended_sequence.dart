@@ -80,7 +80,7 @@ final class AniSequence {
   static AniSequencer<Mamable> _sequencerOf(AniSequenceStyle style) =>
       switch (style) {
         AniSequenceStyle.transformTRS => (previous, next, interval) {
-            final curve = CurveFR.of(interval.curves[0]);
+            final curve = (interval.curves[0], interval.curves[0]);
             return AniSequenceStyle._sequence(
               previous: previous,
               next: next,
@@ -108,7 +108,7 @@ final class AniSequence {
           },
         AniSequenceStyle.transitionRotateSlideBezierCubic =>
           (previous, next, interval) {
-            final curve = CurveFR.of(interval.curves[0]);
+            final curve = (interval.curves[0], interval.curves[0]);
             final controlPoints = interval.offsets;
             return AniSequenceStyle._sequence(
               previous: previous,
@@ -139,7 +139,7 @@ final class AniSequence {
 final class AniSequenceStep {
   final List<double> values;
   final List<Offset> offsets;
-  final List<Point3> points3;
+  final List<(double, double, double)> points3;
 
   const AniSequenceStep({
     this.values = const [],
@@ -194,7 +194,7 @@ enum AniSequenceStyle {
 abstract final class MationaniSequence {
   static Between<T> between<T>({
     BetweenInterval weight = BetweenInterval.linear,
-    CurveFR? curve,
+    (Curve, Curve)? curve,
     required List<T> steps,
   }) =>
       Between.constant(
@@ -212,7 +212,7 @@ abstract final class MationaniSequence {
     required int totalStep,
     required Generator<T> step,
     required Generator<BetweenInterval> interval,
-    CurveFR? curve,
+    (Curve, Curve)? curve,
     Sequencer<T, Lerper<T>, Between<T>>? sequencer,
   }) =>
       Between.constant(
@@ -230,7 +230,7 @@ abstract final class MationaniSequence {
   static Between<T> outAndBack<T>({
     required T begin,
     required T target,
-    CurveFR? curve,
+    (Curve, Curve)? curve,
     double ratio = 1.0,
     Curve curveOut = Curves.fastOutSlowIn,
     Curve curveBack = Curves.fastOutSlowIn,

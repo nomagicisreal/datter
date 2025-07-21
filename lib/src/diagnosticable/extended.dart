@@ -2,9 +2,11 @@ part of '../../datter.dart';
 
 ///
 ///
-/// [Painting], [Clipping]
+/// [Painting]
+/// [Clipping]
 ///
-/// [Curving], [CurveFR]
+/// [Curving]
+/// [CurveCurve]
 ///
 /// [PathExtension]
 /// [DateTimeRangeExtension]
@@ -137,83 +139,15 @@ class Curving extends Curve {
 }
 
 ///
-/// [forward], [reverse]
-/// [interval], ...
-/// [CurveFR.of], ...
-/// [CurveFR.flip], ...
-/// [CurveFR.fusionIntervalFlipIn]
 /// [all], ...
+/// [intervalOf], ...
+/// [invert], ...
 ///
-class CurveFR {
-  final Curve forward;
-  final Curve reverse;
-
-  const CurveFR(this.forward, this.reverse);
-
-  ///
-  ///
-  ///
-  CurveFR interval(
-    double begin,
-    double end, [
-    bool flipForward = false,
-    bool flipReverse = false,
-  ]) =>
-      CurveFR(
-        forward.interval(begin, end, flipForward),
-        reverse.interval(begin, end, flipReverse),
-      );
-
-  CurveFR intervalForward(double begin, double end, [bool flip = false]) =>
-      CurveFR(forward.interval(begin, end, flip), reverse);
-
-  CurveFR intervalReverse(double begin, double end, [bool flip = false]) =>
-      CurveFR(forward, reverse.interval(begin, end, flip));
-
-  CurveFR get invert => CurveFR(reverse, forward);
-
-  ///
-  ///
-  ///
-  const CurveFR.of(Curve curve)
-      : forward = curve,
-        reverse = curve;
-
-  CurveFR.intervalOf(Curve curve, double begin, double end)
-      : forward = curve.interval(begin, end),
-        reverse = curve.interval(begin, end);
-
-  CurveFR.intervalForwardOf(Curve curve, double begin, double end)
-      : forward = curve.interval(begin, end),
-        reverse = curve;
-
-  CurveFR.intervalReverseOf(Curve curve, double begin, double end)
-      : forward = curve,
-        reverse = curve.interval(begin, end);
-
-  ///
-  ///
-  ///
-  CurveFR.flip(Curve curve)
-      : forward = curve,
-        reverse = curve.flipped;
-
-  CurveFR.flipIntervalOf(Curve curve, double begin, double end)
-      : forward = curve.interval(begin, end),
-        reverse = curve.interval(begin, end, true);
-
-  CurveFR.flipIntervalForwardOf(Curve curve, double begin, double end)
-      : forward = curve.interval(begin, end),
-        reverse = curve.flipped;
-
-  CurveFR.flipIntervalReverseOf(Curve curve, double begin, double end)
-      : forward = curve,
-        reverse = curve.interval(begin, end, true);
-
+extension CurveCurve on (Curve, Curve) {
   ///
   /// [all].length == 43, see https://api.flutter.dev/flutter/animation/Curves-class.html?gclid=CjwKCAiA-bmsBhAGEiwAoaQNmg9ZfimSGJRAty3QNZ0AA32ztq51qPlJfFPBsFc5Iv1n-EgFQtULyxoC8q0QAvD_BwE&gclsrc=aw.ds
   ///
-  static const List<CurveFR> all = [
+  static const List<(Curve, Curve)> all = [
     linear,
     decelerate,
     fastLinearToSlowEaseIn,
@@ -259,52 +193,123 @@ class CurveFR {
     elasticInOut,
   ];
 
-  static const linear = CurveFR.of(Curves.linear);
-  static const decelerate = CurveFR.of(Curves.decelerate);
+  static const linear = (Curves.linear, Curves.linear);
+  static const decelerate = (Curves.decelerate, Curves.decelerate);
   static const fastLinearToSlowEaseIn =
-      CurveFR.of(Curves.fastLinearToSlowEaseIn);
+      (Curves.fastLinearToSlowEaseIn, Curves.fastLinearToSlowEaseIn);
   static const fastEaseInToSlowEaseOut =
-      CurveFR.of(Curves.fastEaseInToSlowEaseOut);
-  static const ease = CurveFR.of(Curves.ease);
-  static const easeInToLinear = CurveFR.of(Curves.easeInToLinear);
-  static const linearToEaseOut = CurveFR.of(Curves.linearToEaseOut);
-  static const easeIn = CurveFR.of(Curves.easeIn);
-  static const easeInSine = CurveFR.of(Curves.easeInSine);
-  static const easeInQuad = CurveFR.of(Curves.easeInQuad);
-  static const easeInCubic = CurveFR.of(Curves.easeInCubic);
-  static const easeInQuart = CurveFR.of(Curves.easeInQuart);
-  static const easeInQuint = CurveFR.of(Curves.easeInQuint);
-  static const easeInExpo = CurveFR.of(Curves.easeInExpo);
-  static const easeInCirc = CurveFR.of(Curves.easeInCirc);
-  static const easeInBack = CurveFR.of(Curves.easeInBack);
-  static const easeOut = CurveFR.of(Curves.easeOut);
-  static const easeOutSine = CurveFR.of(Curves.easeOutSine);
-  static const easeOutQuad = CurveFR.of(Curves.easeOutQuad);
-  static const easeOutCubic = CurveFR.of(Curves.easeOutCubic);
-  static const easeOutQuart = CurveFR.of(Curves.easeOutQuart);
-  static const easeOutQuint = CurveFR.of(Curves.easeOutQuint);
-  static const easeOutExpo = CurveFR.of(Curves.easeOutExpo);
-  static const easeOutCirc = CurveFR.of(Curves.easeOutCirc);
-  static const easeOutBack = CurveFR.of(Curves.easeOutBack);
-  static const easeInOut = CurveFR.of(Curves.easeInOut);
-  static const easeInOutSine = CurveFR.of(Curves.easeInOutSine);
-  static const easeInOutQuad = CurveFR.of(Curves.easeInOutQuad);
-  static const easeInOutCubic = CurveFR.of(Curves.easeInOutCubic);
+      (Curves.fastEaseInToSlowEaseOut, Curves.fastEaseInToSlowEaseOut);
+  static const ease = (Curves.ease, Curves.ease);
+  static const easeInToLinear = (Curves.easeInToLinear, Curves.easeInToLinear);
+  static const linearToEaseOut =
+      (Curves.linearToEaseOut, Curves.linearToEaseOut);
+  static const easeIn = (Curves.easeIn, Curves.easeIn);
+  static const easeInSine = (Curves.easeInSine, Curves.easeInSine);
+  static const easeInQuad = (Curves.easeInQuad, Curves.easeInQuad);
+  static const easeInCubic = (Curves.easeInCubic, Curves.easeInCubic);
+  static const easeInQuart = (Curves.easeInQuart, Curves.easeInQuart);
+  static const easeInQuint = (Curves.easeInQuint, Curves.easeInQuint);
+  static const easeInExpo = (Curves.easeInExpo, Curves.easeInExpo);
+  static const easeInCirc = (Curves.easeInCirc, Curves.easeInCirc);
+  static const easeInBack = (Curves.easeInBack, Curves.easeInBack);
+  static const easeOut = (Curves.easeOut, Curves.easeOut);
+  static const easeOutSine = (Curves.easeOutSine, Curves.easeOutSine);
+  static const easeOutQuad = (Curves.easeOutQuad, Curves.easeOutQuad);
+  static const easeOutCubic = (Curves.easeOutCubic, Curves.easeOutCubic);
+  static const easeOutQuart = (Curves.easeOutQuart, Curves.easeOutQuart);
+  static const easeOutQuint = (Curves.easeOutQuint, Curves.easeOutQuint);
+  static const easeOutExpo = (Curves.easeOutExpo, Curves.easeOutExpo);
+  static const easeOutCirc = (Curves.easeOutCirc, Curves.easeOutCirc);
+  static const easeOutBack = (Curves.easeOutBack, Curves.easeOutBack);
+  static const easeInOut = (Curves.easeInOut, Curves.easeInOut);
+  static const easeInOutSine = (Curves.easeInOutSine, Curves.easeInOutSine);
+  static const easeInOutQuad = (Curves.easeInOutQuad, Curves.easeInOutQuad);
+  static const easeInOutCubic = (Curves.easeInOutCubic, Curves.easeInOutCubic);
   static const easeInOutCubicEmphasized =
-      CurveFR.of(Curves.easeInOutCubicEmphasized);
-  static const easeInOutQuart = CurveFR.of(Curves.easeInOutQuart);
-  static const easeInOutQuint = CurveFR.of(Curves.easeInOutQuint);
-  static const easeInOutExpo = CurveFR.of(Curves.easeInOutExpo);
-  static const easeInOutCirc = CurveFR.of(Curves.easeInOutCirc);
-  static const easeInOutBack = CurveFR.of(Curves.easeInOutBack);
-  static const fastOutSlowIn = CurveFR.of(Curves.fastOutSlowIn);
-  static const slowMiddle = CurveFR.of(Curves.slowMiddle);
-  static const bounceIn = CurveFR.of(Curves.bounceIn);
-  static const bounceOut = CurveFR.of(Curves.bounceOut);
-  static const bounceInOut = CurveFR.of(Curves.bounceInOut);
-  static const elasticIn = CurveFR.of(Curves.elasticIn);
-  static const elasticOut = CurveFR.of(Curves.elasticOut);
-  static const elasticInOut = CurveFR.of(Curves.elasticInOut);
+      (Curves.easeInOutCubicEmphasized, Curves.easeInOutCubicEmphasized);
+  static const easeInOutQuart = (Curves.easeInOutQuart, Curves.easeInOutQuart);
+  static const easeInOutQuint = (Curves.easeInOutQuint, Curves.easeInOutQuint);
+  static const easeInOutExpo = (Curves.easeInOutExpo, Curves.easeInOutExpo);
+  static const easeInOutCirc = (Curves.easeInOutCirc, Curves.easeInOutCirc);
+  static const easeInOutBack = (Curves.easeInOutBack, Curves.easeInOutBack);
+  static const fastOutSlowIn = (Curves.fastOutSlowIn, Curves.fastOutSlowIn);
+  static const slowMiddle = (Curves.slowMiddle, Curves.slowMiddle);
+  static const bounceIn = (Curves.bounceIn, Curves.bounceIn);
+  static const bounceOut = (Curves.bounceOut, Curves.bounceOut);
+  static const bounceInOut = (Curves.bounceInOut, Curves.bounceInOut);
+  static const elasticIn = (Curves.elasticIn, Curves.elasticIn);
+  static const elasticOut = (Curves.elasticOut, Curves.elasticOut);
+  static const elasticInOut = (Curves.elasticInOut, Curves.elasticInOut);
+
+  ///
+  ///
+  /// [intervalOf], [intervalForwardOf], [intervalReverseOf]
+  /// [flip], [flipIntervalOf]
+  /// [flipIntervalForwardOf], [flipIntervalReverseOf]
+  ///
+  ///
+
+  ///
+  /// [intervalOf], [intervalForwardOf], [intervalReverseOf]
+  ///
+  static (Curve, Curve) intervalOf(Curve curve, double begin, double end) =>
+      (curve.interval(begin, end), curve.interval(begin, end));
+
+  static (Curve, Curve) intervalForwardOf(
+      Curve curve, double begin, double end) =>
+      (curve.interval(begin, end), curve);
+
+  static (Curve, Curve) intervalReverseOf(
+      Curve curve, double begin, double end) =>
+      (curve, curve.interval(begin, end));
+
+  ///
+  /// [flip], [flipIntervalOf]
+  /// [flipIntervalForwardOf], [flipIntervalReverseOf]
+  ///
+  static (Curve, Curve) flip(Curve curve) => (curve, curve.flipped);
+
+  static (Curve, Curve) flipIntervalOf(Curve curve, double begin, double end) =>
+      (curve.interval(begin, end), curve.interval(begin, end, true));
+
+  static (Curve, Curve) flipIntervalForwardOf(
+      Curve curve, double begin, double end) =>
+      (curve.interval(begin, end), curve.flipped);
+
+  static (Curve, Curve) flipIntervalReverseOf(
+      Curve curve, double begin, double end) =>
+      (curve, curve.interval(begin, end, true));
+
+  ///
+  /// [applyIntervalToEnd]
+  ///
+  static Applier<(Curve, Curve)> applyIntervalToEnd(double begin) =>
+          (curve) => curve.interval(begin, 1.0);
+
+  ///
+  /// [invert], [interval]
+  /// [intervalForward], [intervalReverse]
+  ///
+  (Curve, Curve) get invert => (this.$2, this.$1);
+
+  (Curve, Curve) interval(
+      double begin,
+      double end, [
+        bool flipForward = false,
+        bool flipReverse = false,
+      ]) =>
+      (
+      this.$1.interval(begin, end, flipForward),
+      this.$2.interval(begin, end, flipReverse),
+      );
+
+  (Curve, Curve) intervalForward(double begin, double end,
+      [bool flip = false]) =>
+      (this.$1.interval(begin, end, flip), this.$2);
+
+  (Curve, Curve) intervalReverse(double begin, double end,
+      [bool flip = false]) =>
+      (this.$1, this.$2.interval(begin, end, flip));
 }
 
 ///

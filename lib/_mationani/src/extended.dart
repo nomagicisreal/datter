@@ -27,6 +27,7 @@ class MationaniArrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final curve = Curving.sinPeriodOf(2);
     return SizedBox.square(
       dimension: dimension,
       child: RotatedBox(
@@ -38,7 +39,7 @@ class MationaniArrow extends StatelessWidget {
             mamable: MamableTransition.slide(
               FMatalue.offset_0To(
                 KGeometry.offset_square_1 / 2,
-                curve: CurveFR.of(Curving.sinPeriodOf(2)),
+                curve: (curve, curve),
               ),
             ),
             child: child,
@@ -70,8 +71,8 @@ class MationaniCutting extends StatelessWidget {
   final double rotation;
   final double distance;
   final Ani ani;
-  final CurveFR? curveFadeOut;
-  final CurveFR? curve;
+  final (Curve, Curve)? curveFadeOut;
+  final (Curve, Curve)? curve;
   final Widget child;
 
   @override
