@@ -7,15 +7,9 @@ part of '../../datter.dart';
 /// [ScrollWay2D]
 ///
 /// typedefs:
-/// [Extruding2D]
-/// [TextFormFieldValidator]
-///
-/// [SizingPath], [SizingOffset], ...
-/// [PaintFrom], [PaintingPath], [Painter], ...
-/// [RectBuilder], ...
-///
-/// [WidgetChildrenBuilder], ...
-/// [ConstraintsBuilder], ...
+/// [Sizing], ...
+/// [ChildrenBuilder], ...
+/// [ContextGeneral], ...
 ///
 /// takeaway:
 /// [FWidgetBuilder].
@@ -39,15 +33,6 @@ enum ScrollWay2D { horizontal, vertical, graph }
 ///
 ///
 ///
-typedef Extruding2D = Rect Function(double width, double height);
-
-typedef TextFormFieldValidator = FormFieldValidator<String> Function(
-  String failedMessage,
-);
-
-///
-///
-///
 typedef Sizing = Size Function(Size size);
 typedef SizingDouble = double Function(Size size);
 typedef SizingOffset = Offset Function(Size size);
@@ -57,59 +42,59 @@ typedef SizingPathFrom<T> = SizingPath Function(T value);
 typedef SizingOffsetIterable = Iterable<Offset> Function(Size size);
 typedef SizingOffsetList = List<Offset> Function(Size size);
 typedef SizingCubicOffsetIterable = Iterable<CubicOffset> Function(Size size);
-
-///
-/// painting
-///
 typedef PaintFrom = Paint Function(Canvas canvas, Size size);
 typedef PaintingPath = void Function(Canvas canvas, Paint paint, Path path);
 typedef Painter = Painting Function(SizingPath sizingPath);
-
-///
-/// rect
-///
-typedef RectBuilder = Rect Function(BuildContext context);
+typedef RectFromContext = Rect Function(BuildContext context);
 
 ///
 ///
 /// widget
 ///
 ///
-typedef WidgetChildrenBuilder = List<Widget> Function(BuildContext context);
-typedef WidgetValuedBuilder<T> = Widget Function(BuildContext context, T value);
-typedef WidgetChildBuilder = Widget Function(
-  BuildContext context,
-  Widget child,
-);
-typedef WidgetCallableBuilder = Widget Function(
+typedef ChildrenBuilder = Widget Function(List<Widget> children);
+typedef GeneralBuilder<T> = Widget Function(T value);
+typedef NotifierBuilder<T> = Widget Function(ValueNotifier<T> notifier);
+
+//
+typedef ValuedBuilder<T> = Widget Function(BuildContext context, T value);
+typedef ChildBuilder = Widget Function(BuildContext context, Widget child);
+typedef CallableBuilder = Widget Function(
   BuildContext context,
   VoidCallback callable,
 );
-typedef WidgetGlobalKeysBuilder<T extends State> = Widget Function(
+typedef GlobalKeysBuilder<T extends State> = Widget Function(
   BuildContext context,
   Map<String, GlobalKey<T>> keys,
 );
-typedef Parenting = Widget Function(List<Widget> children);
 
-///
-///
-///
 typedef ConstraintsBuilder = Widget Function(
   BuildContext context,
   BoxConstraints constraints,
 );
 
-typedef ConstraintsChildrenBuilder = List<Widget> Function(
+//
+typedef BuilderList = List<Widget> Function(BuildContext context);
+typedef ConstraintsBuilderList = List<Widget> Function(
   BuildContext context,
   BoxConstraints constraints,
 );
 
-typedef StyleWidgetBuilder<T> = Widget Function(T style);
+///
+///
+///
+typedef ContextGeneral<T> = T Function(BuildContext context);
+typedef Extruding2D = Rect Function(double width, double height);
 
-typedef StylePositionedLayout<T> = Positioned4Double Function(
-  T style,
-  BoxConstraints constraints,
+typedef TextFormFieldValidator = FormFieldValidator<String> Function(
+  String failedMessage,
 );
+
+typedef PositionedLayout = Positioned4Double Function(
+    BoxConstraints constraints);
+
+typedef AnimateToFuture = Future<void> Function(Duration duration, Curve curve);
+
 
 ///
 /// static methods:
@@ -213,7 +198,7 @@ extension FWidgetBuilder on WidgetBuilder {
   ///
   ///
   ///
-  static Parenting parent_stack({
+  static ChildrenBuilder parent_stack({
     Key? key,
     AlignmentGeometry alignment = AlignmentDirectional.topStart,
     TextDirection? textDirection,
@@ -229,7 +214,7 @@ extension FWidgetBuilder on WidgetBuilder {
             children: children,
           );
 
-  static Parenting parent_flex({
+  static ChildrenBuilder parent_flex({
     required Axis direction,
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
     MainAxisSize mainAxisSize = MainAxisSize.max,
@@ -326,12 +311,4 @@ extension ColorExtension on Color {
 
   Color minusAllRGB(double value) =>
       Color.from(alpha: a, red: r - value, green: g - value, blue: b - value);
-}
-
-///
-///
-///
-extension DebugUtils<T> on T {
-  void printThis([Mapper<T, String>? mapper]) =>
-      print(mapper?.call(this) ?? ':::::$this');
 }

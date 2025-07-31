@@ -33,19 +33,19 @@ extension FPainter on Painter {
 ///
 ///
 ///
-extension FRectBuilder on RectBuilder {
-  static RectBuilder get zero => (context) => Rect.zero;
+extension FRectBuilder on RectFromContext {
+  static RectFromContext get zero => (context) => Rect.zero;
 
   ///
   /// rect
   ///
-  static RectBuilder get rectZeroToFull =>
+  static RectFromContext get rectZeroToFull =>
       (context) => Offset.zero & context.sizeMedia;
 
-  static RectBuilder rectZeroToSize(Sizing sizing) =>
+  static RectFromContext rectZeroToSize(Sizing sizing) =>
       (context) => Offset.zero & sizing(context.sizeMedia);
 
-  static RectBuilder rectOffsetToSize(
+  static RectFromContext rectOffsetToSize(
     SizingOffset positioning,
     Sizing sizing,
   ) =>
@@ -57,16 +57,16 @@ extension FRectBuilder on RectBuilder {
   ///
   /// circle
   ///
-  static RectBuilder get circleZeroToFull => (context) =>
+  static RectFromContext get circleZeroToFull => (context) =>
       RectExtension.fromCircle(Offset.zero, context.sizeMedia.diagonal);
 
-  static RectBuilder circleZeroToRadius(SizingDouble sizing) =>
+  static RectFromContext circleZeroToRadius(SizingDouble sizing) =>
       (context) => RectExtension.fromCircle(
             Offset.zero,
             sizing(context.sizeMedia),
           );
 
-  static RectBuilder circleOffsetToSize(
+  static RectFromContext circleOffsetToSize(
     SizingOffset positioning,
     SizingDouble sizing,
   ) =>
@@ -78,16 +78,16 @@ extension FRectBuilder on RectBuilder {
   ///
   /// oval
   ///
-  static RectBuilder get ovalZeroToFull =>
+  static RectFromContext get ovalZeroToFull =>
       (context) => RectExtension.fromCenterSize(Offset.zero, context.sizeMedia);
 
-  static RectBuilder ovalZeroToSize(Sizing sizing) =>
+  static RectFromContext ovalZeroToSize(Sizing sizing) =>
       (context) => RectExtension.fromCenterSize(
             Offset.zero,
             sizing(context.sizeMedia),
           );
 
-  static RectBuilder ovalOffsetToSize(
+  static RectFromContext ovalOffsetToSize(
     SizingOffset positioning,
     Sizing sizing,
   ) =>

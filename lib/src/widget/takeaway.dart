@@ -393,7 +393,7 @@ extension WAwaitBuilder on FutureBuilder {
     WidgetBuilder progressBuilder = FWidgetBuilder.progressing,
     WidgetBuilder? builderNull,
     required Future<T> future,
-    required WidgetValuedBuilder<T?> builder,
+    required ValuedBuilder<T?> builder,
   }) =>
       FutureBuilder<T>(
         future: future,

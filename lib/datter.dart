@@ -20,6 +20,8 @@ part 'src/layout/extended.dart';
 part 'src/layout/extended_collection.dart';
 part 'src/layout/takeaway.dart';
 part 'src/layout/takeaway_constants.dart';
+part 'src/material/extended.dart';
+part 'src/material/takeaway.dart';
 part 'src/responsible/extended.dart';
 part 'src/responsible/takeaway.dart';
 part 'src/widget/extended.dart';

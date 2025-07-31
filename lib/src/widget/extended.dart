@@ -133,7 +133,7 @@ mixin DialogRichMixin<T extends StatefulWidget> on State<T> {
   Future<bool?> showDialogBinary({
     required Widget textEnsure,
     required Widget textCancel,
-    required Parenting builder,
+    required ChildrenBuilder builder,
   }) =>
       showDialog(
         context: context,
@@ -151,7 +151,7 @@ mixin DialogRichMixin<T extends StatefulWidget> on State<T> {
 
   Future<I?> showDialogList<I>({
     required List<I> items,
-    required Parenting builder,
+    required ChildrenBuilder builder,
   }) =>
       showDialog<I>(
         context: context,
@@ -165,7 +165,7 @@ mixin DialogRichMixin<T extends StatefulWidget> on State<T> {
 
   Future<V?> showDialogMap<V>({
     required Map<String, V> options,
-    required Parenting builder,
+    required ChildrenBuilder builder,
   }) =>
       showDialog(
         context: context,
@@ -562,11 +562,11 @@ mixin Form2By2Mixin<T extends StatefulWidget> on State<T>
 ///
 mixin ListItemStateMixin<T extends StatefulWidget, I, S> on State<T> {
   late final List<I> _listItems;
-  late final Map<S, WidgetValuedBuilder<I>> _listItemBuilders;
+  late final Map<S, ValuedBuilder<I>> _listItemBuilders;
 
   List<I> get listItemsInit;
 
-  Map<S, WidgetValuedBuilder<I>> get listItemBuilders;
+  Map<S, ValuedBuilder<I>> get listItemBuilders;
 
   Mapper<I, S> get listItemToState;
 
@@ -602,7 +602,7 @@ mixin ImageBuilderMixin<T extends StatefulWidget> on State<T> {
   ///
   Color get colorProgressIndicator_imageLoading => Colors.blueGrey;
 
-  ImageLoadingBuilder imageLoadingCircular(WidgetChildBuilder builder) =>
+  ImageLoadingBuilder imageLoadingCircular(ChildBuilder builder) =>
       (context, child, loadingProgress) => loadingProgress == null
           ? child
           : builder(

@@ -256,11 +256,11 @@ extension CurveCurve on (Curve, Curve) {
       (curve.interval(begin, end), curve.interval(begin, end));
 
   static (Curve, Curve) intervalForwardOf(
-      Curve curve, double begin, double end) =>
+          Curve curve, double begin, double end) =>
       (curve.interval(begin, end), curve);
 
   static (Curve, Curve) intervalReverseOf(
-      Curve curve, double begin, double end) =>
+          Curve curve, double begin, double end) =>
       (curve, curve.interval(begin, end));
 
   ///
@@ -273,18 +273,18 @@ extension CurveCurve on (Curve, Curve) {
       (curve.interval(begin, end), curve.interval(begin, end, true));
 
   static (Curve, Curve) flipIntervalForwardOf(
-      Curve curve, double begin, double end) =>
+          Curve curve, double begin, double end) =>
       (curve.interval(begin, end), curve.flipped);
 
   static (Curve, Curve) flipIntervalReverseOf(
-      Curve curve, double begin, double end) =>
+          Curve curve, double begin, double end) =>
       (curve, curve.interval(begin, end, true));
 
   ///
   /// [applyIntervalToEnd]
   ///
   static Applier<(Curve, Curve)> applyIntervalToEnd(double begin) =>
-          (curve) => curve.interval(begin, 1.0);
+      (curve) => curve.interval(begin, 1.0);
 
   ///
   /// [invert], [interval]
@@ -293,22 +293,22 @@ extension CurveCurve on (Curve, Curve) {
   (Curve, Curve) get invert => (this.$2, this.$1);
 
   (Curve, Curve) interval(
-      double begin,
-      double end, [
-        bool flipForward = false,
-        bool flipReverse = false,
-      ]) =>
+    double begin,
+    double end, [
+    bool flipForward = false,
+    bool flipReverse = false,
+  ]) =>
       (
-      this.$1.interval(begin, end, flipForward),
-      this.$2.interval(begin, end, flipReverse),
+        this.$1.interval(begin, end, flipForward),
+        this.$2.interval(begin, end, flipReverse),
       );
 
   (Curve, Curve) intervalForward(double begin, double end,
-      [bool flip = false]) =>
+          [bool flip = false]) =>
       (this.$1.interval(begin, end, flip), this.$2);
 
   (Curve, Curve) intervalReverse(double begin, double end,
-      [bool flip = false]) =>
+          [bool flip = false]) =>
       (this.$1, this.$2.interval(begin, end, flip));
 }
 
@@ -407,6 +407,11 @@ extension PathExtension on Path {
 extension DateTimeRangeExtension on DateTimeRange {
   ///
   /// [weekAfter], [weeksFrom], [weeksIneMonthFrom]
+  /// [scopeFrom], [scopeMonthsFrom]
+  ///
+
+  ///
+  /// [weekAfter], [weeksFrom], [weeksIneMonthFrom]
   ///
   static DateTimeRange weekAfter(DateTime date) => DateTimeRange(
         start: date,
@@ -437,9 +442,82 @@ extension DateTimeRangeExtension on DateTimeRange {
         end: date.lastDateOfMonth.lastDateOfWeek(startingWeekday),
       );
 
+  DateTimeRange get normalized =>
+      DateTimeRange(start: start.normalized, end: end.normalized);
+
   ///
-  /// [toDates], [toWeeks]
+  /// [scopeFrom], [scopeMonthsFrom]
   ///
+  static DateTimeRange scopeFrom(
+    DateTime date, {
+    int yearsBefore = 0,
+    int monthsBefore = 0,
+    int daysBefore = 0,
+    int hoursBefore = 0,
+    int minutesBefore = 0,
+    int secondsBefore = 0,
+    int yearsAfter = 0,
+    int monthsAfter = 0,
+    int daysAfter = 0,
+    int hoursAfter = 0,
+    int minutesAfter = 0,
+    int secondsAfter = 0,
+  }) {
+    final year = date.year;
+    final month = date.month;
+    final day = date.day;
+    final hour = date.hour;
+    final minute = date.minute;
+    final second = date.second;
+    return DateTimeRange(
+      start: DateTime(
+        year - yearsBefore,
+        month - monthsBefore,
+        day - daysBefore,
+        hour - hoursBefore,
+        minute - minutesBefore,
+        second - secondsBefore,
+      ),
+      end: DateTime(
+        year + yearsAfter,
+        month + monthsAfter,
+        day + daysAfter,
+        hour + hoursAfter,
+        minute + minutesAfter,
+        second + secondsAfter,
+      ),
+    );
+  }
+
+  static DateTimeRange scopeMonthsFrom(
+    DateTime date, {
+    int before = 0,
+    int after = 0,
+  }) {
+    final year = date.year;
+    final month = date.month;
+    final day = date.day;
+    return DateTimeRange(
+      start: DateTime(year, month - before, day).firstDateOfMonth,
+      end: DateTime(year, month + after, day).lastDateOfMonth,
+    );
+  }
+
+  ///
+  /// [contains], [toDates], [toWeeks]
+  ///
+  bool contains(DateTime dateTime, [bool exclusive = true]) {
+    final start = this.start;
+    final end = this.end;
+    final inside = dateTime.isAfter(start) && dateTime.isBefore(end);
+    if (exclusive) return inside;
+    final year = dateTime.year;
+    final month = dateTime.month;
+    final day = dateTime.day;
+    return (year == start.year && month == start.month && day == start.day) ||
+        (year == end.year && month == end.month && day == end.day);
+  }
+
   List<DateTime> get toDates => List.generate(
         duration.inDays + 1,
         (index) => DateTime(
