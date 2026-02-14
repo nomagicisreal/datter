@@ -6,7 +6,7 @@ part of '../../datter.dart';
 /// [Clipping]
 ///
 /// [Curving]
-/// [CurveCurve]
+/// [BiCurveExtension]
 ///
 /// [PathExtension]
 /// [DateTimeRangeExtension]
@@ -143,7 +143,7 @@ class Curving extends Curve {
 /// [intervalOf], ...
 /// [invert], ...
 ///
-extension CurveCurve on (Curve, Curve) {
+extension BiCurveExtension on (Curve, Curve) {
   ///
   /// [all].length == 43, see https://api.flutter.dev/flutter/animation/Curves-class.html?gclid=CjwKCAiA-bmsBhAGEiwAoaQNmg9ZfimSGJRAty3QNZ0AA32ztq51qPlJfFPBsFc5Iv1n-EgFQtULyxoC8q0QAvD_BwE&gclsrc=aw.ds
   ///

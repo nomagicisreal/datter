@@ -1,4 +1,4 @@
-part of '../_mationani.dart';
+part of '../../_mationani.dart';
 
 ///
 ///
@@ -192,63 +192,63 @@ enum AniSequenceStyle {
 ///
 ///
 abstract final class MationaniSequence {
-  static Between<T> between<T>({
-    BetweenInterval weight = BetweenInterval.linear,
-    (Curve, Curve)? curve,
-    required List<T> steps,
-  }) =>
-      Between.constant(
-        begin: steps.first,
-        end: steps.last,
-        onLerp: BetweenInterval._link(
-          totalStep: steps.length,
-          step: (i) => steps[i],
-          interval: (i) => weight,
-        ),
-        curve: curve,
-      );
-
-  static Between<T> between_generator<T>({
-    required int totalStep,
-    required Generator<T> step,
-    required Generator<BetweenInterval> interval,
-    (Curve, Curve)? curve,
-    Sequencer<T, Lerper<T>, Between<T>>? sequencer,
-  }) =>
-      Between.constant(
-        begin: step(0),
-        end: step(totalStep - 1),
-        onLerp: BetweenInterval._link(
-          totalStep: totalStep,
-          step: step,
-          interval: interval,
-          sequencer: sequencer,
-        ),
-        curve: curve,
-      );
-
-  static Between<T> outAndBack<T>({
-    required T begin,
-    required T target,
-    (Curve, Curve)? curve,
-    double ratio = 1.0,
-    Curve curveOut = Curves.fastOutSlowIn,
-    Curve curveBack = Curves.fastOutSlowIn,
-    Sequencer<T, Lerper<T>, Between<T>>? sequencer,
-  }) =>
-      Between.constant(
-        begin: begin,
-        end: begin,
-        onLerp: BetweenInterval._link(
-          totalStep: 3,
-          step: (i) => i == 1 ? target : begin,
-          interval: (i) => i == 0
-              ? BetweenInterval(ratio, curve: curveOut)
-              : BetweenInterval(1 / ratio, curve: curveBack),
-          sequencer: sequencer,
-        ),
-        curve: curve,
-      );
+  // static Between<T> between<T>({
+  //   BetweenInterval weight = BetweenInterval.linear,
+  //   (Curve, Curve)? curve,
+  //   required List<T> steps,
+  // }) =>
+  //     Between(
+  //       begin: steps.first,
+  //       end: steps.last,
+  //       onLerp: BetweenInterval._link(
+  //         totalStep: steps.length,
+  //         step: (i) => steps[i],
+  //         interval: (i) => weight,
+  //       ),
+  //       curve: curve,
+  //     );
+  //
+  // static Between<T> between_generator<T>({
+  //   required int totalStep,
+  //   required Generator<T> step,
+  //   required Generator<BetweenInterval> interval,
+  //   (Curve, Curve)? curve,
+  //   Sequencer<T, Lerper<T>, Between<T>>? sequencer,
+  // }) =>
+  //     Between(
+  //       begin: step(0),
+  //       end: step(totalStep - 1),
+  //       onLerp: BetweenInterval._link(
+  //         totalStep: totalStep,
+  //         step: step,
+  //         interval: interval,
+  //         sequencer: sequencer,
+  //       ),
+  //       curve: curve,
+  //     );
+  //
+  // static Between<T> outAndBack<T>({
+  //   required T begin,
+  //   required T target,
+  //   (Curve, Curve)? curve,
+  //   double ratio = 1.0,
+  //   Curve curveOut = Curves.fastOutSlowIn,
+  //   Curve curveBack = Curves.fastOutSlowIn,
+  //   Sequencer<T, Lerper<T>, Between<T>>? sequencer,
+  // }) =>
+  //     Between(
+  //       begin: begin,
+  //       end: begin,
+  //       onLerp: BetweenInterval._link(
+  //         totalStep: 3,
+  //         step: (i) => i == 1 ? target : begin,
+  //         interval: (i) => i == 0
+  //             ? BetweenInterval(ratio, curve: curveOut)
+  //             : BetweenInterval(1 / ratio, curve: curveBack),
+  //         sequencer: sequencer,
+  //       ),
+  //       curve: curve,
+  //     );
 }
 
 ///
@@ -260,7 +260,7 @@ class BetweenInterval {
 
   Lerper<T> lerp<T>(T a, T b) {
     final curving = curve.transform;
-    final onLerp = Between.lerperOf<T>(a, b);
+    final onLerp = Between<T>(begin: a, end: b).transform;
     return (t) => onLerp(curving(t));
   }
 
@@ -299,6 +299,5 @@ class BetweenInterval {
     T next,
     Lerper<T> onLerp,
   ) =>
-      (_) => Between.constant(
-          begin: previous, end: next, onLerp: onLerp, curve: null);
+      (_) => Between(begin: previous, end: next, curve: null);
 }

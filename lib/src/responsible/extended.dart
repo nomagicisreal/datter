@@ -182,13 +182,13 @@ extension BuildContextExtension on BuildContext {
 
   TextTheme get themeText => theme.textTheme;
 
-  AppBarTheme get themeAppBar => theme.appBarTheme;
+  AppBarThemeData get themeAppBar => theme.appBarTheme;
 
   BadgeThemeData get themeBadge => theme.badgeTheme;
 
   MaterialBannerThemeData get themeBanner => theme.bannerTheme;
 
-  BottomAppBarTheme get themeBottomAppBar => theme.bottomAppBarTheme;
+  BottomAppBarThemeData get themeBottomAppBar => theme.bottomAppBarTheme;
 
   BottomNavigationBarThemeData get themeBottomNavigationBar =>
       theme.bottomNavigationBarTheme;
