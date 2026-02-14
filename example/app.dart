@@ -1,7 +1,3 @@
-import 'dart:math';
-
-import 'package:damath/damath.dart';
-import 'package:datter/_mationani/_mationani.dart';
 import 'package:datter/datter.dart';
 import 'package:flutter/material.dart';
 
@@ -45,21 +41,10 @@ class _MyHomeState extends State<MyHome> {
         backgroundColor: context.colorScheme.inversePrimary,
         title: Text('hello'),
       ),
-      // body: Center(
-      // child: SizedBox.square(
-      //   dimension: 200,
-      //   child: ColoredBox(color: context.colorScheme.primary),
-      // ),
-      // ),
       body: Center(
-        child: MationaniCuttingAnchored(
-          ani: Ani.updateForwardOrReverse(),
-          rotation: pi / 6 / DoubleExtension.radian_angle360,
-          distance: 0.1,
-          child: ColoredBox(
-            color: context.colorScheme.primary,
-            child: SizedBox.square(dimension: 100),
-          ),
+        child: SizedBox.square(
+          dimension: 200,
+          child: ColoredBox(color: context.colorScheme.primary),
         ),
       ),
       floatingActionButton: FloatingActionButton(
