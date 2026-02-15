@@ -39,7 +39,7 @@ class _MyHomeState extends State<MyHome> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: context.colorScheme.inversePrimary,
-        title: Text('hello'),
+        title: Text('lo'),
       ),
       body: Center(
         child: SizedBox.square(

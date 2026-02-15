@@ -126,13 +126,13 @@ class Curving extends Curve {
   ///
   ///
   Curving.sinPeriodOf(double times)
-      : mapping = DoubleExtension.applyOnPeriod(times, math.sin);
+      : mapping = DoubleExtension.applierPeriod(times, math.sin);
 
   Curving.cosPeriodOf(double times)
-      : mapping = DoubleExtension.applyOnPeriod(times, math.cos);
+      : mapping = DoubleExtension.applierPeriod(times, math.cos);
 
   Curving.tanPeriodOf(double times)
-      : mapping = DoubleExtension.applyOnPeriod(times, math.tan);
+      : mapping = DoubleExtension.applierPeriod(times, math.tan);
 
   @override
   double transformInternal(double t) => mapping(t);
