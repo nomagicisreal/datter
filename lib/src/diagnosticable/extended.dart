@@ -2,8 +2,8 @@ part of '../../datter.dart';
 
 ///
 ///
-/// [Painting]
-/// [Clipping]
+/// [Painter], [PainterAdjust]
+/// [Clipper], [ClipperAdjust]
 ///
 /// [Curving]
 /// [BiCurveExtension]
@@ -14,19 +14,36 @@ part of '../../datter.dart';
 ///
 
 ///
-/// [_shouldRePaint], ...
-/// [paint], ...
-/// [Painting.rePaintWhenUpdate], ...
 ///
-class Painting extends CustomPainter {
-  final Fusionor<Painting, bool> _shouldRePaint;
+///
+class Painter extends CustomPainter {
+  final Path path;
+  final Paint paintPaint;
+  final PaintingPath paintingPath;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    paintingPath(canvas, paintPaint, path);
+  }
+
+  @override
+  bool shouldRepaint(Painter oldDelegate) =>
+      oldDelegate.path != path &&
+      oldDelegate.paint != paint &&
+      oldDelegate.paintingPath != paintingPath;
+
+  const Painter({
+    this.paintingPath = FPaintingPath.draw,
+    required this.path,
+    required Paint paint,
+  }) : paintPaint = paint;
+}
+
+class PainterAdjust extends CustomPainter {
   final SizingPath sizingPath;
   final PaintFrom paintFrom;
   final PaintingPath paintingPath;
 
-  ///
-  ///
-  ///
   @override
   void paint(Canvas canvas, Size size) {
     final path = sizingPath(size);
@@ -35,83 +52,81 @@ class Painting extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(Painting oldDelegate) => _shouldRePaint(oldDelegate, this);
+  bool shouldRepaint(PainterAdjust oldDelegate) =>
+      oldDelegate.sizingPath != sizingPath &&
+      oldDelegate.paintFrom != paintFrom &&
+      oldDelegate.paintingPath != paintingPath;
 
-  static bool _rePaintWhenUpdate(Painting oldP, Painting p) => true;
-
-  static bool _rePaintNever(Painting oldP, Painting p) => false;
-
-  ///
-  ///
-  ///
-  const Painting.rePaintWhenUpdate({
-    required this.paintingPath,
+  const PainterAdjust({
+    this.paintingPath = FPaintingPath.draw,
     required this.sizingPath,
     required this.paintFrom,
-  }) : _shouldRePaint = _rePaintWhenUpdate;
-
-  const Painting.rePaintNever({
-    required this.paintingPath,
-    required this.paintFrom,
-    required this.sizingPath,
-  }) : _shouldRePaint = _rePaintNever;
-
-  factory Painting.rRegularPolygon(
-    PaintFrom paintFrom,
-    RRegularPolygonCubicOnEdge polygon,
-  ) =>
-      Painting.rePaintNever(
-        paintingPath: FPaintingPath.draw,
-        paintFrom: paintFrom,
-        sizingPath: FSizingPath.polygonCubic(polygon.cubicPoints),
-      );
+  });
 }
 
 ///
 ///
-/// [sizingPath], ...
-/// [Clipping.rectOf], ...
 ///
-///
-class Clipping extends CustomClipper<Path> {
-  final SizingPath sizingPath;
-  final Fusionor<Clipping, bool> _shouldReClip;
+class Clipper<T> extends CustomClipper<T> {
+  final T frame;
 
   @override
-  Path getClip(Size size) => sizingPath(size);
+  T getClip(Size size) => frame;
 
   @override
-  bool shouldReclip(Clipping oldClipper) => _shouldReClip(oldClipper, this);
+  bool shouldReclip(Clipper<T> oldClipper) => oldClipper.frame != frame;
 
-  static bool _reclipWhenUpdate(Clipping oldC, Clipping c) => true;
-
-  static bool _reclipNever(Clipping oldC, Clipping c) => false;
-
-  const Clipping.reclipWhenUpdate(this.sizingPath)
-      : _shouldReClip = _reclipWhenUpdate;
-
-  const Clipping.reclipNever(this.sizingPath) : _shouldReClip = _reclipNever;
-
-  ///
-  ///
-  ///
-  factory Clipping.rectOf(Rect rect) =>
-      Clipping.reclipNever(FSizingPath.rect(rect));
-
-  factory Clipping.rectFromZeroTo(Size size) =>
-      Clipping.rectOf(Offset.zero & size);
-
-  factory Clipping.rectFromZeroToOffset(Offset corner) =>
-      Clipping.rectOf(Rect.fromPoints(Offset.zero, corner));
-
-  factory Clipping.rRegularPolygon(
-    RRegularPolygonCubicOnEdge polygon, {
-    Companion<CubicOffset, Size> adjust = CubicOffset.companionSizeAdjustCenter,
-  }) =>
-      Clipping.reclipNever(
-        FSizingPath.polygonCubic(polygon.cubicPoints, adjust: adjust),
-      );
+  const Clipper(this.frame);
 }
+
+class ClipperAdjust<T> extends CustomClipper<T> {
+  final T Function(Size) adjust;
+
+  @override
+  T getClip(Size size) => adjust(size);
+
+  @override
+  bool shouldReclip(ClipperAdjust<T> oldClipper) => oldClipper.adjust != adjust;
+
+  const ClipperAdjust(this.adjust);
+}
+
+// class ClipperPath extends CustomClipper<Path> {
+//   final Path path;
+//
+//   @override
+//   Path getClip(Size size) => path;
+//
+//   @override
+//   bool shouldReclip(ClipperPath oldClipper) => oldClipper.path != path;
+//
+//   const ClipperPath(this.path);
+// }
+//
+// class ClipperRect extends CustomClipper<Rect> {
+//   final Rect rect;
+//
+//   @override
+//   Rect getClip(Size size) => rect;
+//
+//   @override
+//   bool shouldReclip(ClipperRect oldClipper) => oldClipper.rect != rect;
+//
+//   const ClipperRect(this.rect);
+// }
+//
+// class ClipperSizingPath extends CustomClipper<Path> {
+//   final SizingPath sizingPath;
+//
+//   @override
+//   Path getClip(Size size) => sizingPath(size);
+//
+//   @override
+//   bool shouldReclip(ClipperSizingPath oldClipper) =>
+//       oldClipper.sizingPath != sizingPath;
+//
+//   const ClipperSizingPath(this.sizingPath);
+// }
 
 ///
 /// [mapping]
@@ -317,6 +332,7 @@ extension BiCurveExtension on (Curve, Curve) {
 /// [arcFromStartToEnd], ...
 /// [quadraticBezierToPoint], ...
 /// [addOvalFromCircle], ...
+/// [addPolygonCubic], ...
 ///
 extension PathExtension on Path {
   ///
@@ -399,6 +415,26 @@ extension PathExtension on Path {
 
   void addRectFromLTWH(double left, double top, double width, double height) =>
       addRect(Rect.fromLTWH(left, top, width, height));
+
+  ///
+  ///
+  ///
+  void addPolygonCubic(Iterable<CubicOffset> points) {
+    final iterator = points.iterator;
+    var path = Path();
+    if (iterator.moveNext()) {
+      final points = iterator.current;
+      path = path
+        ..moveToPoint(points.a)
+        ..cubicToPoint(points.b, points.c, points.d);
+    }
+    while (iterator.moveNext()) {
+      final points = iterator.current;
+      path = path
+        ..lineToPoint(points.a)
+        ..cubicToPoint(points.b, points.c, points.d);
+    }
+  }
 }
 
 ///
@@ -420,26 +456,26 @@ extension DateTimeRangeExtension on DateTimeRange {
 
   static DateTimeRange weeksFrom({
     DateTime? date,
-    Duration startPending = Duration.zero,
-    int startingWeekday = DateTime.sunday,
+    Duration beginPending = Duration.zero,
+    int beginWeekday = DateTime.sunday,
     int count = 1,
   }) {
-    final start = (date ?? DateTime.now())
-        .add(startPending)
-        .firstDateOfWeek(startingWeekday);
+    final begin = (date ?? DateTime.now())
+        .add(beginPending)
+        .firstDateOfWeek(beginWeekday);
     return DateTimeRange(
-      start: start,
-      end: start.add(DurationExtension.day1 * DateTime.daysPerWeek * count),
+      start: begin,
+      end: begin.add(DurationExtension.day1 * DateTime.daysPerWeek * count),
     );
   }
 
   static DateTimeRange weeksIneMonthFrom(
     DateTime date, [
-    int startingWeekday = DateTime.sunday,
+    int beginWeekday = DateTime.sunday,
   ]) =>
       DateTimeRange(
-        start: date.firstDateOfMonth.firstDateOfWeek(startingWeekday),
-        end: date.lastDateOfMonth.lastDateOfWeek(startingWeekday),
+        start: date.firstDateOfMonth.firstDateOfWeek(beginWeekday),
+        end: date.lastDateOfMonth.lastDateOfWeek(beginWeekday),
       );
 
   DateTimeRange get normalized =>
@@ -528,10 +564,10 @@ extension DateTimeRangeExtension on DateTimeRange {
       );
 
   DateTimeRange toWeeks([
-    int startingWeekday = DateTime.sunday,
+    int beginWeekday = DateTime.sunday,
   ]) =>
       DateTimeRange(
-        start: start.firstDateOfWeek(startingWeekday),
-        end: end.lastDateOfWeek(startingWeekday),
+        start: start.firstDateOfWeek(beginWeekday),
+        end: end.lastDateOfWeek(beginWeekday),
       );
 }

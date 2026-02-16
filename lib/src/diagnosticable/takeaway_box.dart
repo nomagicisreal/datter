@@ -99,15 +99,15 @@ extension FBoxShadow on BoxShadow {
 ///   [FBorderInput.outlineSolidInside]
 ///   [FBorderInput.underline]
 ///
-/// [FBorderOutlined]
-///   [FBorderOutlined.star]
-///   [FBorderOutlined.linear]
-///   [FBorderOutlined.stadium]
-///   [FBorderOutlined.beveledRectangle]
-///   [FBorderOutlined.roundedRectangle]
-///   [FBorderOutlined.continuousRectangle]
-///   [FBorderOutlined.circle]
-///   [FBorderOutlined.oval]
+/// subtypes of [OutlinedBorder]:
+///   [StarBorder]
+///   [LinearBorder]
+///   [StadiumBorder]
+///   [BeveledRectangleBorder]
+///   [RoundedRectangleBorder]
+///   [ContinuousRectangleBorder]
+///   [CircleBorder]
+///   [OvalBorder]
 ///
 /// see https://api.flutter.dev/flutter/painting/ShapeBorder-class.html for more detail about [ShapeBorder]
 /// [FBorderOutlined.linear] usually used with [ButtonStyle.shape] by invoking [TextButton.styleFrom]
@@ -205,81 +205,6 @@ extension FBorderInput on InputBorder {
         borderSide: borderSide,
         borderRadius: borderRadius,
       );
-}
-
-extension FBorderOutlined on OutlinedBorder {
-  static StarBorder star({
-    BorderSide side = BorderSide.none,
-    double points = 5,
-    double innerRadiusRatio = 0.4,
-    double pointRounding = 0,
-    double valleyRounding = 0,
-    double rotation = 0,
-    double squash = 0,
-  }) =>
-      StarBorder(
-        side: side,
-        points: points,
-        innerRadiusRatio: innerRadiusRatio,
-        pointRounding: pointRounding,
-        valleyRounding: valleyRounding,
-        rotation: rotation,
-        squash: squash,
-      );
-
-  static LinearBorder linear({
-    BorderSide side = BorderSide.none,
-    LinearBorderEdge? start,
-    LinearBorderEdge? end,
-    LinearBorderEdge? top,
-    LinearBorderEdge? bottom,
-  }) =>
-      LinearBorder(
-        side: side,
-        start: start,
-        end: end,
-        top: top,
-        bottom: bottom,
-      );
-
-  static StadiumBorder stadium([BorderSide side = BorderSide.none]) =>
-      StadiumBorder(side: side);
-
-  static BeveledRectangleBorder beveledRectangle({
-    BorderSide side = BorderSide.none,
-    required BorderRadius borderRadius,
-  }) =>
-      BeveledRectangleBorder(
-        side: side,
-        borderRadius: borderRadius,
-      );
-
-  static RoundedRectangleBorder roundedRectangle({
-    BorderSide side = BorderSide.none,
-    required BorderRadius borderRadius,
-  }) =>
-      RoundedRectangleBorder(
-        side: side,
-        borderRadius: borderRadius,
-      );
-
-  static ContinuousRectangleBorder continuousRectangle({
-    BorderSide side = BorderSide.none,
-    required BorderRadius borderRadius,
-  }) =>
-      ContinuousRectangleBorder(side: side, borderRadius: borderRadius);
-
-  static CircleBorder circle({
-    BorderSide side = BorderSide.none,
-    double eccentricity = 0.0,
-  }) =>
-      CircleBorder(side: side, eccentricity: eccentricity);
-
-  static CircleBorder oval({
-    BorderSide side = BorderSide.none,
-    double eccentricity = 1.0,
-  }) =>
-      OvalBorder(side: side, eccentricity: eccentricity);
 }
 
 ///

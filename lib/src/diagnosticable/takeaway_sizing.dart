@@ -148,9 +148,9 @@ extension FSizingPath on SizingPath {
   static SizingPath polygonFromSize(SizingOffsetList corners) =>
       (size) => Path()..addPolygon(corners(size), false);
 
-  static SizingPath _polygonCubic(
-    SizingCubicOffsetIterable points,
-    double scale, {
+  static SizingPath polygonCubic(
+    SizingCubicOffsetIterable points, {
+    double scale = 1,
     Companion<CubicOffset, Size>? adjust,
   }) {
     final Applier<Iterable<CubicOffset>> scaled = scale == 1
@@ -169,20 +169,6 @@ extension FSizingPath on SizingPath {
         ? (size) => from(points(size))
         : (size) => from(points(size).map((points) => adjust(points, size)));
   }
-
-  static SizingPath polygonCubic(
-    Iterable<CubicOffset> cornersCubic, {
-    double scale = 1,
-    Companion<CubicOffset, Size>? adjust,
-  }) =>
-      _polygonCubic((_) => cornersCubic, scale, adjust: adjust);
-
-  static SizingPath polygonCubicFromSize(
-    SizingCubicOffsetIterable cornersCubic, {
-    double scale = 1,
-    Companion<CubicOffset, Size>? adjust,
-  }) =>
-      _polygonCubic(cornersCubic, scale, adjust: adjust);
 
   ///
   ///
@@ -225,8 +211,7 @@ extension FSizingPath on SizingPath {
     Offset arcEnd, {
     bool clockwise = true,
   }) {
-    final radius =
-        Radius.circular(arcEnd.distanceHalfTo(arcStart));
+    final radius = Radius.circular(arcEnd.distanceHalfTo(arcStart));
     return (size) => Path()
       ..arcFromStartToEnd(arcStart, arcEnd,
           radius: radius, clockwise: clockwise)
@@ -234,18 +219,18 @@ extension FSizingPath on SizingPath {
   }
 
   static SizingPath pieFromSize({
-    required SizingOffset arcStart,
+    required SizingOffset arcBegin,
     required SizingOffset arcEnd,
     bool clockwise = true,
   }) =>
       (size) {
-        final start = arcStart(size);
+        final begin = arcBegin(size);
         final end = arcEnd(size);
         return Path()
-          ..moveToPoint(start)
+          ..moveToPoint(begin)
           ..arcToPoint(
             end,
-            radius: Radius.circular(end.distanceHalfTo(start)),
+            radius: Radius.circular(end.distanceHalfTo(begin)),
             clockwise: clockwise,
           )
           ..close();
@@ -253,12 +238,12 @@ extension FSizingPath on SizingPath {
 
   static SizingPath pieOfLeftRight(bool isRight) => isRight
       ? FSizingPath.pieFromSize(
-          arcStart: (size) => Offset.zero,
+          arcBegin: (size) => Offset.zero,
           arcEnd: (size) => size.bottomLeft(Offset.zero),
           clockwise: true,
         )
       : FSizingPath.pieFromSize(
-          arcStart: (size) => size.topRight(Offset.zero),
+          arcBegin: (size) => size.topRight(Offset.zero),
           arcEnd: (size) => size.bottomRight(Offset.zero),
           clockwise: false,
         );

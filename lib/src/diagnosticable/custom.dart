@@ -44,7 +44,7 @@ typedef SizingOffsetList = List<Offset> Function(Size size);
 typedef SizingCubicOffsetIterable = Iterable<CubicOffset> Function(Size size);
 typedef PaintFrom = Paint Function(Canvas canvas, Size size);
 typedef PaintingPath = void Function(Canvas canvas, Paint paint, Path path);
-typedef Painter = Painting Function(SizingPath sizingPath);
+typedef Painting = PainterAdjust Function(SizingPath sizingPath);
 typedef RectFromContext = Rect Function(BuildContext context);
 
 ///
@@ -117,19 +117,6 @@ extension FWidgetBuilder on WidgetBuilder {
   ///
   ///
   static WidgetBuilder of(Widget child) => (_) => child;
-
-  static WidgetBuilder ofClipPath_reclipNever({
-    Key? key,
-    Clip clipBehavior = Clip.antiAlias,
-    required SizingPath sizingPath,
-    required WidgetBuilder builder,
-  }) =>
-      (context) => ClipPath(
-            key: key,
-            clipper: Clipping.reclipNever(sizingPath),
-            clipBehavior: clipBehavior,
-            child: builder(context),
-          );
 
   static WidgetBuilder ofStack_centerOnSurface({
     double? widthFactor,

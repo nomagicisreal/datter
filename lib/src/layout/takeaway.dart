@@ -1,33 +1,14 @@
 part of '../../datter.dart';
 
 ///
-/// [FPaintFrom], [FPaintingPath], [FPainter]
+/// [FPaintingPath]
 /// [FRectBuilder]
 /// [FExtruding2D]
 ///
 
-///
-///
-///
-extension FPaintFrom on PaintFrom {
-  static PaintFrom of(Paint paint) => (_, __) => paint;
-}
-
 extension FPaintingPath on PaintingPath {
   static void draw(Canvas canvas, Paint paint, Path path) =>
       canvas.drawPath(path, paint);
-}
-
-extension FPainter on Painter {
-  static Painter of(
-    PaintFrom paintFrom, {
-    PaintingPath paintingPath = FPaintingPath.draw,
-  }) =>
-      (sizingPath) => Painting.rePaintWhenUpdate(
-            paintingPath: paintingPath,
-            sizingPath: sizingPath,
-            paintFrom: paintFrom,
-          );
 }
 
 ///

@@ -11,7 +11,7 @@ part of '../../datter.dart';
 ///
 /// render object widget:
 /// [WSizedBox]
-/// [WCustomPaint], [WClipPath]
+/// [WClipPath]
 /// [WRadioList]
 /// [FTransform]
 ///
@@ -123,49 +123,6 @@ extension WSizedBox on SizedBox {
 }
 
 ///
-///
-///
-extension WCustomPaint on CustomPaint {
-  static CustomPaint repaintNever({
-    PaintingPath paintingPath = FPaintingPath.draw,
-    required PaintFrom paintFrom,
-    required SizingPath sizingPath,
-  }) =>
-      CustomPaint(
-        painter: Painting.rePaintNever(
-          paintingPath: paintingPath,
-          paintFrom: paintFrom,
-          sizingPath: sizingPath,
-        ),
-      );
-
-  static CustomPaint repaintWhenUpdate({
-    PaintingPath paintingPath = FPaintingPath.draw,
-    required PaintFrom paintFrom,
-    required SizingPath sizingPath,
-  }) =>
-      CustomPaint(
-        painter: Painting.rePaintWhenUpdate(
-          paintingPath: paintingPath,
-          paintFrom: paintFrom,
-          sizingPath: sizingPath,
-        ),
-      );
-
-  ///
-  ///
-  ///
-  static CustomPaint drawRRegularPolygon(
-    RRegularPolygonCubicOnEdge polygon, {
-    required PaintFrom pathFrom,
-    Widget? child,
-  }) =>
-      CustomPaint(
-        painter: Painting.rRegularPolygon(pathFrom, polygon),
-        child: child,
-      );
-}
-
 ///
 ///
 /// [WClipPath._shape]
@@ -323,33 +280,9 @@ extension WClipPath on ClipPath {
 
   ///
   ///
-  ///
-  /// with [Clipping]
-  ///
+  /// with [ClipperSizingPath]
   ///
   ///
-  static ClipPath reClipNever({
-    Clip clipBehavior = Clip.antiAlias,
-    required SizingPath sizingPath,
-    required Widget child,
-  }) =>
-      ClipPath(
-        clipBehavior: clipBehavior,
-        clipper: Clipping.reclipNever(sizingPath),
-        child: child,
-      );
-
-  static ClipPath rectFromZeroToSize({
-    Clip clipBehavior = Clip.antiAlias,
-    required Size size,
-    required Widget child,
-  }) =>
-      ClipPath(
-        clipBehavior: clipBehavior,
-        clipper: Clipping.rectOf(Offset.zero & size),
-        child: child,
-      );
-
   static ClipPath polygonRRegular(
     RRegularPolygonCubicOnEdge polygon, {
     Key? key,
@@ -360,8 +293,8 @@ extension WClipPath on ClipPath {
       ClipPath(
         key: key,
         clipBehavior: clipBehavior,
-        clipper: Clipping.reclipNever(
-          FSizingPath.polygonCubic(polygon.cubicPoints, adjust: adjust),
+        clipper: ClipperAdjust<Path>(
+          FSizingPath.polygonCubic((_) => polygon.cubicPoints, adjust: adjust),
         ),
         child: child,
       );
@@ -373,7 +306,7 @@ extension WClipPath on ClipPath {
     Widget? child,
   }) =>
       ClipPath(
-        clipper: Clipping.rRegularPolygon(polygon),
+        clipper: Clipper(Path()..addPolygonCubic(polygon.cubicPoints)),
         child: DecoratedBox(
           decoration: decoration,
           position: position,
@@ -453,12 +386,12 @@ extension WAwaitBuilder on FutureBuilder {
 /// [Direction3DIn6] is a link between "dart coordinate system" and "my coordinate system",
 /// the comment belows shows the way how "dart coordinate system" can be described by [Direction3DIn6].
 /// take [Offset.fromDirection] for example, its radian 0 ~ 2π going through:
-///   1. [Direction3DIn6.right]
-///   2. [Direction3DIn6.bottom]
-///   3. [Direction3DIn6.left]
-///   4. [Direction3DIn6.top]
-///   5. [Direction3DIn6.right], ...
-/// its evidence that [Offset.fromDirection] start from [Direction3DIn6.right],
+///   1. [DirectionIn4.right]
+///   2. [DirectionIn4.bottom]
+///   3. [DirectionIn4.left]
+///   4. [DirectionIn4.top]
+///   5. [DirectionIn4.right], ...
+/// its evidence that [Offset.fromDirection] start from [DirectionIn4.right],
 /// and the axis of [Offset.fromDirection] can be presented as "[Direction3DIn6.front] -> [Direction3DIn6.back]".
 /// because only when the perspective comes from [Direction3DIn6.front] to [Direction3DIn6.back],
 /// the order from 1 to 6 is counterclockwise;
