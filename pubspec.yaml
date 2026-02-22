@@ -12,7 +12,7 @@ dependencies:
 
   damath: ^0.0.47
   overlay_model: ^0.0.2
-  mationani: ^0.0.45
+  mationani: ^0.0.46
 
 dev_dependencies:
   flutter_test:
